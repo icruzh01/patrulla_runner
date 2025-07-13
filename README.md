@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
   <title>Patrulla Runner Arcade</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
       background: #000; 
       display: flex;
@@ -215,10 +213,8 @@
       body {
         background: #111;
         display: block;
+        height: 100%;
         touch-action: manipulation;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
       }
       
       .arcade-machine {
@@ -231,14 +227,13 @@
         left: 0;
         width: 100%;
         height: 100%;
-        touch-action: manipulation;
+        overflow: hidden;
       }
       
       canvas {
         width: 100%;
         height: 100%;
         display: block;
-        touch-action: manipulation;
       }
 
       /* Panel de información minimalista para móvil */
@@ -256,38 +251,34 @@
       .mobile-hud-item {
         background: rgba(0, 0, 0, 0.7);
         color: white;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
         font-weight: bold;
-        text-shadow: 1px 1px 2px #000;
       }
 
       .mobile-hud-combo {
         position: absolute;
-        top: 60px;
+        top: 50px;
         left: 10px;
         background: rgba(255, 215, 0, 0.9);
         color: black;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
         font-weight: bold;
         display: none;
-        text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
       }
     }
 
     /* Estilos compartidos del juego */
     #game-container {
       position: relative;
-      touch-action: manipulation;
     }
 
     canvas {
       display: block;
       background: #111;
-      touch-action: manipulation;
     }
 
     /* Pantalla de inicio y game over */
@@ -301,7 +292,6 @@
       align-items: center;
       z-index: 20;
       gap: 15px;
-      touch-action: manipulation;
     }
 
     #inicio h2 {
@@ -309,7 +299,6 @@
       color: gold;
       text-shadow: 0 0 5px #fff;
       margin-bottom: 10px;
-      text-align: center;
     }
 
     #inicio input, #inicio select {
@@ -322,7 +311,6 @@
       text-align: center;
       background: #222;
       color: white;
-      touch-action: manipulation;
     }
 
     #inicio button {
@@ -335,7 +323,6 @@
       cursor: pointer;
       font-weight: bold;
       transition: transform 0.2s, background 0.2s;
-      touch-action: manipulation;
     }
 
     #btnActivarSonido {
@@ -356,7 +343,6 @@
       background: rgba(0, 0, 0, 0.9);
       z-index: 30;
       gap: 15px;
-      touch-action: manipulation;
     }
 
     #gameOverText {
@@ -365,12 +351,6 @@
       margin-bottom: 10px;
       text-align: center;
       text-shadow: 0 0 10px #ff0000;
-    }
-
-    #puntosFinales, #highScoreFinal {
-      color: white;
-      font-size: 20px;
-      text-align: center;
     }
 
     #btnReiniciar {
@@ -401,7 +381,6 @@
       width: 100%;
       text-align: center;
       z-index: 10;
-      touch-action: manipulation;
     }
 
     #controlesMovil button {
@@ -409,17 +388,23 @@
       margin: 0 10px;
       font-size: 20px;
       background: rgba(0, 0, 0, 0.7);
-      border: none;
+      border: 2px solid rgba(255, 255, 255, 0.5);
       color: white;
       border-radius: 50%;
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       touch-action: manipulation;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #controlesMovil button:active {
+      background: rgba(255, 255, 255, 0.3);
     }
 
     #btnNitro {
-      background: rgba(255, 87, 34, 0.8) !important;
+      background: rgba(255, 87, 34, 0.7) !important;
+      border: 2px solid rgba(255, 255, 255, 0.7) !important;
     }
 
     @media (max-width: 768px) {
@@ -433,72 +418,14 @@
         font-size: 24px;
       }
       
-      #inicio input, #inicio select {
+      #inicio input, #inicio select, #inicio button {
         width: 80%;
         max-width: 300px;
-      }
-      
-      #inicio button {
-        width: 80%;
-        max-width: 300px;
-      }
-    }
-
-    /* Pantalla de orientación para móviles */
-    #orientacion {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      z-index: 100;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-
-    #orientacion h2 {
-      color: red;
-      margin-bottom: 20px;
-    }
-
-    #orientacion p {
-      font-size: 18px;
-      margin-bottom: 30px;
-    }
-
-    #orientacion-icon {
-      font-size: 80px;
-      margin-bottom: 30px;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    @media (max-width: 768px) and (orientation: portrait) {
-      #orientacion {
-        display: flex;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Pantalla de orientación para móviles -->
-  <div id="orientacion">
-    <div id="orientacion-icon">🔄</div>
-    <h2>Gira tu dispositivo</h2>
-    <p>Para una mejor experiencia, juega en modo horizontal (apaisado)</p>
-  </div>
-
   <!-- Contenedor condicional para desktop/móvil -->
   <div id="desktop-view">
     <div class="arcade-machine">
@@ -613,9 +540,8 @@
   </div>
 
   <script>
-    // Detección de dispositivo mejorada
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
-                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Detección de dispositivo
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     const desktopView = document.getElementById('desktop-view');
     const mobileView = document.getElementById('mobile-view');
     const gameCanvas = isMobile ? document.getElementById('game-mobile') : document.getElementById('game');
@@ -623,38 +549,10 @@
     if (isMobile) {
       desktopView.style.display = 'none';
       mobileView.style.display = 'block';
-      
-      // Solicitar pantalla completa en móviles
-      document.documentElement.requestFullscreen = document.documentElement.requestFullscreen || 
-                                                 document.documentElement.webkitRequestFullscreen || 
-                                                 document.documentElement.msRequestFullscreen;
-      
-      if (document.documentElement.requestFullscreen) {
-        document.addEventListener('click', function fullscreenHandler() {
-          document.documentElement.requestFullscreen().catch(e => console.log(e));
-          document.removeEventListener('click', fullscreenHandler);
-        }, {once: true});
-      }
     } else {
       desktopView.style.display = 'block';
       mobileView.style.display = 'none';
     }
-
-    // Verificar orientación y ajustar
-    function checkOrientation() {
-      if (isMobile) {
-        const orientacionDiv = document.getElementById('orientacion');
-        if (window.innerHeight > window.innerWidth) {
-          orientacionDiv.style.display = 'flex';
-        } else {
-          orientacionDiv.style.display = 'none';
-        }
-      }
-    }
-    
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
-    checkOrientation();
 
     // Ajustar tamaño del canvas según dispositivo
     function resizeCanvas() {
@@ -685,6 +583,7 @@
       
       // Escalar el contexto para que coincida
       const ctx = canvas.getContext('2d');
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(newWidth / 400, newHeight / 600);
     }
     
@@ -833,75 +732,53 @@
       }
     }
 
-    // Controles móviles mejorados
+    // Controles móviles
     if (isMobile) {
-      let leftPressed = false;
-      let rightPressed = false;
-      
-      // Controles táctiles para movimiento
       document.getElementById('btnIzquierda').addEventListener('touchstart', (e) => {
         e.preventDefault();
-        leftPressed = true;
-      });
-      
-      document.getElementById('btnIzquierda').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        leftPressed = false;
-      });
+        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
+      }, {passive: false});
       
       document.getElementById('btnDerecha').addEventListener('touchstart', (e) => {
         e.preventDefault();
-        rightPressed = true;
-      });
+        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
+      }, {passive: false});
       
-      document.getElementById('btnDerecha').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        rightPressed = false;
-      });
-      
-      // Controles táctiles para nitro
       document.getElementById('btnNitro').addEventListener('touchstart', (e) => {
         e.preventDefault();
         activarNitro();
-      });
+      }, {passive: false});
       
       document.getElementById('btnNitro').addEventListener('touchend', (e) => {
         e.preventDefault();
         desactivarNitro();
+      }, {passive: false});
+      
+      // También para eventos de mouse (por si el dispositivo soporta ambos)
+      document.getElementById('btnIzquierda').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
       });
       
-      // También permitir clics normales para navegadores que no soportan touch
-      document.getElementById('btnIzquierda').addEventListener('mousedown', () => leftPressed = true);
-      document.getElementById('btnIzquierda').addEventListener('mouseup', () => leftPressed = false);
-      document.getElementById('btnIzquierda').addEventListener('mouseleave', () => leftPressed = false);
+      document.getElementById('btnDerecha').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
+      });
       
-      document.getElementById('btnDerecha').addEventListener('mousedown', () => rightPressed = true);
-      document.getElementById('btnDerecha').addEventListener('mouseup', () => rightPressed = false);
-      document.getElementById('btnDerecha').addEventListener('mouseleave', () => rightPressed = false);
+      document.getElementById('btnNitro').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        activarNitro();
+      });
       
-      document.getElementById('btnNitro').addEventListener('mousedown', () => activarNitro());
-      document.getElementById('btnNitro').addEventListener('mouseup', () => desactivarNitro());
-      document.getElementById('btnNitro').addEventListener('mouseleave', () => desactivarNitro());
+      document.getElementById('btnNitro').addEventListener('mouseup', (e) => {
+        e.preventDefault();
+        desactivarNitro();
+      });
       
-      // Actualizar posición según botones presionados
-      function updateMobileControls() {
-        if (leftPressed && !rightPressed && !deslizando) {
-          patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
-        } else if (rightPressed && !leftPressed && !deslizando) {
-          patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
-        }
-        requestAnimationFrame(updateMobileControls);
-      }
-      
-      updateMobileControls();
-      
-      // Deshabilitar zoom con doble toque
-      document.addEventListener('dblclick', (e) => e.preventDefault());
-      document.addEventListener('touchstart', function preventZoom(e) {
-        if (e.touches.length > 1) {
-          e.preventDefault();
-        }
-      }, { passive: false });
+      document.getElementById('btnNitro').addEventListener('mouseleave', (e) => {
+        e.preventDefault();
+        desactivarNitro();
+      });
     }
 
     // Activar sonido
@@ -1239,7 +1116,7 @@
       document.getElementById('inicio').style.display = 'none';
       sonidoInicio.pause();
       sonidoInicio.currentTime = 0;
-      musicaFondo.play().catch(e => console.log('Error al reproducir música:', e));
+      musicaFondo.play();
       resetGame();
     }
 
@@ -2125,6 +2002,7 @@
     // Inicialización al cargar la página
     window.addEventListener('load', function() {
       resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
       
       // Precargar imágenes de patrulla
       const colorPatrulla = document.getElementById('colorPatrulla').value;
@@ -2169,9 +2047,6 @@
           }
         });
       }
-      
-      // Ajustar canvas al cambiar tamaño de ventana
-      window.addEventListener('resize', resizeCanvas);
     });
   </script>
 </body>
