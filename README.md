@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Patrulla Runner Arcade</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
       background: #000; 
@@ -22,8 +24,6 @@
         font-family: 'Press Start 2P', cursive;
       }
     }
-
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
     /* Estilos de la máquina arcade (solo desktop) */
     .arcade-machine {
@@ -212,8 +212,10 @@
     @media (max-width: 768px) {
       body {
         background: #111;
-        display: block;
-        height: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
         touch-action: manipulation;
       }
       
@@ -222,18 +224,18 @@
       }
       
       #game-container {
-        position: fixed;
-        top: 0;
-        left: 0;
+        position: relative;
         width: 100%;
-        height: 100%;
+        height: 100vh;
         overflow: hidden;
+        flex-grow: 1;
       }
       
       canvas {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
         display: block;
+        object-fit: contain;
       }
 
       /* Panel de información minimalista para móvil */
@@ -243,31 +245,110 @@
         left: 10px;
         right: 10px;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
+        gap: 5px;
         z-index: 20;
         pointer-events: none;
+        font-size: 12px;
       }
 
       .mobile-hud-item {
         background: rgba(0, 0, 0, 0.7);
         color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 6px 10px;
+        border-radius: 8px;
         font-size: 12px;
         font-weight: bold;
+        text-shadow: 1px 1px 2px black;
+        margin: 2px;
+        white-space: nowrap;
+      }
+
+      /* Nuevo contenedor para los datos de la derecha */
+      .mobile-hud-left {
+        display: flex;
+        flex-direction:unset;
+        align-items: flex-end;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 8px;
+        padding: 6px 10px;
+      }
+      /* Nuevo contenedor para los datos de la derecha */
+      .mobile-hud-right {
+        display: flex;
+        flex-direction:unset;
+        align-items: flex-end;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 8px;
+        padding: 6px 10px;
       }
 
       .mobile-hud-combo {
         position: absolute;
-        top: 50px;
-        left: 10px;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
         background: rgba(255, 215, 0, 0.9);
         color: black;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 12px;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
         font-weight: bold;
         display: none;
+        white-space: nowrap;
+      }
+
+      /* Controles móviles en los extremos de la pantalla */
+      .touch-control {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 30%;
+        z-index: 10;
+        opacity: 0.3;
+      }
+      
+      #left-control {
+        left: 0;
+        background: rgba(0, 0, 255, 0.1);
+      }
+      
+      #right-control {
+        right: 0;
+        background: rgba(255, 0, 0, 0.1);
+      }
+      
+      /* Botón de nitro en la parte inferior central */
+      #btnNitro {
+        position: fixed;
+        bottom: 20px;
+        left: 90%;
+        transform: translateX(-50%);
+        padding: 15px;
+        margin: 0;
+        font-size: 20px;
+        background: rgba(255, 87, 34, 0.7);
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        color: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        touch-action: manipulation;
+        z-index: 10;
+      }
+    }
+
+    /* Ajustes específicos para orientación vertical */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .mobile-hud {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .mobile-hud-item {
+        margin-bottom: 5px;
       }
     }
 
@@ -292,6 +373,8 @@
       align-items: center;
       z-index: 20;
       gap: 15px;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     #inicio h2 {
@@ -299,6 +382,7 @@
       color: gold;
       text-shadow: 0 0 5px #fff;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     #inicio input, #inicio select {
@@ -323,6 +407,9 @@
       cursor: pointer;
       font-weight: bold;
       transition: transform 0.2s, background 0.2s;
+      width: 100%;
+      max-width: 300px;
+      margin: 5px auto;
     }
 
     #btnActivarSonido {
@@ -372,56 +459,6 @@
       text-align: center;
       margin: 10px 0;
       font-weight: bold;
-    }
-
-    #controlesMovil {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      width: 100%;
-      text-align: center;
-      z-index: 10;
-    }
-
-    #controlesMovil button {
-      padding: 15px;
-      margin: 0 10px;
-      font-size: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      color: white;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    #controlesMovil button:active {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    #btnNitro {
-      background: rgba(255, 87, 34, 0.7) !important;
-      border: 2px solid rgba(255, 255, 255, 0.7) !important;
-    }
-
-    @media (max-width: 768px) {
-      #controlesMovil {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-      }
-      
-      #inicio h2 {
-        font-size: 24px;
-      }
-      
-      #inicio input, #inicio select, #inicio button {
-        width: 80%;
-        max-width: 300px;
-      }
     }
   </style>
 </head>
@@ -501,11 +538,26 @@
     <div id="game-container">
       <canvas id="game-mobile" width="400" height="600"></canvas>
       <div class="mobile-hud">
-        <div class="mobile-hud-item" id="mobile-score">Puntos: 0</div>
-        <div class="mobile-hud-item" id="mobile-level">Nivel 1</div>
-        <div class="mobile-hud-item" id="mobile-lives">❤️❤️❤️</div>
+        <!-- Elementos de la izquierda -->
+        <div class="mobile-hud-left">
+          <div class="mobile-hud-item" id="mobile-player">Jugador: -</div>
+          <div class="mobile-hud-item" id="mobile-lives">❤️❤️❤️</div>
+          <div class="mobile-hud-item" id="mobile-score">Puntos: 0</div>
+        </div>
+        
+        <!-- Elementos de la derecha -->
+        <div class="mobile-hud-right">
+          <div class="mobile-hud-item" id="mobile-level">Nivel 1</div>
+          <div class="mobile-hud-item" id="mobile-next-level">Próx. nivel: 0%</div>
+          <div class="mobile-hud-item" id="mobile-nitro">Nitro: 100%</div>
+        </div>
       </div>
       <div class="mobile-hud-combo" id="mobile-combo">COMBO x1</div>
+      
+      <!-- Controles táctiles en los extremos -->
+      <div id="left-control" class="touch-control"></div>
+      <div id="right-control" class="touch-control"></div>
+      <button id="btnNitro">💨</button>
     </div>
   </div>
 
@@ -514,12 +566,15 @@
     <h2>Patrulla Runner</h2>
     <button id="btnActivarSonido">🔊 Activar Sonido</button>
     <input id="nombreJugador" type="text" placeholder="Tu nombre..." />
+    
+    <label for="colorPatrulla" style="color: white; margin-bottom: 5px;">Selecciona tu vehículo:</label>
     <select id="colorPatrulla">
       <option value="imagenes/patrulla_1.png">🚓 Patrulla de Cuadrante</option>
       <option value="imagenes/transito_1.png">🚨 Patrulla de Tránsito</option>
       <option value="imagenes/pbi_1.png">🕵️ P.B.I.</option>
       <option value="imagenes/auxiliar_1.png">👮 P.A.</option>
     </select>
+    
     <div class="tienda">
       <div id="puntosTotales"></div>
     </div>
@@ -531,12 +586,6 @@
     <div id="puntosFinales"></div>
     <div id="highScoreFinal"></div>
     <button id="btnReiniciar">🔄 Reiniciar</button>
-  </div>
-
-  <div id="controlesMovil">
-    <button id="btnIzquierda">⬅️</button>
-    <button id="btnDerecha">➡️</button>
-    <button id="btnNitro">💨</button>
   </div>
 
   <script>
@@ -559,23 +608,43 @@
       const container = isMobile ? document.getElementById('game-container') : document.querySelector('.arcade-screen');
       const canvas = gameCanvas;
       
-      // Mantener relación de aspecto 2:3 (400x600)
-      const containerWidth = container.clientWidth;
-      const containerHeight = container.clientHeight;
-      
-      const ratio = 600/400;
-      let newWidth, newHeight;
-      
-      if (containerHeight/containerWidth > ratio) {
-        newWidth = containerWidth;
-        newHeight = containerWidth * ratio;
+      if (isMobile) {
+        // Para móviles, usa toda la altura disponible menos los controles
+        const containerHeight = container.clientHeight;
+        const containerWidth = container.clientWidth;
+        
+        // Mantener relación de aspecto del juego (2:3)
+        const targetRatio = 600/400;
+        const currentRatio = containerHeight/containerWidth;
+        
+        if (currentRatio > targetRatio) {
+          // Contenedor más alto que el juego - ajustar por ancho
+          canvas.style.width = '100%';
+          canvas.style.height = (containerWidth * targetRatio) + 'px';
+        } else {
+          // Contenedor más ancho que el juego - ajustar por alto
+          canvas.style.height = '100%';
+          canvas.style.width = (containerHeight / targetRatio) + 'px';
+        }
       } else {
-        newHeight = containerHeight;
-        newWidth = containerHeight / ratio;
+        // Código original para desktop
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        const ratio = 600/400;
+        let newWidth, newHeight;
+        
+        if (containerHeight/containerWidth > ratio) {
+          newWidth = containerWidth;
+          newHeight = containerWidth * ratio;
+        } else {
+          newHeight = containerHeight;
+          newWidth = containerHeight / ratio;
+        }
+        
+        canvas.style.width = newWidth + 'px';
+        canvas.style.height = newHeight + 'px';
       }
-      
-      canvas.style.width = newWidth + 'px';
-      canvas.style.height = newHeight + 'px';
       
       // Ajustar tamaño real del canvas (para renderizado)
       canvas.width = 400;
@@ -584,12 +653,21 @@
       // Escalar el contexto para que coincida
       const ctx = canvas.getContext('2d');
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(newWidth / 400, newHeight / 600);
+      
+      if (isMobile) {
+        const scaleX = parseFloat(canvas.style.width) / 400;
+        const scaleY = parseFloat(canvas.style.height) / 600;
+        ctx.scale(scaleX, scaleY);
+      } else {
+        const scaleX = parseFloat(canvas.style.width) / 400;
+        const scaleY = parseFloat(canvas.style.height) / 600;
+        ctx.scale(scaleX, scaleY);
+      }
     }
     
     // Precargar imágenes
     const placaPoliciaImg = new Image();
-    placaPoliciaImg.src = 'imagenes/placaPolicia.png';
+    placaPoliciaImg.src = 'imagenes/placaPolicia_1.png';
     
     const barreraImg = new Image();
     barreraImg.src = 'imagenes/barrera.png';
@@ -642,6 +720,12 @@
     let PLACAS_PARA_VIDA = 50;
     let tiempoUltimoLevelUp = 0;
 
+    // Variables para el movimiento continuo en móviles
+    let leftControlActive = false;
+    let rightControlActive = false;
+    let moveInterval = null;
+    const MOVE_SPEED = 5; // Velocidad de movimiento continuo
+
     // Sonidos del juego
     const sonidoPunto = new Audio('sonidos/estrella_1.mp3');
     const sonidoChoque = new Audio('sonidos/choque_1.mp3');
@@ -651,7 +735,7 @@
     const sonidoNitro = new Audio('sonidos/nitro_1.mp3');
     const sonidoVida = new Audio('sonidos/vida_1.mp3');
     const sonidoFrenoDerrape = new Audio('sonidos/freno_1.mp3');
-    const sonidoTrampaClavos = new Audio('sonidos/trampa_clavos.mp3');
+    const sonidoTrampaClavos = new Audio('sonidos/trampaclavos_1.mp3');
     const musicaFondo = new Audio('sonidos/musicaFondo_1.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.2;
@@ -686,9 +770,14 @@
     function updateHUD() {
       if (isMobile) {
         // Actualizar HUD móvil
+        document.getElementById('mobile-player').textContent = `Jugador: ${nombreJugador}`;
         document.getElementById('mobile-score').textContent = `Puntos: ${score}`;
         document.getElementById('mobile-level').textContent = `Nivel ${level}`;
         document.getElementById('mobile-lives').textContent = '❤️'.repeat(vidas);
+        document.getElementById('mobile-nitro').textContent = `Nitro: ${Math.round(nitro)}%`;
+        
+        const progress = Math.min(100, (score / (level * 1000)) * 100);
+        document.getElementById('mobile-next-level').textContent = `Próx. nivel: ${Math.round(progress)}%`;
         
         if (combo > 1) {
           const comboElement = document.getElementById('mobile-combo');
@@ -732,50 +821,91 @@
       }
     }
 
+    // Función para manejar el movimiento continuo
+    function handleContinuousMove() {
+      if (leftControlActive) {
+        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - MOVE_SPEED);
+      }
+      if (rightControlActive) {
+        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + MOVE_SPEED);
+      }
+    }
+
     // Controles móviles
     if (isMobile) {
-      document.getElementById('btnIzquierda').addEventListener('touchstart', (e) => {
+      const leftControl = document.getElementById('left-control');
+      const rightControl = document.getElementById('right-control');
+      const btnNitro = document.getElementById('btnNitro');
+      
+      // Control izquierdo
+      leftControl.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
+        leftControlActive = true;
+        if (!moveInterval) {
+          moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
+        }
       }, {passive: false});
       
-      document.getElementById('btnDerecha').addEventListener('touchstart', (e) => {
+      leftControl.addEventListener('touchend', (e) => {
         e.preventDefault();
-        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
+        leftControlActive = false;
+        if (!rightControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
       }, {passive: false});
       
-      document.getElementById('btnNitro').addEventListener('touchstart', (e) => {
+      leftControl.addEventListener('mouseleave', (e) => {
+        leftControlActive = false;
+        if (!rightControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      });
+      
+      // Control derecho
+      rightControl.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        rightControlActive = true;
+        if (!moveInterval) {
+          moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
+        }
+      }, {passive: false});
+      
+      rightControl.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        rightControlActive = false;
+        if (!leftControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      }, {passive: false});
+      
+      rightControl.addEventListener('mouseleave', (e) => {
+        rightControlActive = false;
+        if (!leftControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      });
+      
+      // Botón nitro
+      btnNitro.addEventListener('touchstart', (e) => {
         e.preventDefault();
         activarNitro();
       }, {passive: false});
       
-      document.getElementById('btnNitro').addEventListener('touchend', (e) => {
+      btnNitro.addEventListener('touchend', (e) => {
         e.preventDefault();
         desactivarNitro();
       }, {passive: false});
       
-      // También para eventos de mouse (por si el dispositivo soporta ambos)
-      document.getElementById('btnIzquierda').addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
-      });
-      
-      document.getElementById('btnDerecha').addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
-      });
-      
-      document.getElementById('btnNitro').addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        activarNitro();
-      });
-      
-      document.getElementById('btnNitro').addEventListener('mouseup', (e) => {
+      btnNitro.addEventListener('mouseup', (e) => {
         e.preventDefault();
         desactivarNitro();
       });
       
-      document.getElementById('btnNitro').addEventListener('mouseleave', (e) => {
+      btnNitro.addEventListener('mouseleave', (e) => {
         e.preventDefault();
         desactivarNitro();
       });
@@ -2003,6 +2133,11 @@
     window.addEventListener('load', function() {
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
+      
+      // Detectar cambios de orientación en móviles
+      if (isMobile) {
+        screen.orientation.addEventListener('change', resizeCanvas);
+      }
       
       // Precargar imágenes de patrulla
       const colorPatrulla = document.getElementById('colorPatrulla').value;
