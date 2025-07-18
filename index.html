@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Patrulla Runner Arcade</title>
+  <style>
+    /* Estilos base */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #000; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Fuente arcade solo para desktop */
+    @media (min-width: 769px) {
+      body {
+        font-family: 'Press Start 2P', cursive;
+      }
+    }
+
+    /* Estilos de la máquina arcade (solo desktop) */
+    .arcade-machine {
+      position: relative;
+      width: 800px;
+      height: 900px;
+      background: #c00;
+      border-radius: 20px;
+      border: 15px solid #333;
+      box-shadow: 0 0 0 10px #555, 
+                  0 30px 50px rgba(0,0,0,0.7),
+                  inset 0 0 50px rgba(0,0,0,0.5);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .arcade-screen-container {
+      display: flex;
+      width: 100%;
+      height: 600px;
+      position: relative;
+    }
+
+    .arcade-screen {
+      width: 57%;
+      height: 100%;
+      background: #000;
+      border: 10px solid #333;
+      box-shadow: inset 0 0 20px rgba(0,255,255,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .arcade-info-panel {
+      width: 43%;
+      height: 100%;
+      background: #000;
+      border: 10px solid #333;
+      border-left: none;
+      box-shadow: inset 0 0 20px rgba(0,255,255,0.1);
+      padding: 15px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    .arcade-bezel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="none" stroke="rgba(0,255,255,0.2)" stroke-width="10"/></svg>');
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .arcade-title {
+      color: #ff0;
+      text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      margin: 15px 0;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .arcade-controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 30px;
+    }
+
+    .arcade-button {
+      width: 60px;
+      height: 60px;
+      background: #333;
+      border-radius: 50%;
+      border: 5px solid #111;
+      box-shadow: inset 0 -5px 10px rgba(0,0,0,0.5), 
+                  0 5px 5px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .arcade-button:after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: #c00;
+      border-radius: 50%;
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.5);
+    }
+
+    .arcade-joystick {
+      width: 80px;
+      height: 80px;
+      background: #333;
+      border-radius: 50%;
+      border: 5px solid #111;
+      box-shadow: inset 0 -10px 15px rgba(0,0,0,0.5), 
+                  0 10px 10px rgba(0,0,0,0.3);
+    }
+
+    .arcade-footer {
+      margin-top: 20px;
+      color: #fff;
+      font-size: 12px;
+      text-align: center;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    /* Estilos del panel de información */
+    .info-item {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    .info-title {
+      color: #ff0;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .info-value {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: #333;
+      margin-top: 5px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #28a745;
+      transition: width 0.3s;
+    }
+
+    .progress-bar.nitro {
+      background: #007bff;
+    }
+
+    .progress-bar.plates {
+      background: #ffc107;
+    }
+
+    .lives-container {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .life {
+      width: 15px;
+      height: 15px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .combo-container {
+      margin-top: 10px;
+      padding: 5px;
+      background: rgba(255, 215, 0, 0.2);
+      border-radius: 5px;
+      display: none;
+    }
+
+    .combo-value {
+      color: #ff0;
+      font-weight: bold;
+    }
+
+    /* Estilos para móvil (pantalla completa) */
+    @media (max-width: 768px) {
+      body {
+        background: #111;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        touch-action: manipulation;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .arcade-machine {
+        display: none;
+      }
+      
+      #game-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+      
+      canvas {
+        width: 100vw !important;
+        height: 100vh !important;
+        display: block;
+        object-fit: contain;
+      }
+
+      /* Panel de información minimalista para móvil */
+      .mobile-hud {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 5px;
+        z-index: 20;
+        pointer-events: none;
+        font-size: 12px;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
+
+      .mobile-hud-left,
+      .mobile-hud-right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 8px;
+        padding: 6px 10px;
+        flex-wrap: wrap;
+        max-width: 50%;
+      }
+
+      .mobile-hud-item {
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 1px 1px 2px black;
+        margin: 2px;
+        white-space: nowrap;
+      }
+
+      /* Estilos para las barras de progreso en móvil */
+      .mobile-progress-container {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-top: 3px;
+        overflow: hidden;
+      }
+
+      .mobile-progress-bar {
+        height: 100%;
+        background: #28a745;
+        transition: width 0.3s;
+      }
+
+      .mobile-progress-bar.nitro {
+        background: #007bff;
+      }
+
+      /* Ajustar tamaño de los ítems del HUD derecho */
+      .mobile-hud-right .mobile-hud-item {
+        min-width: 100px;
+        text-align: center;
+      }
+
+      .mobile-hud-combo {
+        position: absolute;
+        top: 620px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 215, 0, 0.9);
+        color: black;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        display: none;
+        white-space: nowrap;
+      }
+
+      /* Controles móviles en los extremos de la pantalla */
+      .touch-control {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 30%;
+        z-index: 10;
+        opacity: 0.3;
+      }
+      
+      #left-control {
+        left: 0;
+        background: rgba(0, 0, 255, 0.1);
+      }
+      
+      #right-control {
+        right: 0;
+        background: rgba(255, 0, 0, 0.1);
+      }
+      
+      /* Botones de control direccionales */
+      .direction-btn {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 15;
+        touch-action: manipulation;
+        user-select: none;
+      }
+      
+      #btnLeft {
+        left: 20px;
+        bottom: 100px;
+      }
+      
+      #btnRight {
+        right: 20px;
+        bottom: 100px;
+      }
+      
+      /* Botón de nitro en la parte inferior derecha */
+      #btnNitro {
+        position: fixed;
+        bottom: 100px;
+        left: 90%;
+        transform: translateX(-50%);
+        padding: 15px;
+        margin: 0;
+        font-size: 20px;
+        background: rgba(255, 87, 34, 0.7);
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        color: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        touch-action: manipulation;
+        z-index: 10;
+      }
+    }
+
+    /* Ajustes específicos para orientación vertical */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .mobile-hud {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .mobile-hud-item {
+        margin-bottom: 5px;
+      }
+      
+      .mobile-hud-right {
+        align-items: flex-start;
+      }
+      
+      /* Ajustar posición de botones en vertical */
+      #btnLeft {
+        left: 20px;
+        bottom: 100px;
+      }
+      
+      #btnRight {
+        right: 20px;
+        bottom: 100px;
+      }
+      
+      #btnNitro {
+        left: 88%;
+        bottom: 200px;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Estilos compartidos del juego */
+    #game-container {
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      background: #111;
+    }
+
+    /* Pantalla de inicio y game over */
+    #inicio {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      gap: 15px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Fondo para pantalla de inicio en desktop */
+    @media (min-width: 769px) {
+      #inicio {
+        background: url('imagenes/fondoComputadora_1.png') center/cover no-repeat, rgba(0, 0, 0, 0.7);
+        background-blend-mode: overlay;
+      }
+    }
+
+    /* Fondo para pantalla de inicio en móvil */
+    @media (max-width: 768px) {
+      #inicio {
+        background: url('imagenes/fondo_movil_1.png') center/cover no-repeat, rgba(0, 0, 0, 0.7);
+        background-blend-mode: overlay;
+      }
+    }
+
+    #inicio h2 {
+      font-size: 28px;
+      color: gold;
+      text-shadow: 0 0 5px #fff;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    #inicio input, #inicio select {
+      padding: 12px;
+      font-size: 18px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 8px;
+      width: 250px;
+      text-align: center;
+      background: #222;
+      color: white;
+    }
+
+    #inicio button {
+      padding: 12px 25px;
+      font-size: 18px;
+      background: #28a745;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+      width: 100%;
+      max-width: 300px;
+      margin: 5px auto;
+    }
+
+    #btnActivarSonido {
+      background: #6c757d;
+      margin-bottom: 10px;
+    }
+
+    #gameOverScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 30;
+      gap: 15px;
+    }
+
+    #gameOverText {
+      color: red;
+      font-size: 42px;
+      margin-bottom: 10px;
+      text-align: center;
+      text-shadow: 0 0 10px #ff0000;
+    }
+
+    #btnReiniciar {
+      padding: 12px 25px;
+      font-size: 18px;
+      background: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .tienda {
+      color: cyan;
+      font-size: 16px;
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Contenedor condicional para desktop/móvil -->
+  <div id="desktop-view">
+    <div class="arcade-machine">
+      <div class="arcade-title">PATRULLA RUNNER</div>
+      <div class="arcade-screen-container">
+        <div class="arcade-screen">
+          <div id="game-container">
+            <canvas id="game" width="400" height="600"></canvas>
+            <div class="arcade-bezel"></div>
+          </div>
+        </div>
+        <div class="arcade-info-panel">
+          <div class="info-item">
+            <div class="info-title">POLICÍA</div>
+            <div class="info-value" id="desktop-player">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">PUNTOS</div>
+            <div class="info-value" id="desktop-score">0</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">NIVEL</div>
+            <div class="info-value" id="desktop-level">1</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">PRÓX. NIVEL</div>
+            <div class="progress-container">
+              <div class="progress-bar" id="desktop-level-progress" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">RÉCORD</div>
+            <div class="info-value" id="desktop-highscore">0</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">NITRO</div>
+            <div class="progress-container">
+              <div class="progress-bar nitro" id="desktop-nitro-progress" style="width: 100%"></div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">VIDAS</div>
+            <div class="lives-container" id="desktop-lives">
+              <div class="life"></div>
+              <div class="life"></div>
+              <div class="life"></div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">PLACAS PARA VIDA</div>
+            <div class="info-value" id="desktop-plates">0/50</div>
+            <div class="progress-container">
+              <div class="progress-bar plates" id="desktop-plates-progress" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="combo-container" id="desktop-combo-container">
+            <div class="info-title">COMBO ACTIVO</div>
+            <div class="combo-value" id="desktop-combo">x1</div>
+          </div>
+        </div>
+      </div>
+      <div class="arcade-controls">
+        <div class="arcade-joystick"></div>
+        <div class="arcade-button"></div>
+        <div class="arcade-button"></div>
+      </div>
+      <div class="arcade-footer">© 2024 POLICIA ARCADE</div>
+    </div>
+  </div>
+
+  <!-- Versión móvil (oculta inicialmente) -->
+  <div id="mobile-view" style="display: none;">
+    <div id="game-container">
+      <canvas id="game-mobile" width="400" height="600"></canvas>
+      <div class="mobile-hud">
+        <!-- Elementos de la izquierda -->
+        <div class="mobile-hud-left">
+          <div class="mobile-hud-item" id="mobile-player">Policía: -</div>
+          <div class="mobile-hud-item" id="mobile-lives">❤️❤️❤️</div>
+          <div class="mobile-hud-item" id="mobile-score">Puntos: 0</div>
+        </div>
+        
+        <!-- Elementos de la derecha -->
+        <div class="mobile-hud-right">
+          <div class="mobile-hud-item" id="mobile-level">Nivel 1</div>
+          
+          <div class="mobile-hud-item">
+            <div>Próx. nivel</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <div class="mobile-hud-item">
+            <div>Nitro</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mobile-hud-combo" id="mobile-combo">COMBO x1</div>
+      
+      <!-- Controles táctiles en los extremos -->
+      <div id="left-control" class="touch-control"></div>
+      <div id="right-control" class="touch-control"></div>
+      
+      <!-- Nuevos botones de control direccional -->
+      <div id="btnLeft" class="direction-btn">←</div>
+      <div id="btnRight" class="direction-btn">→</div>
+      
+      <button id="btnNitro">💨</button>
+    </div>
+  </div>
+
+  <!-- Elementos comunes del juego -->
+  <div id="inicio">
+    <h2>Patrulla Runner</h2>
+    <button id="btnActivarSonido">🔊 Activar Sonido</button>
+    <input id="nombreJugador" type="text" placeholder="Tu nombre..." />
+    
+    <label for="colorPatrulla" style="color: white; margin-bottom: 5px;">Selecciona tu vehículo:</label>
+    <select id="colorPatrulla">
+      <option value="imagenes/patrulla_1.png">🚓 Patrulla de Cuadrante</option>
+      <option value="imagenes/transito_1.png">🚨 Tránsito</option>
+      <option value="imagenes/pbi_1.png">🕵️ P.B.I.</option>
+      <option value="imagenes/auxiliar_1.png">👮 P.A.</option>
+    </select>
+    
+    <div class="tienda">
+      <div id="puntosTotales"></div>
+    </div>
+    <button onclick="iniciarJuego()">🚀 Jugar</button>
+  </div>
+
+  <div id="gameOverScreen">
+    <div id="gameOverText">¡Game Over!</div>
+    <div id="puntosFinales"></div>
+    <div id="highScoreFinal"></div>
+    <button id="btnReiniciar">🔄 Reiniciar</button>
+  </div>
+
+  <script>
+    // Detección de dispositivo
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const desktopView = document.getElementById('desktop-view');
+    const mobileView = document.getElementById('mobile-view');
+    const gameCanvas = isMobile ? document.getElementById('game-mobile') : document.getElementById('game');
+    
+    if (isMobile) {
+      desktopView.style.display = 'none';
+      mobileView.style.display = 'block';
+    } else {
+      desktopView.style.display = 'block';
+      mobileView.style.display = 'none';
+    }
+
+    // Ajustar tamaño del canvas según dispositivo
+    function resizeCanvas() {
+      const container = isMobile ? document.getElementById('game-container') : document.querySelector('.arcade-screen');
+      const canvas = gameCanvas;
+      
+      if (isMobile) {
+        // Para móviles, usa toda la altura disponible menos los controles
+        const containerHeight = container.clientHeight;
+        const containerWidth = container.clientWidth;
+        
+        // Mantener relación de aspecto del juego (2:3)
+        const targetRatio = 600/400;
+        const currentRatio = containerHeight/containerWidth;
+        
+        if (currentRatio > targetRatio) {
+          // Contenedor más alto que el juego - ajustar por ancho
+          canvas.style.width = '100%';
+          canvas.style.height = (containerWidth * targetRatio) + 'px';
+        } else {
+          // Contenedor más ancho que el juego - ajustar por alto
+          canvas.style.height = '100%';
+          canvas.style.width = (containerHeight / targetRatio) + 'px';
+        }
+      } else {
+        // Código original para desktop
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        const ratio = 600/400;
+        let newWidth, newHeight;
+        
+        if (containerHeight/containerWidth > ratio) {
+          newWidth = containerWidth;
+          newHeight = containerWidth * ratio;
+        } else {
+          newHeight = containerHeight;
+          newWidth = containerHeight / ratio;
+        }
+        
+        canvas.style.width = newWidth + 'px';
+        canvas.style.height = newHeight + 'px';
+      }
+      
+      // Ajustar tamaño real del canvas (para renderizado)
+      canvas.width = 400;
+      canvas.height = 600;
+      
+      // Escalar el contexto para que coincida
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      
+      if (isMobile) {
+        const scaleX = parseFloat(canvas.style.width) / 400;
+        const scaleY = parseFloat(canvas.style.height) / 600;
+        ctx.scale(scaleX, scaleY);
+      } else {
+        const scaleX = parseFloat(canvas.style.width) / 400;
+        const scaleY = parseFloat(canvas.style.height) / 600;
+        ctx.scale(scaleX, scaleY);
+      }
+    }
+    
+    // Precargar imágenes
+    const placaPoliciaImg = new Image();
+    placaPoliciaImg.src = 'imagenes/placaPolicia_1.png';
+    
+    const barreraImg = new Image();
+    barreraImg.src = 'imagenes/barrera.png';
+    
+    const powerupImg = new Image();
+    powerupImg.src = 'imagenes/powerup_1.png';
+
+    const nitroItemImg = new Image();
+    nitroItemImg.src = 'imagenes/nitro_1.png';
+
+    const vidaItemImg = new Image();
+    vidaItemImg.src = 'imagenes/vida_1.png';
+
+    const trampaClavosImg = new Image();
+    trampaClavosImg.src = 'imagenes/trampaclavos_1.png';
+
+    // Precargar fondo de inicio para desktop
+    const fondoInicioDesktop = new Image();
+    fondoInicioDesktop.src = 'imagenes/fondoComputadora_1.png';
+
+    // Precargar fondo de inicio para móvil
+    const fondoInicioMovil = new Image();
+    fondoInicioMovil.src = 'imagenes/fondo_movil_1.png';
+
+    // Variables del juego
+    const patrullaAssets = {
+        'imagenes/patrulla_1.png': ['imagenes/patrulla_1.png', 'imagenes/patrulla_1b.png'],
+        'imagenes/transito_1.png': ['imagenes/transito_1.png', 'imagenes/transito_1b.png'],
+        'imagenes/pbi_1.png': ['imagenes/pbi_1.png', 'imagenes/pbi_1b.png'],
+        'imagenes/auxiliar_1.png': ['imagenes/auxiliar_1.png', 'imagenes/auxiliar_1b.png']
+    };
+    
+    let patrullaImgs = [];
+    let currentPatrullaImgIndex = 0;
+    let frameCount = 0;
+    const switchEveryFrames = 8;
+    
+    let nombreJugador = '';
+    let highScore = 0;
+    let totalPuntos = 0;
+    let escudoActivo = false;
+    let combo = 0;
+    let maxCombo = 0;
+    let nitro = 100;
+    let nitroActivo = false;
+    let gotas = [];
+    let tiempoUltimoGuardado = 0;
+    let humoParticles = [];
+    let derrapeMarks = [];
+    const MAX_DERRAPE_MARKS = 5;
+    let nitroSoundPlaying = false;
+    let nitroItems = [];
+    let vidaItems = [];
+    let trampaClavosItems = [];
+    let ultimoNitroItemTiempo = 0;
+    let placasRecolectadasDesdeUltimaVida = 0;
+    let NITRO_ITEM_INTERVALO = 15000;
+    let PLACAS_PARA_VIDA = 50;
+    let tiempoUltimoLevelUp = 0;
+    let sonidoActivado = false; // Variable para controlar el estado del sonido
+
+    // Variables para el movimiento continuo en móviles
+    let leftControlActive = false;
+    let rightControlActive = false;
+    let moveInterval = null;
+    const MOVE_SPEED = 5; // Velocidad de movimiento continuo
+
+    // Sonidos del juego
+    const sonidoPunto = new Audio('sonidos/estrella_1.mp3');
+    const sonidoChoque = new Audio('sonidos/choque_1.mp3');
+    const sonidoPowerup = new Audio('sonidos/powerup_1.mp3');
+    const sonidoAntiPowerup = new Audio('sonidos/anti_powerup.mp3');
+    const sonidoAceite = new Audio('sonidos/aceite.mp3');
+    const sonidoNitro = new Audio('sonidos/nitro_1.mp3');
+    const sonidoVida = new Audio('sonidos/vida_1.mp3');
+    const sonidoFrenoDerrape = new Audio('sonidos/freno_1.mp3');
+    const sonidoTrampaClavos = new Audio('sonidos/trampaclavos_1.mp3');
+    const musicaFondo = new Audio('sonidos/musicaFondo_1.mp3');
+    musicaFondo.loop = true;
+    musicaFondo.volume = 0.2;
+    
+    const sonidoInicio = new Audio('sonidos/musicaInicio_1.mp3');
+    sonidoInicio.loop = true;
+    sonidoInicio.volume = 0.3;
+
+    // Variables del juego
+    let patrulla = { x: 180, y: gameCanvas.height - 100, width: 40, height: 60, targetX: 180 };
+    let obstacles = [], objetivos = [], recolectados = [], powerups = [], aceites = [];
+    let score = 0, level = 1, speed = 2, vidas = 3;
+    let gameOver = false;
+    let pulso = 0;
+    let shakeFrames = 0;
+    let tiempoUltimoChoque = 0;
+    let deslizando = false;
+    let tiempoDeslizamiento = 0;
+    const tiempoInvulnerable = 1000;
+    const tiempoDeslizamientoMax = 1000;
+    
+    // Variables para las líneas de carril
+    let lineOffset = 0;
+    const linePositions = [120, 200, 280];
+    const lineHeight = 30;
+    const lineGap = 50;
+    const borderWidth = 8;
+    const leftBorder = 40;
+    const rightBorder = 360;
+
+    // Actualizar HUD según dispositivo
+    function updateHUD() {
+      if (isMobile) {
+        // Actualizar HUD móvil
+        document.getElementById('mobile-player').textContent = `Jugador: ${nombreJugador}`;
+        document.getElementById('mobile-score').textContent = `Puntos: ${score}`;
+        document.getElementById('mobile-level').textContent = `Nivel ${level}`;
+        document.getElementById('mobile-lives').textContent = '❤️'.repeat(vidas);
+        
+        // Actualizar barras de progreso
+        const progress = Math.min(100, (score / (level * 1000)) * 100);
+        document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
+        document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
+        
+        if (combo > 1) {
+          const comboElement = document.getElementById('mobile-combo');
+          comboElement.textContent = `COMBO x${combo}`;
+          comboElement.style.display = 'block';
+          comboElement.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
+        } else {
+          document.getElementById('mobile-combo').style.display = 'none';
+        }
+      } else {
+         // Actualizar HUD desktop
+        document.getElementById('desktop-player').textContent = nombreJugador;
+        document.getElementById('desktop-score').textContent = score;
+        document.getElementById('desktop-level').textContent = level;
+        document.getElementById('desktop-highscore').textContent = highScore;
+        document.getElementById('desktop-nitro-progress').style.width = `${nitro}%`;
+        document.getElementById('desktop-plates').textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+        document.getElementById('desktop-plates-progress').style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
+        
+        const progress = Math.min(100, (score / (level * 1000)) * 100);
+        document.getElementById('desktop-level-progress').style.width = `${progress}%`;
+        
+        // Actualizar vidas
+        const livesContainer = document.getElementById('desktop-lives');
+        livesContainer.innerHTML = '';
+        for (let i = 0; i < vidas; i++) {
+          const life = document.createElement('div');
+          life.className = 'life';
+          livesContainer.appendChild(life);
+        }
+        
+        // Actualizar combo
+        if (combo > 1) {
+          const comboContainer = document.getElementById('desktop-combo-container');
+          comboContainer.style.display = 'block';
+          document.getElementById('desktop-combo').textContent = `x${combo}`;
+          comboContainer.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+        } else {
+          document.getElementById('desktop-combo-container').style.display = 'none';
+        }
+      }
+    }
+
+    // Función para manejar el movimiento continuo
+    function handleContinuousMove() {
+      if (leftControlActive) {
+        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - MOVE_SPEED);
+      }
+      if (rightControlActive) {
+        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + MOVE_SPEED);
+      }
+    }
+
+    // Controles móviles
+    if (isMobile) {
+      const leftControl = document.getElementById('left-control');
+      const rightControl = document.getElementById('right-control');
+      const btnNitro = document.getElementById('btnNitro');
+      const btnLeft = document.getElementById('btnLeft');
+      const btnRight = document.getElementById('btnRight');
+      
+      // Control izquierdo
+      leftControl.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        leftControlActive = true;
+        if (!moveInterval) {
+          moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
+        }
+      }, {passive: false});
+      
+      leftControl.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        leftControlActive = false;
+        if (!rightControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      }, {passive: false});
+      
+      leftControl.addEventListener('mouseleave', (e) => {
+        leftControlActive = false;
+        if (!rightControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      });
+      
+      // Control derecho
+      rightControl.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        rightControlActive = true;
+        if (!moveInterval) {
+          moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
+        }
+      }, {passive: false});
+      
+      rightControl.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        rightControlActive = false;
+        if (!leftControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      }, {passive: false});
+      
+      rightControl.addEventListener('mouseleave', (e) => {
+        rightControlActive = false;
+        if (!leftControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      });
+      
+      // Botón nitro
+      btnNitro.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        activarNitro();
+      }, {passive: false});
+      
+      btnNitro.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        desactivarNitro();
+      }, {passive: false});
+      
+      btnNitro.addEventListener('mouseup', (e) => {
+        e.preventDefault();
+        desactivarNitro();
+      });
+      
+      btnNitro.addEventListener('mouseleave', (e) => {
+        e.preventDefault();
+        desactivarNitro();
+      });
+      
+      // Nuevos botones direccionales
+      btnLeft.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        leftControlActive = true;
+        if (!moveInterval) {
+          moveInterval = setInterval(handleContinuousMove, 16);
+        }
+      }, {passive: false});
+      
+      btnLeft.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        leftControlActive = false;
+        if (!rightControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      }, {passive: false});
+      
+      btnRight.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        rightControlActive = true;
+        if (!moveInterval) {
+          moveInterval = setInterval(handleContinuousMove, 16);
+        }
+      }, {passive: false});
+      
+      btnRight.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        rightControlActive = false;
+        if (!leftControlActive && moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      }, {passive: false});
+    }
+
+    // Activar/desactivar sonido
+    document.getElementById('btnActivarSonido').addEventListener('click', function() {
+      if (sonidoActivado) {
+        // Desactivar sonido
+        sonidoInicio.pause();
+        musicaFondo.pause();
+        sonidoActivado = false;
+        this.textContent = '🔇 Sonido Desactivado';
+        this.style.background = '#dc3545';
+      } else {
+        // Activar sonido
+        sonidoInicio.play()
+          .then(() => {
+            sonidoActivado = true;
+            this.textContent = '🔊 Sonido Activado';
+            this.style.background = '#28a745';
+          })
+          .catch(e => {
+            console.error('Error al reproducir sonido:', e);
+            this.textContent = '❌ Error al activar sonido';
+            this.style.background = '#dc3545';
+          });
+      }
+    });
+
+    function activarNitro() {
+      if (nitro > 0 && !nitroActivo) {
+        nitroActivo = true;
+        speed += 3;
+        
+        if (!nitroSoundPlaying && sonidoActivado) {
+          sonidoNitro.currentTime = 0;
+          sonidoNitro.loop = true;
+          sonidoNitro.play().catch(e => console.error('Error al reproducir sonido nitro:', e));
+          nitroSoundPlaying = true;
+        }
+        
+        nitroConsumptionInterval = setInterval(() => {
+          if (nitroActivo && nitro > 0) {
+            nitro -= 1;
+            if (nitro <= 0) {
+              nitro = 0;
+              desactivarNitro();
+            }
+            updateHUD();
+          }
+        }, 50);
+      }
+    }
+
+    function desactivarNitro() {
+      if (nitroActivo) {
+        nitroActivo = false;
+        speed -= 3;
+        
+        if (nitroSoundPlaying) {
+          sonidoNitro.pause();
+          sonidoNitro.currentTime = 0;
+          nitroSoundPlaying = false;
+        }
+        
+        clearInterval(nitroConsumptionInterval);
+        if (sonidoActivado) {
+          reproducirSonidoFrenoDerrape();
+        }
+        crearEfectoDerrape();
+      }
+    }
+
+    function reproducirSonidoFrenoDerrape() {
+      try {
+        sonidoFrenoDerrape.currentTime = 0;
+        sonidoFrenoDerrape.play();
+      } catch (e) {
+        console.error('Error al reproducir sonido de freno/derrape:', e);
+      }
+    }
+
+    function crearEfectoDerrape() {
+      const centerX = patrulla.x + patrulla.width / 2;
+      const wheelWidth = 10;
+      
+      if (derrapeMarks.length < MAX_DERRAPE_MARKS - 1) {
+        derrapeMarks.push({
+          x1: centerX - wheelWidth,
+          y1: patrulla.y + patrulla.height,
+          x2: centerX - wheelWidth,
+          y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
+          width: 3 + Math.random() * 2,
+          alpha: 0.8
+        });
+        
+        derrapeMarks.push({
+          x1: centerX + wheelWidth,
+          y1: patrulla.y + patrulla.height,
+          x2: centerX + wheelWidth,
+          y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
+          width: 3 + Math.random() * 2,
+          alpha: 0.8
+        });
+      }
+      
+      for (let i = 0; i < 15; i++) {
+        humoParticles.push({
+          x: centerX + (Math.random() - 0.5) * wheelWidth * 1.5,
+          y: patrulla.y + patrulla.height - 5 + Math.random() * 30,
+          size: 5 + Math.random() * 15,
+          alpha: 0.6,
+          speedX: (Math.random() - 0.5) * 2,
+          speedY: -Math.random() * 2,
+          decay: 0.01 + Math.random() * 0.03
+        });
+      }
+      
+      shakeFrames = 5;
+    }
+
+    function spawnNitroItem() {
+      const ahora = Date.now();
+      if (level >= 3 && 
+          ahora - ultimoNitroItemTiempo > NITRO_ITEM_INTERVALO && 
+          nitroItems.length === 0 && 
+          nitro < 80) {
+        
+        if (Math.random() < 0.01) {
+          const minX = leftBorder + borderWidth;
+          const maxX = rightBorder - borderWidth - 30;
+          const x = Math.random() * (maxX - minX) + minX;
+          nitroItems.push({ x: x, y: -30 });
+          ultimoNitroItemTiempo = ahora;
+        }
+      }
+    }
+
+    function spawnVidaItem() {
+      if (vidas < 3 && placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 30;
+        const x = Math.random() * (maxX - minX) + minX;
+        vidaItems.push({ x: x, y: -30 });
+        placasRecolectadasDesdeUltimaVida = 0;
+        updateHUD();
+      }
+    }
+
+    function spawnTrampaClavos() {
+      if (level >= 5 && Math.random() < 0.003 && trampaClavosItems.length === 0) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 30;
+        const x = Math.random() * (maxX - minX) + minX;
+        trampaClavosItems.push({ 
+          x: x, 
+          y: -30, 
+          width: 30, 
+          height: 30,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 0.2,
+          slideDirection: Math.random() > 0.5 ? 1 : -1
+        });
+      }
+    }
+
+    function drawTrampaClavos() {
+      const ctx = gameCanvas.getContext('2d');
+      trampaClavosItems.forEach(item => {
+        ctx.save();
+        ctx.translate(item.x + item.width / 2, item.y + item.height / 2);
+        ctx.rotate(item.rotation);
+        ctx.translate(-(item.x + item.width / 2), -(item.y + item.height / 2));
+        
+        if (trampaClavosImg.complete) {
+          ctx.drawImage(trampaClavosImg, item.x, item.y, item.width, item.height);
+        } else {
+          ctx.fillStyle = '#8B4513';
+          ctx.beginPath();
+          ctx.arc(item.x + 15, item.y + 15, 15, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = 'black';
+          for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI * 2 / 8) * i;
+            const nailX = item.x + 15 + Math.cos(angle) * 10;
+            const nailY = item.y + 15 + Math.sin(angle) * 10;
+            ctx.beginPath();
+            ctx.moveTo(nailX, nailY);
+            ctx.lineTo(item.x + 15 + Math.cos(angle) * 5, item.y + 15 + Math.sin(angle) * 5);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'silver';
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+        
+        item.y += speed;
+        item.rotation += item.rotationSpeed;
+        item.x += item.slideDirection * 0.5;
+        
+        if (item.x < leftBorder + borderWidth || item.x + item.width > rightBorder - borderWidth) {
+          item.slideDirection *= -1;
+        }
+      });
+    }
+
+    function drawVidaItems() {
+      const ctx = gameCanvas.getContext('2d');
+      vidaItems.forEach(item => {
+        const parpadeo = Math.sin(Date.now() / 200) > 0;
+        
+        if (parpadeo) {
+          if (vidaItemImg.complete) {
+            ctx.drawImage(vidaItemImg, item.x, item.y, 30, 30);
+          } else {
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(item.x + 15, item.y + 15, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('+', item.x + 10, item.y + 22);
+          }
+        }
+        item.y += speed;
+      });
+    }
+
+    function drawNitroItems() {
+      const ctx = gameCanvas.getContext('2d');
+      nitroItems.forEach(item => {
+        const parpadeo = Math.sin(Date.now() / 200) > 0;
+        
+        if (parpadeo) {
+          if (nitroItemImg.complete) {
+            ctx.drawImage(nitroItemImg, item.x, item.y, 30, 30);
+          } else {
+            ctx.fillStyle = 'orange';
+            ctx.fillRect(item.x, item.y, 30, 30);
+            ctx.fillStyle = 'white';
+            ctx.font = '10px Arial';
+            ctx.fillText('NITRO', item.x + 5, item.y + 18);
+          }
+        }
+        item.y += speed;
+      });
+    }
+
+    function reproducirSonidoPunto() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoPunto.pause();
+        sonidoPunto.currentTime = 0;
+        sonidoPunto.play();
+      } catch (e) {}
+    }
+
+    function reproducirSonidoChoque() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoChoque.pause();
+        sonidoChoque.currentTime = 0;
+        sonidoChoque.play();
+      } catch (e) {}
+    }
+
+    function reproducirSonidoPowerup() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoPowerup.pause();
+        sonidoPowerup.currentTime = 0;
+        sonidoPowerup.play();
+      } catch (e) {}
+    }
+
+    function reproducirSonidoAntiPowerup() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoAntiPowerup.pause();
+        sonidoAntiPowerup.currentTime = 0;
+        sonidoAntiPowerup.play();
+      } catch (e) {}
+    }
+
+    function reproducirSonidoAceite() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoAceite.pause();
+        sonidoAceite.currentTime = 0;
+        sonidoAceite.play();
+      } catch (e) {}
+    }
+
+    function reproducirSonidoVida() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoVida.pause();
+        sonidoVida.currentTime = 0;
+        sonidoVida.play();
+      } catch (e) {}
+    }
+
+    function reproducirSonidoTrampaClavos() {
+      if (!sonidoActivado) return;
+      try {
+        sonidoTrampaClavos.pause();
+        sonidoTrampaClavos.currentTime = 0;
+        sonidoTrampaClavos.play();
+      } catch (e) {}
+    }
+
+    function actualizarTienda() {
+      totalPuntos = parseInt(localStorage.getItem('puntos_' + nombreJugador) || '0');
+      document.getElementById('puntosTotales').textContent = 'Tus puntos: ' + totalPuntos;
+    }
+
+    function cargarProgreso() {
+      const datos = JSON.parse(localStorage.getItem('autosave_' + nombreJugador) || '{}');
+      if (datos.score) {
+        score = datos.score;
+        level = datos.level;
+        highScore = datos.highScore || 0;
+        totalPuntos = datos.totalPuntos || 0;
+      }
+    }
+
+    function guardarProgreso() {
+      const ahora = Date.now();
+      if (ahora - tiempoUltimoGuardado > 10000) {
+        localStorage.setItem('autosave_' + nombreJugador, JSON.stringify({
+          score: score,
+          level: level,
+          highScore: highScore,
+          totalPuntos: totalPuntos
+        }));
+        tiempoUltimoGuardado = ahora;
+      }
+    }
+
+    function iniciarJuego() {
+      nombreJugador = document.getElementById('nombreJugador').value.trim() || 'Jugador';
+      const colorPatrulla = document.getElementById('colorPatrulla').value;
+      
+      patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
+          const img = new Image();
+          img.src = src;
+          return img;
+      });
+      
+      highScore = localStorage.getItem('highScore_' + nombreJugador) || 0;
+      totalPuntos = parseInt(localStorage.getItem('puntos_' + nombreJugador) || '0');
+      cargarProgreso();
+      actualizarTienda();
+      document.getElementById('inicio').style.display = 'none';
+      sonidoInicio.pause();
+      sonidoInicio.currentTime = 0;
+      if (sonidoActivado) {
+        musicaFondo.play();
+      }
+      resetGame();
+    }
+
+    function resetGame() {
+      const ctx = gameCanvas.getContext('2d');
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      
+      patrulla.x = gameCanvas.width / 2 - 20;
+      patrulla.y = gameCanvas.height - 100;
+      patrulla.targetX = gameCanvas.width / 2 - 20;
+      obstacles = [];
+      objetivos = [];
+      powerups = [];
+      aceites = [];
+      recolectados = [];
+      nitroItems = [];
+      vidaItems = [];
+      trampaClavosItems = [];
+      humoParticles = [];
+      derrapeMarks = [];
+      score = 0;
+      level = 1;
+      speed = 2;
+      vidas = 3;
+      escudoActivo = false;
+      shakeFrames = 0;
+      gameOver = false;
+      tiempoUltimoChoque = 0;
+      deslizando = false;
+      tiempoDeslizamiento = 0;
+      lineOffset = 0;
+      combo = 0;
+      nitro = 100;
+      gotas = [];
+      placasRecolectadasDesdeUltimaVida = 0;
+      ultimoNitroItemTiempo = 0;
+      tiempoUltimoLevelUp = 0;
+      NITRO_ITEM_INTERVALO = 15000;
+      PLACAS_PARA_VIDA = 50;
+      desactivarNitro();
+      document.getElementById('gameOverScreen').style.display = 'none';
+      updateHUD();
+      loop();
+    }
+
+    document.getElementById('btnReiniciar').addEventListener('click', () => {
+      musicaFondo.pause();
+      musicaFondo.currentTime = 0;
+      desactivarNitro();
+      if (sonidoActivado) {
+        sonidoInicio.play();
+      }
+      document.getElementById('inicio').style.display = 'flex';
+      document.getElementById('btnActivarSonido').style.display = 'block';
+      document.getElementById('gameOverScreen').style.display = 'none';
+    });
+
+    if (!isMobile) {
+      document.addEventListener('keydown', (e) => {
+        if (!deslizando) {
+          if (e.key === 'ArrowLeft') {
+            patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
+          }
+          if (e.key === 'ArrowRight') {
+            patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
+          }
+          if (e.key === ' ' || e.key === 'Spacebar') {
+            activarNitro();
+          }
+        }
+      });
+
+      document.addEventListener('keyup', (e) => {
+        if (e.key === ' ' || e.key === 'Spacebar') {
+          desactivarNitro();
+        }
+      });
+    }
+
+    function fondoPorNivel() {
+      if (level <= 2) return '#222';
+      if (level <= 4) return '#001144';
+      return '#552200';
+    }
+
+    function drawRoadLines() {
+      const ctx = gameCanvas.getContext('2d');
+      ctx.strokeStyle = 'gold';
+      ctx.lineWidth = borderWidth;
+      
+      ctx.beginPath();
+      ctx.moveTo(leftBorder, 0);
+      ctx.lineTo(leftBorder, gameCanvas.height);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(rightBorder, 0);
+      ctx.lineTo(rightBorder, gameCanvas.height);
+      ctx.stroke();
+      
+      if (level >= 5) {
+        ctx.strokeStyle = `hsl(${Date.now()/50 % 360}, 80%, 50%)`;
+      } else {
+        ctx.strokeStyle = 'white';
+      }
+      ctx.lineWidth = 3;
+      
+      lineOffset += speed;
+      if (lineOffset > lineGap + lineHeight) {
+        lineOffset = 0;
+      }
+      
+      linePositions.forEach(posX => {
+        for (let y = -lineHeight; y < gameCanvas.height; y += lineGap + lineHeight) {
+          const lineY = y + lineOffset;
+          ctx.beginPath();
+          ctx.moveTo(posX, lineY);
+          ctx.lineTo(posX, lineY + lineHeight);
+          ctx.stroke();
+        }
+      });
+    }
+
+    function drawAceites() {
+      const ctx = gameCanvas.getContext('2d');
+      aceites.forEach(aceite => {
+        ctx.beginPath();
+        ctx.ellipse(aceite.x, aceite.y, aceite.size, aceite.size * 0.7, 0, 0, Math.PI * 2);
+        
+        const gradient = ctx.createRadialGradient(
+          aceite.x, aceite.y, aceite.size * 0.3,
+          aceite.x, aceite.y, aceite.size
+        );
+        gradient.addColorStop(0, 'rgba(50, 50, 50, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(20, 20, 20, 0.9)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.ellipse(
+          aceite.x - aceite.size * 0.3, 
+          aceite.y - aceite.size * 0.2, 
+          aceite.size * 0.15, 
+          aceite.size * 0.1, 
+          0, 0, Math.PI * 2
+        );
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fill();
+        
+        aceite.y += speed;
+      });
+    }
+
+    function drawHumo() {
+      const ctx = gameCanvas.getContext('2d');
+      humoParticles.forEach((p, i) => {
+        ctx.fillStyle = `rgba(50, 50, 50, ${p.alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.alpha -= p.decay;
+        p.size *= 0.99;
+        
+        if (p.alpha <= 0) {
+            humoParticles.splice(i, 1);
+        }
+      });
+    }
+
+    function drawDerrapeMarks() {
+      const ctx = gameCanvas.getContext('2d');
+      if (deslizando) {
+        if (frameCount % 5 === 0 && derrapeMarks.length < MAX_DERRAPE_MARKS - 1) {
+          const centerX = patrulla.x + patrulla.width / 2;
+          const wheelWidth = 10;
+          
+          derrapeMarks.push({
+            x1: centerX - wheelWidth,
+            y1: patrulla.y + patrulla.height,
+            x2: centerX - wheelWidth,
+            y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
+            width: 3 + Math.random() * 2,
+            alpha: 0.8
+          });
+          
+          derrapeMarks.push({
+            x1: centerX + wheelWidth,
+            y1: patrulla.y + patrulla.height,
+            x2: centerX + wheelWidth,
+            y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
+            width: 3 + Math.random() * 2,
+            alpha: 0.8
+          });
+        }
+      }
+      
+      derrapeMarks.forEach((mark, i) => {
+        ctx.strokeStyle = `rgba(150, 150, 150, ${mark.alpha})`;
+        ctx.lineWidth = mark.width;
+        ctx.beginPath();
+        ctx.moveTo(mark.x1, mark.y1);
+        ctx.lineTo(mark.x2, mark.y2);
+        ctx.stroke();
+        
+        mark.alpha -= 0.01;
+        if (mark.alpha <= 0) {
+            derrapeMarks.splice(i, 1);
+        }
+      });
+    }
+
+    function drawPatrulla() {
+      const ctx = gameCanvas.getContext('2d');
+      const ahora = Date.now();
+      if (deslizando) {
+        if (ahora - tiempoDeslizamiento > tiempoDeslizamientoMax) {
+          deslizando = false;
+        } else {
+          patrulla.x += (Math.random() - 0.5) * 4;
+          patrulla.x = Math.max(leftBorder + borderWidth, Math.min(rightBorder - borderWidth - patrulla.width, patrulla.x));
+          patrulla.targetX = patrulla.x;
+          
+          ctx.save();
+          const inclineAngle = (Math.random() - 0.5) * 0.3;
+          ctx.translate(patrulla.x + patrulla.width/2, patrulla.y + patrulla.height/2);
+          ctx.rotate(inclineAngle);
+          ctx.translate(-(patrulla.x + patrulla.width/2), -(patrulla.y + patrulla.height/2));
+          
+          if (Math.random() < 0.3) {
+            humoParticles.push({
+              x: patrulla.x + patrulla.width/2 + (Math.random() - 0.5) * 10,
+              y: patrulla.y + patrulla.height - 10,
+              size: 5 + Math.random() * 15,
+              alpha: 0.6,
+              speedX: (Math.random() - 0.5) * 2,
+              speedY: -Math.random() * 2,
+              decay: 0.01 + Math.random() * 0.03
+            });
+          }
+        }
+      } else {
+        patrulla.x += (patrulla.targetX - patrulla.x) * 0.2;
+      }
+
+      const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
+
+      if (invulnerable && Math.floor(ahora / 100) % 2 === 0) {
+        if (deslizando) ctx.restore();
+        return;
+      }
+
+      frameCount++;
+      if (frameCount % switchEveryFrames === 0) {
+          currentPatrullaImgIndex = (currentPatrullaImgIndex + 1) % patrullaImgs.length;
+      }
+
+      const imgToDraw = patrullaImgs[currentPatrullaImgIndex];
+      if (imgToDraw.complete) {
+          ctx.drawImage(imgToDraw, Math.round(patrulla.x), Math.round(patrulla.y), patrulla.width, patrulla.height);
+      } else {
+          ctx.fillStyle = '#0033aa';
+          ctx.fillRect(patrulla.x, patrulla.y, patrulla.width, patrulla.height);
+      }
+
+      if (escudoActivo) {
+        const time = Date.now() / 100;
+        const flashIntensity1 = 0.5 + 0.5 * Math.sin(time);
+        const flashIntensity2 = 0.3 + 0.3 * Math.sin(time + 1);
+        
+        ctx.save();
+        ctx.strokeStyle = `rgba(0, 255, 255, ${flashIntensity1})`;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = 'cyan';
+        ctx.shadowBlur = 15 * flashIntensity1;
+        
+        ctx.beginPath();
+        ctx.arc(
+            patrulla.x + patrulla.width / 2, 
+            patrulla.y + patrulla.height / 2, 
+            35, 
+            0, 
+            Math.PI * 2
+        );
+        ctx.stroke();
+        
+        ctx.strokeStyle = `rgba(100, 255, 255, ${flashIntensity2})`;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 10 * flashIntensity2;
+        ctx.beginPath();
+        ctx.arc(
+            patrulla.x + patrulla.width / 2, 
+            patrulla.y + patrulla.height / 2, 
+            40, 
+            0, 
+            Math.PI * 2
+        );
+        ctx.stroke();
+        
+        ctx.restore();
+      }
+      
+      if (deslizando) {
+        ctx.restore();
+      }
+
+      if (nitroActivo) {
+        ctx.fillStyle = 'rgba(255, 200, 0, 0.5)';
+        ctx.fillRect(patrulla.x - 10, patrulla.y + patrulla.height - 5, patrulla.width + 20, 10);
+      }
+    }
+
+    function drawObstacles() {
+      const ctx = gameCanvas.getContext('2d');
+      obstacles.forEach(o => {
+        if (barreraImg.complete) {
+          if (o.tipo === "barreraMovil") {
+            ctx.save();
+            ctx.fillStyle = 'red';
+            ctx.fillRect(o.x - 2, o.y - 2, o.size + 4, o.size + 4);
+            ctx.restore();
+          }
+          ctx.drawImage(barreraImg, o.x, o.y, o.size, o.size);
+        } else {
+          ctx.fillStyle = o.tipo === "barreraMovil" ? 'red' : 'orange';
+          ctx.fillRect(o.x, o.y, o.size, o.size);
+        }
+        o.y += speed;
+      });
+    }
+
+    function drawObjetivos() {
+      const ctx = gameCanvas.getContext('2d');
+      pulso += 0.1;
+      const pulseSize = Math.sin(pulso) * 0.2 + 1;
+      
+      objetivos.forEach(obj => {
+        const floatOffset = Math.sin(pulso + obj.x * 0.01) * 3;
+        
+        ctx.save();
+        const brightness = 0.7 + Math.abs(Math.sin(pulso * 2)) * 0.3;
+        ctx.globalAlpha = brightness;
+        
+        if (placaPoliciaImg.complete) {
+          const size = obj.size * pulseSize;
+          const yPos = obj.y + floatOffset;
+          
+          ctx.drawImage(
+            placaPoliciaImg, 
+            obj.x - size/2, 
+            yPos - size/2, 
+            size, 
+            size
+          );
+        } else {
+          drawHexagon(obj.x, obj.y + floatOffset, obj.size * pulseSize, 'yellow');
+        }
+        
+        ctx.restore();
+        obj.y += speed;
+      });
+    }
+
+    function drawPowerUps() {
+      const ctx = gameCanvas.getContext('2d');
+      const pulseSize = 0.9 + Math.abs(Math.sin(pulso * 3)) * 0.2;
+      
+      powerups.forEach(p => {
+        if (powerupImg.complete) {
+          const size = 30 * pulseSize;
+          ctx.drawImage(
+            powerupImg,
+            p.x + (30 - size)/2, 
+            p.y + (30 - size)/2, 
+            size, 
+            size
+          );
+        } else {
+          ctx.fillStyle = 'cyan';
+          ctx.beginPath();
+          ctx.arc(p.x + 15, p.y + 15, 15, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        p.y += speed;
+      });
+    }
+
+    function drawRecolectados() {
+      const ctx = gameCanvas.getContext('2d');
+      recolectados.forEach((obj, index) => {
+        obj.scale += 0.1;
+        obj.alpha -= 0.05;
+        ctx.save();
+        ctx.globalAlpha = obj.alpha;
+        ctx.translate(obj.x, obj.y);
+        ctx.scale(obj.scale, obj.scale);
+        
+        if (placaPoliciaImg.complete) {
+          ctx.drawImage(
+            placaPoliciaImg, 
+            -obj.size/2, 
+            -obj.size/2, 
+            obj.size, 
+            obj.size
+          );
+        } else {
+          drawHexagon(0, 0, obj.size, obj.color || 'yellow');
+        }
+        
+        ctx.restore();
+        if (obj.alpha <= 0) recolectados.splice(index, 1);
+      });
+    }
+
+    function drawLluvia() {
+      const ctx = gameCanvas.getContext('2d');
+      if (level >= 6) {
+        if (Math.random() < 0.3) {
+          gotas.push({
+            x: Math.random() * gameCanvas.width,
+            y: -10,
+            speed: 2 + Math.random() * 5,
+            length: 10 + Math.random() * 10
+          });
+        }
+
+        ctx.strokeStyle = 'rgba(200, 200, 255, 0.7)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < gotas.length; i++) {
+          const g = gotas[i];
+          ctx.beginPath();
+          ctx.moveTo(g.x, g.y);
+          ctx.lineTo(g.x - g.length * 0.3, g.y + g.length);
+          ctx.stroke();
+          g.y += g.speed;
+
+          if (g.y > gameCanvas.height) {
+            gotas.splice(i, 1);
+            i--;
+          }
+        }
+      }
+    }
+
+    function drawHexagon(x, y, size, color) {
+      const ctx = gameCanvas.getContext('2d');
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = Math.PI / 3 * i;
+        const px = x + size * Math.cos(angle);
+        const py = y + size * Math.sin(angle);
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function spawnObstacle() {
+      // Ajustamos las probabilidades según el nivel como solicitaste
+      let probability;
+      
+      if (level === 1) {
+        // Nivel 1: Muy pocos obstáculos para que el usuario se familiarice
+        probability = 0.002;
+      } else if (level === 2) {
+        // Nivel 2: Un poco más que el nivel 1 pero aún pocos
+        probability = 0.003;
+      } else if (level === 3) {
+        // Nivel 3: Incrementamos un poco más
+        probability = 0.005;
+      } else if (level === 4) {
+        // Nivel 4: Similar al 3 pero con posibilidad de obstáculos móviles
+        probability = 0.006;
+      } else if (level === 5) {
+        // Nivel 5: Mayor dificultad, más obstáculos
+        probability = 0.008;
+      } else {
+        // Nivel 6+: Máxima dificultad
+        probability = 0.01;
+      }
+      
+      if (Math.random() < probability) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 30;
+        const x = Math.random() * (maxX - minX) + minX;
+        
+        // Solo aparecen obstáculos móviles a partir del nivel 3
+        if (level >= 3 && Math.random() < (level >= 5 ? 0.3 : 0.1)) {
+          obstacles.push({ 
+            x: x, 
+            y: -30, 
+            size: 30,
+            tipo: "barreraMovil",
+            direccion: Math.random() > 0.5 ? 1 : -1
+          });
+        } else {
+          obstacles.push({ x: x, y: -30, size: 30 });
+        }
+      }
+    }
+
+    function spawnAceite() {
+      // Ajustamos la probabilidad de aceite según el nivel
+      let probability;
+      
+      if (level <= 2) {
+        probability = 0.0005; // Muy baja probabilidad en niveles iniciales
+      } else if (level <= 4) {
+        probability = 0.001; // Probabilidad moderada
+      } else {
+        probability = 0.002; // Mayor probabilidad en niveles altos
+      }
+      
+      if (Math.random() < probability && aceites.length < 2) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 40;
+        const x = Math.random() * (maxX - minX) + minX;
+        aceites.push({
+          x: x,
+          y: -40,
+          size: 25 + Math.random() * 10
+        });
+      }
+    }
+
+    function spawnObjetivo() {
+      if (Math.random() < 0.015) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 30;
+        const x = Math.random() * (maxX - minX) + minX;
+        objetivos.push({ x: x, y: -30, size: 30 });
+      }
+    }
+
+    function spawnPowerUp() {
+      const baseProbability = 0.002;
+      const levelIncrement = Math.min(0.0015 * (level - 1), 0.006);
+      const probability = baseProbability + levelIncrement;
+      
+      if (Math.random() < probability) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 30;
+        const x = Math.random() * (maxX - minX) + minX;
+        powerups.push({ x: x, y: -30 });
+      }
+    }
+
+    function checkCollisions() {
+      const ctx = gameCanvas.getContext('2d');
+      const ahora = Date.now();
+      const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
+
+      obstacles = obstacles.filter(o => {
+        const hit = patrulla.x < o.x + o.size &&
+                    patrulla.x + patrulla.width > o.x &&
+                    patrulla.y < o.y + o.size &&
+                    patrulla.y + patrulla.height > o.y;
+        if (hit && !invulnerable) {
+          if (escudoActivo) {
+            escudoActivo = false;
+            reproducirSonidoAntiPowerup();
+          } else {
+            vidas--;
+            combo = 0;
+            reproducirSonidoChoque();
+            shakeFrames = 10;
+            tiempoUltimoChoque = ahora;
+            
+            for (let i = 0; i < 10; i++) {
+              recolectados.push({
+                x: o.x + o.size/2,
+                y: o.y + o.size/2,
+                size: 5,
+                alpha: 1,
+                scale: 1,
+                color: 'red'
+              });
+            }
+            
+            if (vidas <= 0) {
+              gameOver = true;
+              musicaFondo.pause();
+              document.getElementById('gameOverScreen').style.display = 'flex';
+              document.getElementById('btnReiniciar').style.display = 'block';
+              document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
+              document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+            }
+          }
+          updateHUD();
+          return false;
+        }
+
+        if (o.tipo === "barreraMovil") {
+          o.x += o.direccion * 2;
+          if (o.x < leftBorder + borderWidth || o.x + o.size > rightBorder - borderWidth) {
+            o.direccion *= -1;
+          }
+        }
+
+        return true;
+      });
+
+      aceites = aceites.filter(aceite => {
+        const hit = patrulla.x < aceite.x + aceite.size &&
+                    patrulla.x + patrulla.width > aceite.x - aceite.size &&
+                    patrulla.y < aceite.y + aceite.size &&
+                    patrulla.y + patrulla.height > aceite.y - aceite.size;
+        
+        if (hit && !deslizando) {
+          deslizando = true;
+          tiempoDeslizamiento = ahora;
+          reproducirSonidoAceite();
+          shakeFrames = 20;
+          
+          for (let i = 0; i < 15; i++) {
+            humoParticles.push({
+              x: aceite.x + (Math.random() - 0.5) * 30,
+              y: aceite.y + (Math.random() - 0.5) * 20,
+              size: 5 + Math.random() * 10,
+              alpha: 0.8,
+              speedX: (Math.random() - 0.5) * 3,
+              speedY: -Math.random() * 2,
+              decay: 0.01 + Math.random() * 0.02
+            });
+          }
+          
+          return false;
+        }
+        return aceite.y < gameCanvas.height + aceite.size;
+      });
+
+      objetivos = objetivos.filter(obj => {
+        const hit = patrulla.x < obj.x + obj.size &&
+                    patrulla.x + patrulla.width > obj.x - obj.size &&
+                    patrulla.y < obj.y + obj.size &&
+                    patrulla.y + patrulla.height > obj.y - obj.size;
+        if (hit) {
+          combo++;
+          placasRecolectadasDesdeUltimaVida++;
+          if (combo > maxCombo) maxCombo = combo;
+          
+          const puntosBase = 1;
+          const puntosExtra = combo > 1 ? combo * 2 : 0;
+          score += puntosBase + puntosExtra;
+          
+          if (score >= level * 1000) {
+            level++;
+            speed += 1;
+            tiempoUltimoLevelUp = ahora;
+            
+            if (level % 2 === 0) {
+              PLACAS_PARA_VIDA = Math.max(20, PLACAS_PARA_VIDA - 5);
+            }
+            
+            if (level % 3 === 0) {
+              NITRO_ITEM_INTERVALO = Math.max(5000, NITRO_ITEM_INTERVALO - 2000);
+            }
+            
+            reproducirSonidoPowerup();
+          }
+          
+          reproducirSonidoPunto();
+          recolectados.push({ 
+            x: obj.x, 
+            y: obj.y, 
+            size: obj.size, 
+            alpha: 1, 
+            scale: 1,
+            color: combo > 3 ? 'gold' : 'yellow'
+          });
+          
+          if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore_' + nombreJugador, highScore);
+          }
+          localStorage.setItem('puntos_' + nombreJugador, score);
+          
+          if (combo % 3 === 0) {
+            nitro = Math.min(100, nitro + 10);
+          }
+          
+          if (vidas < 3 && placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
+            spawnVidaItem();
+          }
+          
+          updateHUD();
+          return false;
+        }
+        return true;
+      });
+
+      powerups = powerups.filter(p => {
+        const hit = patrulla.x < p.x + 30 &&
+                    patrulla.x + patrulla.width > p.x &&
+                    patrulla.y < p.y + 30 &&
+                    patrulla.y + patrulla.height > p.y;
+        if (hit) {
+          escudoActivo = true;
+          reproducirSonidoPowerup();
+          updateHUD();
+          return false;
+        }
+        return true;
+      });
+
+      nitroItems = nitroItems.filter(item => {
+        const hit = patrulla.x < item.x + 30 &&
+                   patrulla.x + patrulla.width > item.x &&
+                   patrulla.y < item.y + 30 &&
+                   patrulla.y + patrulla.height > item.y;
+        if (hit) {
+          nitro = Math.min(100, nitro + 25);
+          reproducirSonidoPowerup();
+          updateHUD();
+          return false;
+        }
+        return item.y < gameCanvas.height + 30;
+      });
+
+      vidaItems = vidaItems.filter(item => {
+        const hit = patrulla.x < item.x + 30 &&
+                   patrulla.x + patrulla.width > item.x &&
+                   patrulla.y < item.y + 30 &&
+                   patrulla.y + patrulla.height > item.y;
+        if (hit) {
+          vidas = Math.min(3, vidas + 1);
+          reproducirSonidoVida();
+          
+          for (let i = 0; i < 15; i++) {
+            recolectados.push({
+              x: item.x + 15,
+              y: item.y + 15,
+              size: 5 + Math.random() * 10,
+              alpha: 1,
+              scale: 1,
+              color: 'red'
+            });
+          }
+          
+          updateHUD();
+          return false;
+        }
+        return item.y < gameCanvas.height + 30;
+      });
+
+      trampaClavosItems = trampaClavosItems.filter(trampa => {
+        const hit = patrulla.x < trampa.x + trampa.width &&
+                   patrulla.x + patrulla.width > trampa.x &&
+                   patrulla.y < trampa.y + trampa.height &&
+                   patrulla.y + patrulla.height > trampa.y;
+        
+        if (hit && !invulnerable) {
+          reproducirSonidoTrampaClavos();
+          
+          if (escudoActivo) {
+            escudoActivo = false;
+            reproducirSonidoAntiPowerup();
+          } else {
+            vidas--;
+            combo = 0;
+            shakeFrames = 15;
+            tiempoUltimoChoque = ahora;
+            
+            for (let i = 0; i < 20; i++) {
+              recolectados.push({
+                x: trampa.x + trampa.width/2,
+                y: trampa.y + trampa.height/2,
+                size: 3 + Math.random() * 5,
+                alpha: 1,
+                scale: 1,
+                color: 'silver'
+              });
+            }
+            
+            deslizando = true;
+            tiempoDeslizamiento = ahora;
+            
+            if (vidas <= 0) {
+              gameOver = true;
+              musicaFondo.pause();
+              document.getElementById('gameOverScreen').style.display = 'flex';
+              document.getElementById('btnReiniciar').style.display = 'block';
+              document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
+              document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+            }
+          }
+          updateHUD();
+          return false;
+        }
+        return trampa.y < gameCanvas.height + trampa.height;
+      });
+    }
+
+    function drawHUD() {
+      if (isMobile) {
+        // Para móvil, el HUD se maneja con elementos HTML fuera del canvas
+        return;
+      }
+      
+      // Solo dibujar HUD en canvas si es necesario
+      const ctx = gameCanvas.getContext('2d');
+      const ahora = Date.now();
+      
+      if (ahora - tiempoUltimoLevelUp < 2000) {
+        const alpha = 1 - ((ahora - tiempoUltimoLevelUp) / 2000);
+        ctx.save();
+        
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(gameCanvas.width/2 - 150, 120, 300, 60);
+        
+        ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`;
+        ctx.font = 'bold 28px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.7)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        
+        ctx.fillText(`¡NIVEL ${level} DESBLOQUEADO!`, gameCanvas.width / 2, 150);
+        
+        ctx.shadowColor = 'transparent';
+        ctx.restore();
+      }
+      
+      if (deslizando) {
+        ctx.fillStyle = 'yellow';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('¡DERRAPANDO!', 10, 180);
+      }
+    }
+
+    function aplicarSacudida() {
+      if (shakeFrames > 0) {
+        const intensity = deslizando ? 15 : 10;
+        const dx = (Math.random() - 0.5) * intensity;
+        const dy = (Math.random() - 0.5) * intensity;
+        gameCanvas.style.transform = `translate(${dx}px, ${dy}px) rotate(${(Math.random() - 0.5) * (deslizando ? 3 : 1)}deg)`;
+        shakeFrames--;
+      } else {
+        gameCanvas.style.transform = 'translate(0, 0) rotate(0deg)';
+      }
+    }
+
+    function loop() {
+      if (gameOver) {
+        return;
+      }
+
+      aplicarSacudida();
+      const ctx = gameCanvas.getContext('2d');
+      ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+      
+      gameCanvas.style.background = fondoPorNivel();
+      drawRoadLines();
+      drawAceites();
+      drawObstacles();
+      drawObjetivos();
+      drawPowerUps();
+      drawNitroItems();
+      drawVidaItems();
+      drawTrampaClavos();
+      drawRecolectados();
+      drawPatrulla();
+      drawLluvia();
+      drawHumo();
+      drawDerrapeMarks();
+      drawHUD();
+      
+      checkCollisions();
+      spawnObstacle();
+      spawnAceite();
+      spawnObjetivo();
+      spawnPowerUp();
+      spawnNitroItem();
+      spawnTrampaClavos();
+      
+      if (level < 3 && nitro < 100) {
+        nitro += 0.1;
+        updateHUD();
+      }
+      
+      guardarProgreso();
+
+      requestAnimationFrame(loop);
+    }
+
+    // Inicialización al cargar la página
+    window.addEventListener('load', function() {
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      
+      // Detectar cambios de orientación en móviles
+      if (isMobile) {
+        screen.orientation.addEventListener('change', resizeCanvas);
+      }
+      
+      // Precargar imágenes de patrulla
+      const colorPatrulla = document.getElementById('colorPatrulla').value;
+      patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
+          const img = new Image();
+          img.src = src;
+          return img;
+      });
+      
+      // Configurar botón de reinicio
+      document.getElementById('btnReiniciar').addEventListener('click', function() {
+        musicaFondo.pause();
+        musicaFondo.currentTime = 0;
+        desactivarNitro();
+        if (sonidoActivado) {
+          sonidoInicio.play();
+        }
+        document.getElementById('inicio').style.display = 'flex';
+        document.getElementById('btnActivarSonido').style.display = 'block';
+        document.getElementById('gameOverScreen').style.display = 'none';
+      });
+      
+      // Configurar teclado para desktop
+      if (!isMobile) {
+        document.addEventListener('keydown', (e) => {
+          if (!deslizando) {
+            if (e.key === 'ArrowLeft') {
+              patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
+            }
+            if (e.key === 'ArrowRight') {
+              patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
+            }
+            if (e.key === ' ' || e.key === 'Spacebar') {
+              activarNitro();
+            }
+          }
+        });
+
+        document.addEventListener('keyup', (e) => {
+          if (e.key === ' ' || e.key === 'Spacebar') {
+            desactivarNitro();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
