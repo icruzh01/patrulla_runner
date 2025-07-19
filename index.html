@@ -1132,11 +1132,11 @@
           
           if (climaActual === 'viento') {
             sonidoViento.loop = true;
-            sonidoViento.volume = 0.3;
+            sonidoViento.volume = 0.5;
             sonidoViento.play().catch(e => console.error('Error al reproducir sonido de viento:', e));
           } else if (climaActual === 'nieve') {
             sonidoNieve.loop = true;
-            sonidoNieve.volume = 0.2;
+            sonidoNieve.volume = 0.3;
             sonidoNieve.play().catch(e => console.error('Error al reproducir sonido de nieve:', e));
           }
         }
@@ -1303,7 +1303,7 @@
     function aplicarEfectosClimaticos() {
       if (vientoActivo) {
         // El viento empuja la patrulla
-        patrulla.targetX += (Math.random() - 0.5) * 2;
+        patrulla.targetX += (Math.random() - 0.5) * 20;
         patrulla.targetX = Math.max(leftBorder + borderWidth, Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX));
       }
       
