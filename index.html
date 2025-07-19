@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Patrulla Runner Arcade</title>
   <style>
-    
-
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -393,6 +391,48 @@
         touch-action: manipulation;
         z-index: 10;
       }
+
+      /* Botones de control en móvil */
+      .mobile-control-btn {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s;
+        z-index: 25;
+      }
+
+      #btnMuteMobile, #btnPauseMobile {
+        position: fixed;
+        top: 10px;
+        z-index: 20;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+      }
+
+      #btnMuteMobile {
+          right: 60px;
+      }
+
+      #btnPauseMobile {
+          right: 10px;
+      }
     }
 
     /* Ajustes específicos para orientación vertical */
@@ -427,6 +467,17 @@
         bottom: 200px;
         transform: translateX(-50%);
       }
+
+      /* Ajustar posición de botones de control en vertical */
+      #btnMuteMobile {
+        top: 150px;
+        right: 60px;
+      }
+      
+      #btnPauseMobile {
+        top: 150px;
+        right: 10px;
+      }
     }
 
     /* Estilos compartidos del juego */
@@ -439,10 +490,62 @@
       background: #111;
     }
 
+    /* Pantalla de carga */
+    #loading-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      gap: 20px;
+    }
+
+    /* Fondo para pantalla de carga en desktop */
+    @media (min-width: 769px) {
+      #loading-screen {
+        background: url('imagenes/cargaInicioPC_1.png') center/cover no-repeat;
+      }
+    }
+
+    /* Fondo para pantalla de carga en móvil */
+    @media (max-width: 768px) {
+      #loading-screen {
+        background: url('imagenes/cargaInicioMovil_1.png') center/cover no-repeat;
+      }
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: white;
+      font-size: 18px;
+      text-shadow: 0 0 5px #000;
+    }
+
     /* Pantalla de inicio y game over */
     #inicio {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: rgba(0, 0, 0, 0.7);
       display: flex;
       flex-direction: column;
@@ -452,6 +555,7 @@
       gap: 15px;
       padding: 20px;
       box-sizing: border-box;
+      display: none; /* Oculto inicialmente */
     }
 
     /* Fondo para pantalla de inicio en desktop */
@@ -604,18 +708,24 @@
       }
       
       #btnMute {
-        top: 70px;
+        top: 150px;
         right: 60px;
       }
       
       #btnPause {
-        top: 70px;
+        top: 150px;
         right: 10px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Pantalla de carga -->
+  <div id="loading-screen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Cargando...</div>
+  </div>
+
   <!-- Contenedor condicional para desktop/móvil -->
   <div id="desktop-view">
     <div class="arcade-machine">
@@ -694,8 +804,8 @@
     <div id="game-container">
       <canvas id="game-mobile" width="400" height="600"></canvas>
       <!-- Botones de control en juego para móvil -->
-      <div id="btnMute" class="control-btn">🔊</div>
-      <div id="btnPause" class="control-btn">⏸️</div>
+      <div id="btnMuteMobile" class="mobile-control-btn">🔊</div>
+      <div id="btnPauseMobile" class="mobile-control-btn">⏸️</div>
       
       <div class="mobile-hud">
         <!-- Elementos de la izquierda -->
@@ -766,6 +876,28 @@
   </div>
 
   <script>
+    // Precargar imágenes de carga
+    const loadingDesktopImg = new Image();
+    loadingDesktopImg.src = 'imagenes/cargaInicioPC_1.png';
+    
+    const loadingMobileImg = new Image();
+    loadingMobileImg.src = 'imagenes/cargaInicioMovil_1.png';
+
+    // Precargar imagen del cono
+    const conoImg = new Image();
+    conoImg.src = 'imagenes/cono_1.png';
+
+    // Mostrar pantalla de carga por 3 segundos
+    setTimeout(() => {
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('inicio').style.display = 'flex';
+      
+      // Reproducir música de inicio si el sonido está activado
+      if (sonidoActivado) {
+        sonidoInicio.play().catch(e => console.error('Error al reproducir música de inicio:', e));
+      }
+    }, 5000);
+
     // Detección de dispositivo
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
     const desktopView = document.getElementById('desktop-view');
@@ -847,7 +979,7 @@
     placaPoliciaImg.src = 'imagenes/placaPolicia_1.png';
     
     const barreraImg = new Image();
-    barreraImg.src = 'imagenes/barrera.png';
+    barreraImg.src = 'imagenes/barrera_1.png';
     
     const powerupImg = new Image();
     powerupImg.src = 'imagenes/powerup_1.png';
@@ -899,19 +1031,33 @@
     let nitroItems = [];
     let vidaItems = [];
     let trampaClavosItems = [];
+    let conos = [];
     let ultimoNitroItemTiempo = 0;
     let placasRecolectadasDesdeUltimaVida = 0;
     let NITRO_ITEM_INTERVALO = 15000;
     let PLACAS_PARA_VIDA = 50;
     let tiempoUltimoLevelUp = 0;
-    let sonidoActivado = false; // Variable para controlar el estado del sonido
-    let juegoPausado = false; // Variable para controlar el estado de pausa
+    let sonidoActivado = false;
+    let juegoPausado = false;
 
-    // Variables para el movimiento continuo en móviles
-    let leftControlActive = false;
-    let rightControlActive = false;
-    let moveInterval = null;
-    const MOVE_SPEED = 5; // Velocidad de movimiento continuo
+    // Variables para controles táctiles (móvil)
+    let moveInterval = null;        // Guarda el intervalo de movimiento continuo
+    let leftControlActive = false;  // Indica si el control izquierdo está activo
+    let rightControlActive = false; // Indica si el control derecho está activo
+    const MOVE_SPEED = 5;           // Velocidad de movimiento lateral (ajústala si es necesario)
+    
+    // Variables para efectos climáticos
+    let climaActual = 'normal';
+    let tiempoCambioClima = 0;
+    let tiempoDuracionClima = 0;
+    let hojas = [];
+    let copos = [];
+    let arena = [];
+    let granizos = [];
+    let ultimoRayo = 0;
+    let nieblaActiva = false;
+    let nocheActiva = false;
+    let vientoActivo = false;
 
     // Sonidos del juego
     const sonidoPunto = new Audio('sonidos/estrella_1.mp3');
@@ -923,6 +1069,10 @@
     const sonidoVida = new Audio('sonidos/vida_1.mp3');
     const sonidoFrenoDerrape = new Audio('sonidos/freno_1.mp3');
     const sonidoTrampaClavos = new Audio('sonidos/trampaclavos_1.mp3');
+    const sonidoCono = new Audio('sonidos/choque_1.mp3');
+    const sonidoRayo = new Audio('sonidos/rayo.mp3');
+    const sonidoViento = new Audio('sonidos/viento.mp3');
+    const sonidoNieve = new Audio('sonidos/nieve.mp3');
     const musicaFondo = new Audio('sonidos/musicaFondo_1.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.2;
@@ -952,6 +1102,248 @@
     const borderWidth = 8;
     const leftBorder = 40;
     const rightBorder = 360;
+
+    // Funciones para efectos climáticos
+    function cambiarClima() {
+      const ahora = Date.now();
+      if (ahora - tiempoCambioClima > tiempoDuracionClima) {
+        const climas = ['normal', 'niebla', 'tormenta', 'viento', 'nieve', 'arena', 'granizo', 'noche'];
+        climaActual = climas[Math.floor(Math.random() * climas.length)];
+        
+        // Configurar duración del clima (entre 15 y 30 segundos)
+        tiempoDuracionClima = 15000 + Math.random() * 15000;
+        tiempoCambioClima = ahora;
+        
+        // Limpiar partículas anteriores
+        hojas = [];
+        copos = [];
+        arena = [];
+        granizos = [];
+        
+        // Activar/desactivar efectos según el clima
+        nieblaActiva = climaActual === 'niebla';
+        nocheActiva = climaActual === 'noche';
+        vientoActivo = climaActual === 'viento';
+        
+        // Reproducir sonidos ambientales
+        if (sonidoActivado) {
+          sonidoViento.pause();
+          sonidoNieve.pause();
+          
+          if (climaActual === 'viento') {
+            sonidoViento.loop = true;
+            sonidoViento.volume = 0.3;
+            sonidoViento.play().catch(e => console.error('Error al reproducir sonido de viento:', e));
+          } else if (climaActual === 'nieve') {
+            sonidoNieve.loop = true;
+            sonidoNieve.volume = 0.2;
+            sonidoNieve.play().catch(e => console.error('Error al reproducir sonido de nieve:', e));
+          }
+        }
+      }
+    }
+
+    function drawNiebla() {
+      if (!nieblaActiva) return;
+      
+      const ctx = gameCanvas.getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, gameCanvas.height);
+      gradient.addColorStop(0, 'rgba(200, 200, 200, 0.1)');
+      gradient.addColorStop(1, 'rgba(200, 200, 200, 0.7)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+    }
+
+    function drawTormenta() {
+      if (climaActual !== 'tormenta') return;
+      
+      const ahora = Date.now();
+      if (ahora - ultimoRayo > 5000 && Math.random() < 0.1) {
+        ultimoRayo = ahora;
+        gameCanvas.style.backgroundColor = 'white';
+        setTimeout(() => { gameCanvas.style.backgroundColor = fondoPorNivel(); }, 100);
+        
+        if (sonidoActivado) {
+          sonidoRayo.currentTime = 0;
+          sonidoRayo.play().catch(e => console.error('Error al reproducir sonido de rayo:', e));
+        }
+      }
+    }
+
+    function spawnHojas() {
+      if (climaActual !== 'viento') return;
+      
+      if (Math.random() < 0.1) {
+        hojas.push({
+          x: Math.random() * gameCanvas.width,
+          y: -10,
+          speedX: (Math.random() - 0.5) * 3,
+          speedY: 2 + Math.random() * 3,
+          size: 5 + Math.random() * 10
+        });
+      }
+    }
+
+    function drawHojas() {
+      const ctx = gameCanvas.getContext('2d');
+      hojas.forEach((hoja, i) => {
+        ctx.fillStyle = 'rgba(150, 100, 50, 0.7)';
+        ctx.beginPath();
+        ctx.arc(hoja.x, hoja.y, hoja.size, 0, Math.PI * 2);
+        ctx.fill();
+        hoja.x += hoja.speedX;
+        hoja.y += hoja.speedY;
+        if (hoja.y > gameCanvas.height) hojas.splice(i, 1);
+      });
+    }
+
+    function spawnNieve() {
+      if (climaActual !== 'nieve') return;
+      
+      if (Math.random() < 0.2) {
+        copos.push({
+          x: Math.random() * gameCanvas.width,
+          y: -5,
+          speed: 1 + Math.random() * 2,
+          size: 2 + Math.random() * 3
+        });
+      }
+    }
+
+    function drawNieve() {
+      const ctx = gameCanvas.getContext('2d');
+      copos.forEach((copo, i) => {
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(copo.x, copo.y, copo.size, 0, Math.PI * 2);
+        ctx.fill();
+        copo.y += copo.speed;
+        copo.x += Math.sin(copo.y * 0.1) * 1.5;
+        if (copo.y > gameCanvas.height) copos.splice(i, 1);
+      });
+    }
+
+    function spawnArena() {
+      if (climaActual !== 'arena') return;
+      
+      if (Math.random() < 0.3) {
+        arena.push({
+          x: Math.random() * gameCanvas.width,
+          y: -5,
+          speed: 3 + Math.random() * 4,
+          size: 1 + Math.random() * 2
+        });
+      }
+    }
+
+    function drawArena() {
+      const ctx = gameCanvas.getContext('2d');
+      arena.forEach((grano, i) => {
+        ctx.fillStyle = 'rgba(194, 178, 128, 0.8)';
+        ctx.beginPath();
+        ctx.arc(grano.x, grano.y, grano.size, 0, Math.PI * 2);
+        ctx.fill();
+        grano.y += grano.speed;
+        if (grano.y > gameCanvas.height) arena.splice(i, 1);
+      });
+    }
+
+    function spawnGranizo() {
+      if (climaActual !== 'granizo') return;
+      
+      if (Math.random() < 0.05) {
+        granizos.push({
+          x: Math.random() * gameCanvas.width,
+          y: -10,
+          speed: 5 + Math.random() * 5,
+          size: 5 + Math.random() * 5
+        });
+      }
+    }
+
+    function drawGranizo() {
+      const ctx = gameCanvas.getContext('2d');
+      granizos.forEach((granizo, i) => {
+        ctx.fillStyle = 'rgba(200, 200, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(granizo.x, granizo.y, granizo.size, 0, Math.PI * 2);
+        ctx.fill();
+        granizo.y += granizo.speed;
+        if (granizo.y > gameCanvas.height) granizos.splice(i, 1);
+      });
+    }
+
+    function drawNoche() {
+      if (!nocheActiva) return;
+      
+      const ctx = gameCanvas.getContext('2d');
+      ctx.fillStyle = 'rgba(0, 0, 50, 0.7)';
+      ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+      
+      // Dibujar farolas en la parte superior
+    ctx.fillStyle = 'rgba(255, 255, 150, 0.8)';
+    for (let i = 0; i < 3; i++) {
+    const x = leftBorder + (rightBorder - leftBorder) / 4 * (i + 1);
+    const y = 0; // Ajusta este valor para que esté más arriba (ej: 10, 20, etc.)
+    
+    // Bombilla de la farola
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Luz de la farola (gradiente hacia abajo)
+    const gradient = ctx.createRadialGradient(x, y, 5, x, y, 50);
+    gradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
+    gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x - 50, y, 100, gameCanvas.height - y); // La luz llega hasta abajo
+    }
+    }
+
+    function aplicarEfectosClimaticos() {
+      if (vientoActivo) {
+        // El viento empuja la patrulla
+        patrulla.targetX += (Math.random() - 0.5) * 2;
+        patrulla.targetX = Math.max(leftBorder + borderWidth, Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX));
+      }
+      
+      if (climaActual === 'nieve') {
+        // La nieve reduce la tracción
+        speed = Math.max(1, speed - 0.5);
+      }
+      
+      if (climaActual === 'granizo') {
+        // El granizo puede dañar la patrulla
+        granizos.forEach((granizo, i) => {
+          if (patrulla.x < granizo.x + granizo.size &&
+              patrulla.x + patrulla.width > granizo.x &&
+              patrulla.y < granizo.y + granizo.size &&
+              patrulla.y + patrulla.height > granizo.y) {
+            
+            if (escudoActivo) {
+              escudoActivo = false;
+              reproducirSonidoAntiPowerup();
+            } else {
+              vidas--;
+              combo = 0;
+              shakeFrames = 10;
+              tiempoUltimoChoque = Date.now();
+              
+              if (vidas <= 0) {
+                gameOver = true;
+                musicaFondo.pause();
+                document.getElementById('gameOverScreen').style.display = 'flex';
+                document.getElementById('btnReiniciar').style.display = 'block';
+                document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
+                document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+              }
+            }
+            updateHUD();
+            granizos.splice(i, 1);
+          }
+        });
+      }
+    }
 
     // Actualizar HUD según dispositivo
     function updateHUD() {
@@ -1019,121 +1411,167 @@
       }
     }
 
-    // Controles móviles
-    if (isMobile) {
-      const leftControl = document.getElementById('left-control');
-      const rightControl = document.getElementById('right-control');
-      const btnNitro = document.getElementById('btnNitro');
-      const btnLeft = document.getElementById('btnLeft');
-      const btnRight = document.getElementById('btnRight');
-      
-      // Control izquierdo
-      leftControl.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        leftControlActive = true;
-        if (!moveInterval) {
-          moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
-        }
-      }, {passive: false});
-      
-      leftControl.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        leftControlActive = false;
-        if (!rightControlActive && moveInterval) {
-          clearInterval(moveInterval);
-          moveInterval = null;
-        }
-      }, {passive: false});
-      
-      leftControl.addEventListener('mouseleave', (e) => {
-        leftControlActive = false;
-        if (!rightControlActive && moveInterval) {
-          clearInterval(moveInterval);
-          moveInterval = null;
+    // Configurar controles según el dispositivo
+    function setupControls() {
+      // Configurar botón de mute
+      const muteBtn = isMobile ? document.getElementById('btnMuteMobile') : document.getElementById('btnMute');
+      muteBtn.addEventListener('click', function() {
+        if (sonidoActivado) {
+          musicaFondo.pause();
+          sonidoViento.pause();
+          sonidoNieve.pause();
+          sonidoActivado = false;
+          this.textContent = '🔇';
+        } else {
+          if (!juegoPausado) {
+            musicaFondo.play().catch(e => console.error('Error al reproducir música:', e));
+            if (vientoActivo) sonidoViento.play().catch(e => console.error('Error al reproducir viento:', e));
+            if (climaActual === 'nieve') sonidoNieve.play().catch(e => console.error('Error al reproducir nieve:', e));
+          }
+          sonidoActivado = true;
+          this.textContent = '🔊';
         }
       });
-      
-      // Control derecho
-      rightControl.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        rightControlActive = true;
-        if (!moveInterval) {
-          moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
-        }
-      }, {passive: false});
-      
-      rightControl.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        rightControlActive = false;
-        if (!leftControlActive && moveInterval) {
-          clearInterval(moveInterval);
-          moveInterval = null;
-        }
-      }, {passive: false});
-      
-      rightControl.addEventListener('mouseleave', (e) => {
-        rightControlActive = false;
-        if (!leftControlActive && moveInterval) {
-          clearInterval(moveInterval);
-          moveInterval = null;
+
+      // Configurar botón de pausa
+      const pauseBtn = isMobile ? document.getElementById('btnPauseMobile') : document.getElementById('btnPause');
+      pauseBtn.addEventListener('click', function() {
+        if (juegoPausado) {
+          // Reanudar juego
+          juegoPausado = false;
+          this.textContent = '⏸️';
+          if (sonidoActivado) {
+            musicaFondo.play().catch(e => console.error('Error al reanudar música:', e));
+            if (vientoActivo) sonidoViento.play().catch(e => console.error('Error al reanudar viento:', e));
+            if (climaActual === 'nieve') sonidoNieve.play().catch(e => console.error('Error al reanudar nieve:', e));
+          }
+          loop();
+        } else {
+          // Pausar juego
+          juegoPausado = true;
+          this.textContent = '▶️';
+          musicaFondo.pause();
+          sonidoViento.pause();
+          sonidoNieve.pause();
         }
       });
-      
-      // Botón nitro
-      btnNitro.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        activarNitro();
-      }, {passive: false});
-      
-      btnNitro.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        desactivarNitro();
-      }, {passive: false});
-      
-      btnNitro.addEventListener('mouseup', (e) => {
-        e.preventDefault();
-        desactivarNitro();
-      });
-      
-      btnNitro.addEventListener('mouseleave', (e) => {
-        e.preventDefault();
-        desactivarNitro();
-      });
-      
-      // Nuevos botones direccionales
-      btnLeft.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        leftControlActive = true;
-        if (!moveInterval) {
-          moveInterval = setInterval(handleContinuousMove, 16);
-        }
-      }, {passive: false});
-      
-      btnLeft.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        leftControlActive = false;
-        if (!rightControlActive && moveInterval) {
-          clearInterval(moveInterval);
-          moveInterval = null;
-        }
-      }, {passive: false});
-      
-      btnRight.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        rightControlActive = true;
-        if (!moveInterval) {
-          moveInterval = setInterval(handleContinuousMove, 16);
-        }
-      }, {passive: false});
-      
-      btnRight.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        rightControlActive = false;
-        if (!leftControlActive && moveInterval) {
-          clearInterval(moveInterval);
-          moveInterval = null;
-        }
-      }, {passive: false});
+
+      // Controles móviles
+      if (isMobile) {
+        const leftControl = document.getElementById('left-control');
+        const rightControl = document.getElementById('right-control');
+        const btnNitro = document.getElementById('btnNitro');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        
+        // Control izquierdo
+        leftControl.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          leftControlActive = true;
+          if (!moveInterval) {
+            moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
+          }
+        }, {passive: false});
+        
+        leftControl.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          leftControlActive = false;
+          if (!rightControlActive && moveInterval) {
+            clearInterval(moveInterval);
+            moveInterval = null;
+          }
+        }, {passive: false});
+        
+        leftControl.addEventListener('mouseleave', (e) => {
+          leftControlActive = false;
+          if (!rightControlActive && moveInterval) {
+            clearInterval(moveInterval);
+            moveInterval = null;
+          }
+        });
+        
+        // Control derecho
+        rightControl.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          rightControlActive = true;
+          if (!moveInterval) {
+            moveInterval = setInterval(handleContinuousMove, 16); // ~60fps
+          }
+        }, {passive: false});
+        
+        rightControl.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          rightControlActive = false;
+          if (!leftControlActive && moveInterval) {
+            clearInterval(moveInterval);
+            moveInterval = null;
+          }
+        }, {passive: false});
+        
+        rightControl.addEventListener('mouseleave', (e) => {
+          rightControlActive = false;
+          if (!leftControlActive && moveInterval) {
+            clearInterval(moveInterval);
+            moveInterval = null;
+          }
+        });
+        
+        // Botón nitro
+        btnNitro.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          activarNitro();
+        }, {passive: false});
+        
+        btnNitro.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          desactivarNitro();
+        }, {passive: false});
+        
+        btnNitro.addEventListener('mouseup', (e) => {
+          e.preventDefault();
+          desactivarNitro();
+        });
+        
+        btnNitro.addEventListener('mouseleave', (e) => {
+          e.preventDefault();
+          desactivarNitro();
+        });
+        
+        // Nuevos botones direccionales
+        btnLeft.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          leftControlActive = true;
+          if (!moveInterval) {
+            moveInterval = setInterval(handleContinuousMove, 16);
+          }
+        }, {passive: false});
+        
+        btnLeft.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          leftControlActive = false;
+          if (!rightControlActive && moveInterval) {
+            clearInterval(moveInterval);
+            moveInterval = null;
+          }
+        }, {passive: false});
+        
+        btnRight.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          rightControlActive = true;
+          if (!moveInterval) {
+            moveInterval = setInterval(handleContinuousMove, 16);
+          }
+        }, {passive: false});
+        
+        btnRight.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          rightControlActive = false;
+          if (!leftControlActive && moveInterval) {
+            clearInterval(moveInterval);
+            moveInterval = null;
+          }
+        }, {passive: false});
+      }
     }
 
     // Activar/desactivar sonido
@@ -1142,6 +1580,8 @@
         // Desactivar sonido
         sonidoInicio.pause();
         musicaFondo.pause();
+        sonidoViento.pause();
+        sonidoNieve.pause();
         sonidoActivado = false;
         this.textContent = '🔇 Sonido Desactivado';
         this.style.background = '#dc3545';
@@ -1158,41 +1598,6 @@
             this.textContent = '❌ Error al activar sonido';
             this.style.background = '#dc3545';
           });
-      }
-    });
-
-    // Configurar botón de mute en juego
-    const btnMute = document.getElementById('btnMute');
-    btnMute.addEventListener('click', function() {
-      if (sonidoActivado) {
-        musicaFondo.pause();
-        sonidoActivado = false;
-        this.textContent = '🔇';
-      } else {
-        if (!juegoPausado) {
-          musicaFondo.play().catch(e => console.error('Error al reproducir música:', e));
-        }
-        sonidoActivado = true;
-        this.textContent = '🔊';
-      }
-    });
-
-    // Configurar botón de pausa
-    const btnPause = document.getElementById('btnPause');
-    btnPause.addEventListener('click', function() {
-      if (juegoPausado) {
-        // Reanudar juego
-        juegoPausado = false;
-        this.textContent = '⏸️';
-        if (sonidoActivado) {
-          musicaFondo.play().catch(e => console.error('Error al reanudar música:', e));
-        }
-        loop();
-      } else {
-        // Pausar juego
-        juegoPausado = true;
-        this.textContent = '▶️';
-        musicaFondo.pause();
       }
     });
 
@@ -1333,6 +1738,20 @@
       }
     }
 
+    function spawnCono() {
+      if (level >= 2 && Math.random() < 0.003) {
+        const minX = leftBorder + borderWidth;
+        const maxX = rightBorder - borderWidth - 30;
+        const x = Math.random() * (maxX - minX) + minX;
+        conos.push({
+          x: x,
+          y: -30,
+          width: 20,
+          height: 30
+        });
+      }
+    }
+
     function drawTrampaClavos() {
       const ctx = gameCanvas.getContext('2d');
       trampaClavosItems.forEach(item => {
@@ -1373,24 +1792,66 @@
       });
     }
 
+    function drawConos() {
+      const ctx = gameCanvas.getContext('2d');
+      conos.forEach(cono => {
+        if (conoImg.complete) {
+          ctx.drawImage(conoImg, cono.x, cono.y, cono.width, cono.height);
+        } else {
+          ctx.fillStyle = 'orange';
+          ctx.beginPath();
+          ctx.moveTo(cono.x + cono.width/2, cono.y);
+          ctx.lineTo(cono.x + cono.width, cono.y + cono.height);
+          ctx.lineTo(cono.x, cono.y + cono.height);
+          ctx.closePath();
+          ctx.fill();
+          
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(cono.x + cono.width/3, cono.y + cono.height/3);
+          ctx.lineTo(cono.x + cono.width/2, cono.y + cono.height/2);
+          ctx.stroke();
+        }
+        cono.y += speed;
+      });
+    }
+
     function drawVidaItems() {
       const ctx = gameCanvas.getContext('2d');
+      const pulseSize = 0.9 + Math.abs(Math.sin(pulso * 2)) * 0.2;
+      
       vidaItems.forEach(item => {
-        const parpadeo = Math.sin(Date.now() / 200) > 0;
+        ctx.save();
         
-        if (parpadeo) {
-          if (vidaItemImg.complete) {
-            ctx.drawImage(vidaItemImg, item.x, item.y, 30, 30);
-          } else {
-            ctx.fillStyle = 'red';
-            ctx.beginPath();
-            ctx.arc(item.x + 15, item.y + 15, 15, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 20px Arial';
-            ctx.fillText('+', item.x + 10, item.y + 22);
-          }
+        const glowIntensity = 0.5 + 0.5 * Math.sin(Date.now() / 200);
+        ctx.shadowColor = 'rgba(0, 255, 255, ' + glowIntensity + ')';
+        ctx.shadowBlur = 15 * glowIntensity;
+        
+        const size = 30 * pulseSize;
+        
+        if (vidaItemImg.complete) {
+          ctx.drawImage(
+            vidaItemImg,
+            item.x + (30 - size)/2, 
+            item.y + (30 - size)/2, 
+            size, 
+            size
+          );
+        } else {
+          ctx.fillStyle = '#00CED1';
+          ctx.beginPath();
+          ctx.arc(item.x + 15, item.y + 15, size/2, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.fillStyle = 'white';
+          ctx.font = 'bold 16px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('+', item.x + 15, item.y + 15);
         }
+        
+        ctx.restore();
         item.y += speed;
       });
     }
@@ -1478,6 +1939,15 @@
       } catch (e) {}
     }
 
+    function reproducirSonidoCono() {
+      if (!sonidoActivado || juegoPausado) return;
+      try {
+        sonidoCono.pause();
+        sonidoCono.currentTime = 0;
+        sonidoCono.play();
+      } catch (e) {}
+    }
+
     function actualizarTienda() {
       totalPuntos = parseInt(localStorage.getItem('puntos_' + nombreJugador) || '0');
       document.getElementById('puntosTotales').textContent = 'Tus puntos: ' + totalPuntos;
@@ -1544,6 +2014,7 @@
       nitroItems = [];
       vidaItems = [];
       trampaClavosItems = [];
+      conos = [];
       humoParticles = [];
       derrapeMarks = [];
       score = 0;
@@ -1566,7 +2037,20 @@
       NITRO_ITEM_INTERVALO = 15000;
       PLACAS_PARA_VIDA = 50;
       juegoPausado = false;
+      climaActual = 'normal';
+      tiempoCambioClima = 0;
+      tiempoDuracionClima = 0;
+      hojas = [];
+      copos = [];
+      arena = [];
+      granizos = [];
+      ultimoRayo = 0;
+      nieblaActiva = false;
+      nocheActiva = false;
+      vientoActivo = false;
+      
       document.getElementById('btnPause').textContent = '⏸️';
+      document.getElementById('btnPauseMobile').textContent = '⏸️';
       desactivarNitro();
       document.getElementById('gameOverScreen').style.display = 'none';
       updateHUD();
@@ -1576,6 +2060,8 @@
     document.getElementById('btnReiniciar').addEventListener('click', () => {
       musicaFondo.pause();
       musicaFondo.currentTime = 0;
+      sonidoViento.pause();
+      sonidoNieve.pause();
       desactivarNitro();
       if (sonidoActivado) {
         sonidoInicio.play();
@@ -1598,10 +2084,10 @@
             activarNitro();
           }
           if (e.key === 'p' || e.key === 'P') {
-            btnPause.click();
+            document.getElementById('btnPause').click();
           }
           if (e.key === 'm' || e.key === 'M') {
-            btnMute.click();
+            document.getElementById('btnMute').click();
           }
         }
       });
@@ -1614,6 +2100,7 @@
     }
 
     function fondoPorNivel() {
+      if (nocheActiva) return '#001122';
       if (level <= 2) return '#222';
       if (level <= 4) return '#001144';
       return '#552200';
@@ -1692,7 +2179,6 @@
     function drawHumo() {
       const ctx = gameCanvas.getContext('2d');
       humoParticles.forEach((p, i) => {
-        // Usar color específico si existe, sino usar el por defecto
         ctx.fillStyle = p.color || `rgba(50, 50, 50, ${p.alpha})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -1766,7 +2252,7 @@
           speedX: (Math.random() - 0.5) * 1.5,
           speedY: -Math.random() * 1.5,
           decay: 0.01 + Math.random() * 0.02,
-          color: 'rgba(200, 200, 200, 0.8)' // Humo blanco/gris
+          color: 'rgba(200, 200, 200, 0.8)'
         });
       }
       
@@ -2014,26 +2500,19 @@
     }
 
     function spawnObstacle() {
-      // Ajustamos las probabilidades según el nivel como solicitaste
       let probability;
       
       if (level === 1) {
-        // Nivel 1: Muy pocos obstáculos para que el usuario se familiarice
         probability = 0.002;
       } else if (level === 2) {
-        // Nivel 2: Un poco más que el nivel 1 pero aún pocos
         probability = 0.003;
       } else if (level === 3) {
-        // Nivel 3: Incrementamos un poco más
         probability = 0.005;
       } else if (level === 4) {
-        // Nivel 4: Similar al 3 pero con posibilidad de obstáculos móviles
         probability = 0.006;
       } else if (level === 5) {
-        // Nivel 5: Mayor dificultad, más obstáculos
         probability = 0.008;
       } else {
-        // Nivel 6+: Máxima dificultad
         probability = 0.01;
       }
       
@@ -2042,7 +2521,6 @@
         const maxX = rightBorder - borderWidth - 30;
         const x = Math.random() * (maxX - minX) + minX;
         
-        // Solo aparecen obstáculos móviles a partir del nivel 3
         if (level >= 3 && Math.random() < (level >= 5 ? 0.3 : 0.1)) {
           obstacles.push({ 
             x: x, 
@@ -2058,15 +2536,14 @@
     }
 
     function spawnAceite() {
-      // Ajustamos la probabilidad de aceite según el nivel
       let probability;
       
       if (level <= 2) {
-        probability = 0.0005; // Muy baja probabilidad en niveles iniciales
+        probability = 0.0005;
       } else if (level <= 4) {
-        probability = 0.001; // Probabilidad moderada
+        probability = 0.001;
       } else {
-        probability = 0.002; // Mayor probabilidad en niveles altos
+        probability = 0.002;
       }
       
       if (Math.random() < probability && aceites.length < 2) {
@@ -2158,6 +2635,50 @@
         }
 
         return true;
+      });
+
+      conos = conos.filter(cono => {
+        const hit = patrulla.x < cono.x + cono.width &&
+                   patrulla.x + patrulla.width > cono.x &&
+                   patrulla.y < cono.y + cono.height &&
+                   patrulla.y + patrulla.height > cono.y;
+        
+        if (hit && !invulnerable) {
+          reproducirSonidoCono();
+          
+          if (escudoActivo) {
+            escudoActivo = false;
+            reproducirSonidoAntiPowerup();
+          } else {
+            vidas--;
+            combo = 0;
+            shakeFrames = 10;
+            tiempoUltimoChoque = ahora;
+            
+            for (let i = 0; i < 8; i++) {
+              recolectados.push({
+                x: cono.x + cono.width/2,
+                y: cono.y + cono.height/2,
+                size: 3 + Math.random() * 5,
+                alpha: 1,
+                scale: 1,
+                color: 'orange'
+              });
+            }
+            
+            if (vidas <= 0) {
+              gameOver = true;
+              musicaFondo.pause();
+              document.getElementById('gameOverScreen').style.display = 'flex';
+              document.getElementById('btnReiniciar').style.display = 'block';
+              document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
+              document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+            }
+          }
+          updateHUD();
+          return false;
+        }
+        return cono.y < gameCanvas.height + cono.height;
       });
 
       aceites = aceites.filter(aceite => {
@@ -2353,11 +2874,9 @@
 
     function drawHUD() {
       if (isMobile) {
-        // Para móvil, el HUD se maneja con elementos HTML fuera del canvas
         return;
       }
       
-      // Solo dibujar HUD en canvas si es necesario
       const ctx = gameCanvas.getContext('2d');
       const ahora = Date.now();
       
@@ -2389,6 +2908,17 @@
         ctx.font = 'bold 16px Arial';
         ctx.fillText('¡DERRAPANDO!', 10, 180);
       }
+      
+      // Mostrar clima actual
+      if (climaActual !== 'normal') {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(gameCanvas.width - 150, 180, 140, 30);
+        
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Clima: ${climaActual.toUpperCase()}`, gameCanvas.width - 20, 200);
+      }
     }
 
     function aplicarSacudida() {
@@ -2408,6 +2938,7 @@
         return;
       }
 
+      cambiarClima();
       aplicarSacudida();
       const ctx = gameCanvas.getContext('2d');
       ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
@@ -2421,11 +2952,24 @@
       drawNitroItems();
       drawVidaItems();
       drawTrampaClavos();
+      drawConos();
       drawRecolectados();
       drawPatrulla();
       drawLluvia();
       drawHumo();
       drawDerrapeMarks();
+      
+      // Dibujar efectos climáticos
+      drawNiebla();
+      drawTormenta();
+      drawHojas();
+      drawNieve();
+      drawArena();
+      drawGranizo();
+      drawNoche();
+      
+      aplicarEfectosClimaticos();
+      
       drawHUD();
       
       checkCollisions();
@@ -2435,6 +2979,11 @@
       spawnPowerUp();
       spawnNitroItem();
       spawnTrampaClavos();
+      spawnCono();
+      spawnHojas();
+      spawnNieve();
+      spawnArena();
+      spawnGranizo();
       
       if (level < 3 && nitro < 100) {
         nitro += 0.1;
@@ -2451,12 +3000,10 @@
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
       
-      // Detectar cambios de orientación en móviles
       if (isMobile) {
         screen.orientation.addEventListener('change', resizeCanvas);
       }
       
-      // Precargar imágenes de patrulla
       const colorPatrulla = document.getElementById('colorPatrulla').value;
       patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
           const img = new Image();
@@ -2464,10 +3011,13 @@
           return img;
       });
       
-      // Configurar botón de reinicio
+      setupControls();
+      
       document.getElementById('btnReiniciar').addEventListener('click', function() {
         musicaFondo.pause();
         musicaFondo.currentTime = 0;
+        sonidoViento.pause();
+        sonidoNieve.pause();
         desactivarNitro();
         if (sonidoActivado) {
           sonidoInicio.play();
@@ -2477,7 +3027,6 @@
         document.getElementById('gameOverScreen').style.display = 'none';
       });
       
-      // Configurar teclado para desktop
       if (!isMobile) {
         document.addEventListener('keydown', (e) => {
           if (!deslizando && !juegoPausado) {
@@ -2491,10 +3040,10 @@
               activarNitro();
             }
             if (e.key === 'p' || e.key === 'P') {
-              btnPause.click();
+              document.getElementById('btnPause').click();
             }
             if (e.key === 'm' || e.key === 'M') {
-              btnMute.click();
+              document.getElementById('btnMute').click();
             }
           }
         });
