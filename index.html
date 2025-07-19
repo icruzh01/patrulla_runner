@@ -1073,6 +1073,9 @@
     const sonidoRayo = new Audio('sonidos/rayo.mp3');
     const sonidoViento = new Audio('sonidos/viento.mp3');
     const sonidoNieve = new Audio('sonidos/nieve.mp3');
+    const sonidoNoche = new Audio('sonidos/noche.mp3');
+    sonidoNoche.loop = true;
+    sonidoNoche.volume = 0.3;
     const musicaFondo = new Audio('sonidos/musicaFondo_1.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.2;
@@ -1129,15 +1132,20 @@
         if (sonidoActivado) {
           sonidoViento.pause();
           sonidoNieve.pause();
+          sonidoNoche.pause();
           
           if (climaActual === 'viento') {
             sonidoViento.loop = true;
-            sonidoViento.volume = 0.3;
+            sonidoViento.volume = 0.5;
             sonidoViento.play().catch(e => console.error('Error al reproducir sonido de viento:', e));
           } else if (climaActual === 'nieve') {
             sonidoNieve.loop = true;
-            sonidoNieve.volume = 0.2;
+            sonidoNieve.volume = 0.3;
             sonidoNieve.play().catch(e => console.error('Error al reproducir sonido de nieve:', e));
+          } else if (climaActual === 'noche') {
+            sonidoNoche.loop = true;
+            sonidoNoche.volume = 0.3;
+            sonidoNoche.play().catch(e => console.error('Error al reproducir sonido de noche:', e));
           }
         }
       }
@@ -1281,29 +1289,29 @@
       ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
       
       // Dibujar farolas en la parte superior
-    ctx.fillStyle = 'rgba(255, 255, 150, 0.8)';
-    for (let i = 0; i < 3; i++) {
-    const x = leftBorder + (rightBorder - leftBorder) / 4 * (i + 1);
-    const y = 0; // Ajusta este valor para que esté más arriba (ej: 10, 20, etc.)
-    
-    // Bombilla de la farola
-    ctx.beginPath();
-    ctx.arc(x, y, 5, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Luz de la farola (gradiente hacia abajo)
-    const gradient = ctx.createRadialGradient(x, y, 5, x, y, 50);
-    gradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
-    gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(x - 50, y, 100, gameCanvas.height - y); // La luz llega hasta abajo
-    }
+      ctx.fillStyle = 'rgba(255, 255, 150, 0.8)';
+      for (let i = 0; i < 3; i++) {
+        const x = leftBorder + (rightBorder - leftBorder) / 4 * (i + 1);
+        const y = 0;
+        
+        // Bombilla de la farola
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Luz de la farola (gradiente hacia abajo)
+        const gradient = ctx.createRadialGradient(x, y, 5, x, y, 50);
+        gradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
+        gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x - 50, y, 100, gameCanvas.height - y);
+      }
     }
 
     function aplicarEfectosClimaticos() {
       if (vientoActivo) {
         // El viento empuja la patrulla
-        patrulla.targetX += (Math.random() - 0.5) * 2;
+        patrulla.targetX += (Math.random() - 0.5) * 20;
         patrulla.targetX = Math.max(leftBorder + borderWidth, Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX));
       }
       
@@ -1420,6 +1428,7 @@
           musicaFondo.pause();
           sonidoViento.pause();
           sonidoNieve.pause();
+          sonidoNoche.pause();
           sonidoActivado = false;
           this.textContent = '🔇';
         } else {
@@ -1427,6 +1436,7 @@
             musicaFondo.play().catch(e => console.error('Error al reproducir música:', e));
             if (vientoActivo) sonidoViento.play().catch(e => console.error('Error al reproducir viento:', e));
             if (climaActual === 'nieve') sonidoNieve.play().catch(e => console.error('Error al reproducir nieve:', e));
+            if (climaActual === 'noche') sonidoNoche.play().catch(e => console.error('Error al reproducir noche:', e));
           }
           sonidoActivado = true;
           this.textContent = '🔊';
@@ -1444,6 +1454,7 @@
             musicaFondo.play().catch(e => console.error('Error al reanudar música:', e));
             if (vientoActivo) sonidoViento.play().catch(e => console.error('Error al reanudar viento:', e));
             if (climaActual === 'nieve') sonidoNieve.play().catch(e => console.error('Error al reanudar nieve:', e));
+            if (climaActual === 'noche') sonidoNoche.play().catch(e => console.error('Error al reanudar noche:', e));
           }
           loop();
         } else {
@@ -1453,6 +1464,7 @@
           musicaFondo.pause();
           sonidoViento.pause();
           sonidoNieve.pause();
+          sonidoNoche.pause();
         }
       });
 
@@ -1582,6 +1594,7 @@
         musicaFondo.pause();
         sonidoViento.pause();
         sonidoNieve.pause();
+        sonidoNoche.pause();
         sonidoActivado = false;
         this.textContent = '🔇 Sonido Desactivado';
         this.style.background = '#dc3545';
@@ -2049,6 +2062,11 @@
       nocheActiva = false;
       vientoActivo = false;
       
+      // Detener todos los sonidos ambientales
+      sonidoViento.pause();
+      sonidoNieve.pause();
+      sonidoNoche.pause();
+      
       document.getElementById('btnPause').textContent = '⏸️';
       document.getElementById('btnPauseMobile').textContent = '⏸️';
       desactivarNitro();
@@ -2062,6 +2080,7 @@
       musicaFondo.currentTime = 0;
       sonidoViento.pause();
       sonidoNieve.pause();
+      sonidoNoche.pause();
       desactivarNitro();
       if (sonidoActivado) {
         sonidoInicio.play();
@@ -2306,6 +2325,68 @@
           ctx.fillRect(patrulla.x, patrulla.y, patrulla.width, patrulla.height);
       }
 
+      // Dibujar faros delanteros (siempre visibles, pero más intensos de noche)
+      if (nocheActiva) {
+        ctx.save();
+        
+        // Faro izquierdo
+        const leftLightX = patrulla.x + 5;
+        const leftLightY = patrulla.y + patrulla.height - 60;
+        
+        // Faro derecho
+        const rightLightX = patrulla.x + patrulla.width - 5;
+        const rightLightY = patrulla.y + patrulla.height - 60;
+        
+        // Crear capa de iluminación
+        ctx.globalCompositeOperation = 'lighter';
+        
+        // Dibujar haz de luz izquierdo
+        const leftGradient = ctx.createRadialGradient(
+          leftLightX, leftLightY, 10,
+          leftLightX, leftLightY, 150
+        );
+        leftGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+        leftGradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
+        leftGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
+        
+        ctx.fillStyle = leftGradient;
+        ctx.beginPath();
+        ctx.moveTo(leftLightX, leftLightY);
+        ctx.lineTo(leftLightX - 100, leftLightY - 200);
+        ctx.lineTo(leftLightX + 100, leftLightY - 200);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Dibujar haz de luz derecho
+        const rightGradient = ctx.createRadialGradient(
+          rightLightX, rightLightY, 10,
+          rightLightX, rightLightY, 150
+        );
+        rightGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+        rightGradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
+        rightGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
+        
+        ctx.fillStyle = rightGradient;
+        ctx.beginPath();
+        ctx.moveTo(rightLightX, rightLightY);
+        ctx.lineTo(rightLightX - 100, rightLightY - 200);
+        ctx.lineTo(rightLightX + 100, rightLightY - 200);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Dibujar focos de luz
+        ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
+        ctx.beginPath();
+        ctx.arc(leftLightX, leftLightY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(rightLightX, rightLightY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+
       if (escudoActivo) {
         const time = Date.now() / 100;
         const flashIntensity1 = 0.5 + 0.5 * Math.sin(time);
@@ -2353,6 +2434,79 @@
       }
     }
 
+    function drawLightEffects() {
+      if (!nocheActiva) return;
+      
+      const ctx = gameCanvas.getContext('2d');
+      ctx.save();
+      
+      // Posiciones de los faros
+      const leftLightX = patrulla.x + 5;
+      const leftLightY = patrulla.y + patrulla.height - 60;
+      const rightLightX = patrulla.x + patrulla.width - 5;
+      const rightLightY = patrulla.y + patrulla.height - 60;
+      
+      // Iluminar obstáculos
+      obstacles.forEach(o => {
+        if (isInLightCone(o, leftLightX, leftLightY) || isInLightCone(o, rightLightX, rightLightY)) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.filter = 'brightness(1.5)';
+          
+          if (barreraImg.complete) {
+            ctx.drawImage(barreraImg, o.x, o.y, o.size, o.size);
+          } else {
+            ctx.fillStyle = o.tipo === "barreraMovil" ? 'red' : 'orange';
+            ctx.fillRect(o.x, o.y, o.size, o.size);
+          }
+          
+          ctx.restore();
+        }
+      });
+      
+      // Iluminar objetivos
+      objetivos.forEach(obj => {
+        if (isInLightCone(obj, leftLightX, leftLightY) || isInLightCone(obj, rightLightX, rightLightY)) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.filter = 'brightness(1.8)';
+          
+          if (placaPoliciaImg.complete) {
+            const size = obj.size * (0.9 + Math.abs(Math.sin(pulso * 2)) * 0.2);
+            const floatOffset = Math.sin(pulso + obj.x * 0.01) * 3;
+            const yPos = obj.y + floatOffset;
+            
+            ctx.drawImage(placaPoliciaImg, obj.x - size/2, yPos - size/2, size, size);
+          } else {
+            drawHexagon(obj.x, obj.y + floatOffset, obj.size, 'yellow');
+          }
+          
+          ctx.restore();
+        }
+      });
+      
+      ctx.restore();
+    }
+
+    function isInLightCone(obj, lightX, lightY) {
+      const objCenterX = obj.x + (obj.size ? obj.size/2 : 15);
+      const objCenterY = obj.y + (obj.size ? obj.size/2 : 15);
+      
+      // Distancia al faro
+      const dx = objCenterX - lightX;
+      const dy = objCenterY - lightY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // Solo objetos delante del coche
+      if (objCenterY > lightY) return false;
+      
+      // Ángulo máximo del cono de luz (60 grados)
+      const maxAngle = Math.PI / 3;
+      const angle = Math.atan2(dy, dx);
+      
+      return distance < 200 && Math.abs(angle) < maxAngle;
+    }
+
     function drawObstacles() {
       const ctx = gameCanvas.getContext('2d');
       obstacles.forEach(o => {
@@ -2396,7 +2550,7 @@
             size
           );
         } else {
-          drawHexagon(obj.x, obj.y + floatOffset, obj.size * pulseSize, 'yellow');
+          drawHexagon(obj.x, obj.y + floatOffset, obj.size, 'yellow');
         }
         
         ctx.restore();
@@ -2732,8 +2886,9 @@
             if (level % 2 === 0) {
               PLACAS_PARA_VIDA = Math.max(20, PLACAS_PARA_VIDA - 5);
             }
-            
-            if (level % 3 === 0) {
+
+
+        if (level % 3 === 0) {
               NITRO_ITEM_INTERVALO = Math.max(5000, NITRO_ITEM_INTERVALO - 2000);
             }
             
