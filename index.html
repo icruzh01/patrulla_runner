@@ -2928,9 +2928,9 @@
             probability = 0.01;
         }
         
-        // Significant increase in obstacles during snow weather
+        // Reducir drásticamente los obstáculos durante clima de nieve
         if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
-            probability *= 3; // Triple the obstacle probability during snow
+            probability *= 0.1; // Reducir a 10% de la probabilidad normal durante nieve
         }
         
         if (Math.random() < probability) {
