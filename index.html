@@ -806,7 +806,7 @@
     </div>
   </div>
 
-  <!-- Versión móvil (oculta inicialmente) -->
+  <!-------------------- Versión móvil (oculta inicialmente) --------------->
   <div id="mobile-view" style="display: none;">
     <div id="game-container">
       <canvas id="game-mobile" width="400" height="600"></canvas>
@@ -1033,6 +1033,7 @@
     const sonidoViento = new Audio('sonidos/viento.mp3');
     const sonidoNieve = new Audio('sonidos/nieve.mp3');
     const sonidoNoche = new Audio('sonidos/noche.mp3');
+    const sonidoGranizoGolpe = new Audio('sonidos/granizoGolpe_1.mp3');
     sonidoNoche.loop = true;
     sonidoNoche.volume = 0.3;
     const musicaFondo = new Audio('sonidos/musicaFondo_1.mp3');
@@ -1361,6 +1362,12 @@
         const ahora = Date.now();
         
         crateres.forEach((crater, index) => {
+            // Eliminar cráter después de 3 segundos (3000ms)
+            if (ahora - crater.tiempoCreacion > 3000) {
+                crateres.splice(index, 1);
+                return;
+            }
+            
             // Dibujar cráter principal
             ctx.save();
             
@@ -1391,8 +1398,8 @@
                 ctx.fill();
             }
             
-            // Efecto de humo si es reciente
-            if (ahora - crater.tiempoCreacion < 3000 && frameCount % 5 === 0) {
+            // Efecto de humo si es reciente (solo durante los 3 segundos)
+            if (frameCount % 5 === 0) {
                 particulasCrateres.push({
                     x: crater.x + crater.width/2 + (Math.random() - 0.5) * 10,
                     y: crater.y + (Math.random() * 5),
@@ -1408,7 +1415,7 @@
             ctx.restore();
         });
         
-        // Dibujar partículas de cráteres
+        // Dibujar partículas de cráteres (se autodestruyen cuando alpha <= 0)
         particulasCrateres.forEach((p, index) => {
             ctx.fillStyle = p.color.replace('0.7)', p.alpha + ')');
             ctx.beginPath();
@@ -1614,6 +1621,12 @@
                         combo = 0;
                         shakeFrames = 10;
                         tiempoUltimoChoque = Date.now();
+                        
+                        // Reproducir sonido de impacto de granizo
+                        if (sonidoActivado) {
+                            sonidoGranizoGolpe.currentTime = 0;
+                            sonidoGranizoGolpe.play().catch(e => console.error('Error al reproducir sonido de granizo:', e));
+                        }
                         
                         if (vidas <= 0) {
                             gameOver = true;
