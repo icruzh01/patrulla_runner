@@ -3350,6 +3350,16 @@
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         
         gameCanvas.style.background = fondoPorNivel();
+        
+        // Dibujar efectos climáticos primero (excepto rayos que necesitan estar sobre algunos elementos)
+        drawNiebla();
+        drawTormenta();  // Esta función genera los rayos pero no los dibuja
+        drawHojas();
+        drawNieve();
+        drawArena();
+        drawGranizo();
+        drawNoche();
+        
         drawRoadLines();
         drawAceites();
         drawObstacles();
@@ -3359,20 +3369,16 @@
         drawVidaItems();
         drawTrampaClavos();
         drawConos();
+        
+        // Dibujar rayos y cráteres aquí para que sean visibles sobre la carretera
+        drawRayos();      // Añadir esta línea
+        drawCrateres();   // Añadir esta línea
+        
         drawRecolectados();
         drawPatrulla();
         drawLluvia();
         drawHumo();
         drawDerrapeMarks();
-        
-        // Dibujar efectos climáticos
-        drawNiebla();
-        drawTormenta();
-        drawHojas();
-        drawNieve();
-        drawArena();
-        drawGranizo();
-        drawNoche();
         
         aplicarEfectosClimaticos();
         
