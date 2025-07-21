@@ -806,7 +806,7 @@
     </div>
   </div>
 
-  <!-------------------- Versión móvil (oculta inicialmente) --------------->
+  <!-------------------- Versión móvil (oculta inicialmente) ---------------->
   <div id="mobile-view" style="display: none;">
     <div id="game-container">
       <canvas id="game-mobile" width="400" height="600"></canvas>
@@ -817,33 +817,40 @@
       <div class="mobile-hud">
         <!-- Elementos de la izquierda -->
         <div class="mobile-hud-left">
-          <div class="mobile-hud-item" id="mobile-player">Policía: -</div>
-          <div class="mobile-hud-item" id="mobile-lives">❤️❤️❤️</div>
-          <div class="mobile-hud-item" id="mobile-score">Puntos: 0</div>
+          <div class="mobile-hud-item" id="mobile-player">👮‍♂️: -</div>
+          <div class="mobile-hud-item" id="mobile-lives">♥️: 3</div>
+          <div class="mobile-hud-item" id="mobile-score">💎: 0</div>
         </div>
         
         <!-- Elementos de la derecha -->
         <div class="mobile-hud-right">
-          <div class="mobile-hud-item" id="mobile-level">Nivel 1</div>
+          <div class="mobile-hud-item" id="mobile-level">🏆: 1</div>
           
           <div class="mobile-hud-item">
-            <div>Próx. nivel</div>
+            <div>🚩: 0%</div>
             <div class="mobile-progress-container">
               <div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div>
             </div>
           </div>
           
           <div class="mobile-hud-item">
-            <div>Nitro</div>
+            <div>⚡: 100%</div>
             <div class="mobile-progress-container">
               <div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div>
             </div>
           </div>
 
           <div class="mobile-hud-item">
-            <div>Escudos</div>
+            <div>🛡️: 0/2</div>
             <div class="mobile-progress-container">
               <div class="mobile-progress-bar" id="mobile-shields-bar" style="width: 0%; background: cyan"></div>
+            </div>
+          </div>
+          
+          <div class="mobile-hud-item">
+            <div>🟡: 0/50</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar plates" id="mobile-plates-bar" style="width: 0%; background: yellow"></div>
             </div>
           </div>
         </div>
@@ -883,7 +890,7 @@
   </div>
 
   <div id="gameOverScreen">
-    <div id="gameOverText">¡Misión Fallida!</div>
+    <div id="gameOverText">¡Game Over!</div>
     <div id="puntosFinales"></div>
     <div id="highScoreFinal"></div>
     <div id="maxComboFinal"></div>
@@ -1135,6 +1142,8 @@
             gotas = [];
             rayos = [];
             crateres = [];
+            particulasRayos = [];
+            particulasCrateres = [];
             
             // Activar/desactivar efectos según el clima
             nieblaActiva = climaActual === 'niebla';
@@ -1646,57 +1655,107 @@
 
     // Funciones del juego principal
     function updateHUD() {
-        if (isMobile) {
-            document.getElementById('mobile-player').textContent = `Jugador: ${nombreJugador}`;
-            document.getElementById('mobile-score').textContent = `Puntos: ${score}`;
-            document.getElementById('mobile-level').textContent = `Nivel ${level}`;
-            document.getElementById('mobile-lives').textContent = '❤️'.repeat(vidas);
-            
-            const progress = Math.min(100, (score / (level * 1000)) * 100);
-            document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
-            document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
-            document.getElementById('mobile-shields-bar').style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
-            
+    if (isMobile) {
+        const nombreCorto = nombreJugador.length > 5 ? nombreJugador.substring(0, 5).toUpperCase() : nombreJugador.toUpperCase();
+        
+        // Verificar existencia de elementos antes de acceder a ellos
+        const mobilePlayer = document.getElementById('mobile-player');
+        const mobileScore = document.getElementById('mobile-score');
+        const mobileLevel = document.getElementById('mobile-level');
+        const mobileLives = document.getElementById('mobile-lives');
+        const mobileNextLevelBar = document.getElementById('mobile-next-level-bar');
+        const mobileNitroBar = document.getElementById('mobile-nitro-bar');
+        const mobileShieldsBar = document.getElementById('mobile-shields-bar');
+        const mobilePlatesBar = document.getElementById('mobile-plates-bar');
+        const mobileCombo = document.getElementById('mobile-combo');
+
+        if (mobilePlayer) mobilePlayer.textContent = `👮‍♂️: ${nombreCorto}`;
+        if (mobileScore) mobileScore.textContent = `💎: ${score}`;
+        if (mobileLevel) mobileLevel.textContent = `🏆: ${level}`;
+        if (mobileLives) mobileLives.textContent = `♥️: ${vidas}`;
+        
+        const progress = Math.min(100, (score / (level * 1000)) * 100);
+        if (mobileNextLevelBar) mobileNextLevelBar.style.width = `${progress}%`;
+        if (mobileNitroBar) mobileNitroBar.style.width = `${nitro}%`;
+        if (mobileShieldsBar) mobileShieldsBar.style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
+        if (mobilePlatesBar) mobilePlatesBar.style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
+        
+        // Actualizar textos con emojis solo si existen los elementos
+        const hudItems = document.querySelectorAll('.mobile-hud-item');
+        if (hudItems.length > 0) {
+            hudItems[0].textContent = `👮‍♂️: ${nombreCorto}`;
+            if (hudItems[1]) hudItems[1].textContent = `♥️: ${vidas}`;
+            if (hudItems[2]) hudItems[2].textContent = `💎: ${score}`;
+        }
+        
+        const rightHudItems = document.querySelectorAll('.mobile-hud-right .mobile-hud-item');
+        if (rightHudItems.length > 0) {
+            if (rightHudItems[0]) rightHudItems[0].textContent = `🏆: ${level}`;
+            if (rightHudItems[1]) rightHudItems[1].innerHTML = `🚩: ${Math.round(progress)}%`;
+            if (rightHudItems[2]) rightHudItems[2].innerHTML = `⚡: ${Math.round(nitro)}%`;
+            if (rightHudItems[3]) rightHudItems[3].innerHTML = `🛡️: ${escudosRecolectados}/${MAX_ESCUDOS}`;
+            if (rightHudItems[4]) rightHudItems[4].innerHTML = `🟡: ${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+        }
+        
+        if (mobileCombo) {
             if (combo > 1) {
-                const comboElement = document.getElementById('mobile-combo');
-                comboElement.textContent = `COMBO x${combo}`;
-                comboElement.style.display = 'block';
-                comboElement.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
+                mobileCombo.textContent = `COMBO x${combo}`;
+                mobileCombo.style.display = 'block';
+                mobileCombo.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
             } else {
-                document.getElementById('mobile-combo').style.display = 'none';
+                mobileCombo.style.display = 'none';
             }
-        } else {
-            document.getElementById('desktop-player').textContent = nombreJugador;
-            document.getElementById('desktop-score').textContent = score;
-            document.getElementById('desktop-level').textContent = level;
-            document.getElementById('desktop-highscore').textContent = highScore;
-            document.getElementById('desktop-nitro-progress').style.width = `${nitro}%`;
-            document.getElementById('desktop-plates').textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
-            document.getElementById('desktop-plates-progress').style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
-            document.getElementById('desktop-shields').textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
-            document.getElementById('desktop-shields-progress').style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
-            
-            const progress = Math.min(100, (score / (level * 1000)) * 100);
+        }
+    } else {
+        // Versión desktop - también con verificaciones
+        const desktopPlayer = document.getElementById('desktop-player');
+        const desktopScore = document.getElementById('desktop-score');
+        const desktopLevel = document.getElementById('desktop-level');
+        const desktopHighscore = document.getElementById('desktop-highscore');
+        const desktopNitroProgress = document.getElementById('desktop-nitro-progress');
+        const desktopPlates = document.getElementById('desktop-plates');
+        const desktopPlatesProgress = document.getElementById('desktop-plates-progress');
+        const desktopShields = document.getElementById('desktop-shields');
+        const desktopShieldsProgress = document.getElementById('desktop-shields-progress');
+        const desktopLives = document.getElementById('desktop-lives');
+        const desktopComboContainer = document.getElementById('desktop-combo-container');
+        const desktopCombo = document.getElementById('desktop-combo');
+
+        if (desktopPlayer) desktopPlayer.textContent = nombreJugador;
+        if (desktopScore) desktopScore.textContent = score;
+        if (desktopLevel) desktopLevel.textContent = level;
+        if (desktopHighscore) desktopHighscore.textContent = highScore;
+        if (desktopNitroProgress) desktopNitroProgress.style.width = `${nitro}%`;
+        if (desktopPlates) desktopPlates.textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+        if (desktopPlatesProgress) desktopPlatesProgress.style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
+        if (desktopShields) desktopShields.textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
+        if (desktopShieldsProgress) desktopShieldsProgress.style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
+        
+        const progress = Math.min(100, (score / (level * 1000)) * 100);
+        if (document.getElementById('desktop-level-progress')) {
             document.getElementById('desktop-level-progress').style.width = `${progress}%`;
-            
-            const livesContainer = document.getElementById('desktop-lives');
-            livesContainer.innerHTML = '';
+        }
+        
+        if (desktopLives) {
+            desktopLives.innerHTML = '';
             for (let i = 0; i < vidas; i++) {
                 const life = document.createElement('div');
                 life.className = 'life';
-                livesContainer.appendChild(life);
+                desktopLives.appendChild(life);
             }
-            
+        }
+        
+        if (desktopComboContainer && desktopCombo) {
             if (combo > 1) {
-                const comboContainer = document.getElementById('desktop-combo-container');
-                comboContainer.style.display = 'block';
-                document.getElementById('desktop-combo').textContent = `x${combo}`;
-                comboContainer.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+                desktopComboContainer.style.display = 'block';
+                desktopCombo.textContent = `x${combo}`;
+                desktopComboContainer.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
             } else {
-                document.getElementById('desktop-combo-container').style.display = 'none';
+                desktopComboContainer.style.display = 'none';
             }
         }
     }
+}
 
     function handleContinuousMove() {
         if (leftControlActive) {
@@ -2776,23 +2835,23 @@
     }
 
     function isInLightCone(obj, lightX, lightY) {
-        const objCenterX = obj.x + (obj.size ? obj.size/2 : 15);
-        const objCenterY = obj.y + (obj.size ? obj.size/2 : 15);
-        
-        // Distancia al faro
-        const dx = objCenterX - lightX;
-        const dy = objCenterY - lightY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        // Solo objetos delante del coche
-        if (objCenterY > lightY) return false;
-        
-        // Ángulo máximo del cono de luz (60 grados)
-        const maxAngle = Math.PI / 3;
-        const angle = Math.atan2(dy, dx);
-        
-        return distance < 200 && Math.abs(angle) < maxAngle;
-    }
+    // Verificar si el objeto está dentro del área general de iluminación
+    const objCenterX = obj.x + (obj.size ? obj.size/2 : obj.width/2);
+    const objCenterY = obj.y + (obj.size ? obj.size/2 : obj.height/2);
+    
+    // Distancia desde el foco de luz al objeto
+    const dx = objCenterX - lightX;
+    const dy = objCenterY - lightY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Ángulo del cono de luz (aproximadamente 60 grados)
+    const angle = Math.atan2(dy, dx);
+    const minAngle = -Math.PI/3; // -60 grados
+    const maxAngle = Math.PI/3;  // 60 grados
+    
+    // El objeto está en el cono si está dentro del rango de distancia y ángulo
+    return distance < 150 && angle > minAngle && angle < maxAngle;
+}
 
     function drawObstacles() {
         const ctx = gameCanvas.getContext('2d');
@@ -2809,6 +2868,19 @@
                 ctx.fillStyle = o.tipo === "barreraMovil" ? 'red' : 'orange';
                 ctx.fillRect(o.x, o.y, o.size, o.size);
             }
+            
+            // Movimiento lateral para barreras móviles
+            if (o.tipo === "barreraMovil") {
+                o.x += o.direccion * 1.5;
+                if (o.x < leftBorder + borderWidth) {
+                    o.x = leftBorder + borderWidth;
+                    o.direccion = 1;
+                } else if (o.x + o.size > rightBorder - borderWidth) {
+                    o.x = rightBorder - borderWidth - o.size;
+                    o.direccion = -1;
+                }
+            }
+            
             o.y += speed;
         });
     }
@@ -2896,20 +2968,6 @@
         });
     }
 
-    function drawHexagon(x, y, size, color) {
-        const ctx = gameCanvas.getContext('2d');
-        ctx.beginPath();
-        for (let i = 0; i < 6; i++) {
-            const angle = Math.PI / 3 * i;
-            const px = x + size * Math.cos(angle);
-            const py = y + size * Math.sin(angle);
-            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.closePath();
-        ctx.fillStyle = color;
-        ctx.fill();
-    }
-
     function spawnObstacle() {
         let probability;
         
@@ -2919,19 +2977,16 @@
         } else if (level === 2) {
             probability = 0.003; // Probabilidad ligeramente mayor para nivel 2
         } else if (level <= 5) {
-            // Aumento gradual desde el nivel 3 hasta el 5
-            probability = 0.003 + (0.001 * (level - 2)); // Ejemplo: nivel 3 = 0.004, nivel 4 = 0.005, nivel 5 = 0.006
+            probability = 0.003 + (0.001 * (level - 2));
         } else if (level <= 8) {
-            // Incremento más moderado para niveles 6-8
-            probability = 0.006 + (0.0005 * (level - 5)); // Ejemplo: nivel 6 = 0.0065, nivel 7 = 0.007, nivel 8 = 0.0075
+            probability = 0.006 + (0.0005 * (level - 5));
         } else {
-            // Límite máximo para evitar exceso de obstáculos
-            probability = 0.008; // Probabilidad máxima (niveles 9+)
+            probability = 0.008;
         }
         
         // Reducir drásticamente los obstáculos durante clima de nieve
         if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
-            probability *= 0.1; // Reducir a 10% de la probabilidad normal durante nieve
+            probability *= 0.1;
         }
         
         if (Math.random() < probability) {
@@ -2939,7 +2994,6 @@
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
             
-            // Solo crear obstáculos móviles si NO es clima de nieve
             if (level >= 3 && Math.random() < (level >= 5 ? 0.3 : 0.1) && 
                 !(climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve'))) {
                 obstacles.push({ 
@@ -3019,20 +3073,9 @@
                 } else {
                     vidas--;
                     combo = 0;
+                    shakeFrames = 15;
+                    tiempoUltimoChoque = ahora;
                     reproducirSonidoChoque();
-                    shakeFrames = 10;
-                    tiempoUltimoChoque = ahora;
-                    
-                    for (let i = 0; i < 10; i++) {
-                        recolectados.push({
-                            x: o.x + o.size/2,
-                            y: o.y + o.size/2,
-                            size: 5,
-                            alpha: 1,
-                            scale: 1,
-                            color: 'red'
-                        });
-                    }
                     
                     if (vidas <= 0) {
                         gameOver = true;
@@ -3041,153 +3084,74 @@
                         document.getElementById('btnReiniciar').style.display = 'block';
                         document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
                         document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+                        document.getElementById('maxComboFinal').textContent = `Máximo Combo: ${maxCombo}`;
+                        
+                        // Guardar puntuación máxima
+                        if (score > highScore) {
+                            highScore = score;
+                            localStorage.setItem('highScore_' + nombreJugador, highScore);
+                        }
+                        
+                        // Sumar puntos al total
+                        totalPuntos += score;
+                        localStorage.setItem('puntos_' + nombreJugador, totalPuntos);
+                        actualizarTienda();
                     }
                 }
                 updateHUD();
-                return false;
+                return false; // Eliminar el obstáculo
             }
-
-            if (o.tipo === "barreraMovil") {
-                o.x += o.direccion * 2;
-                if (o.x < leftBorder + borderWidth || o.x + o.size > rightBorder - borderWidth) {
-                    o.direccion *= -1;
-                }
-            }
-
-            return true;
+            return o.y < gameCanvas.height; // Mantener si no ha salido de la pantalla
         });
 
-        conos = conos.filter(cono => {
-            const hit = patrulla.x < cono.x + cono.width &&
-                       patrulla.x + patrulla.width > cono.x &&
-                       patrulla.y < cono.y + cono.height &&
-                       patrulla.y + patrulla.height > cono.y;
-            
-            if (hit && !invulnerable) {
-                reproducirSonidoCono();
-                
-                if (escudosRecolectados > 0) {
-                    escudosRecolectados--;
-                    reproducirSonidoAntiPowerup();
-                } else {
-                    vidas--;
-                    combo = 0;
-                    shakeFrames = 10;
-                    tiempoUltimoChoque = ahora;
-                    
-                    for (let i = 0; i < 8; i++) {
-                        recolectados.push({
-                            x: cono.x + cono.width/2,
-                            y: cono.y + cono.height/2,
-                            size: 3 + Math.random() * 5,
-                            alpha: 1,
-                            scale: 1,
-                            color: 'orange'
-                        });
-                    }
-                    
-                    if (vidas <= 0) {
-                        gameOver = true;
-                        musicaFondo.pause();
-                        document.getElementById('gameOverScreen').style.display = 'flex';
-                        document.getElementById('btnReiniciar').style.display = 'block';
-                        document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
-                        document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
-                    }
-                }
-                updateHUD();
-                return false;
-            }
-            return cono.y < gameCanvas.height + cono.height;
-        });
-
-        aceites = aceites.filter(aceite => {
-            const hit = patrulla.x < aceite.x + aceite.size &&
-                        patrulla.x + patrulla.width > aceite.x - aceite.size &&
-                        patrulla.y < aceite.y + aceite.size &&
-                        patrulla.y + patrulla.height > aceite.y - aceite.size;
-            
-            if (hit && !deslizando) {
+        aceites = aceites.filter(a => {
+            const hit = patrulla.x < a.x + a.size &&
+                        patrulla.x + patrulla.width > a.x - a.size &&
+                        patrulla.y < a.y + a.size &&
+                        patrulla.y + patrulla.height > a.y - a.size;
+            if (hit && !invulnerable && !deslizando) {
                 deslizando = true;
                 tiempoDeslizamiento = ahora;
                 reproducirSonidoAceite();
-                shakeFrames = 20;
                 
-                for (let i = 0; i < 15; i++) {
-                    humoParticles.push({
-                        x: aceite.x + (Math.random() - 0.5) * 30,
-                        y: aceite.y + (Math.random() - 0.5) * 20,
-                        size: 5 + Math.random() * 10,
-                        alpha: 0.8,
-                        speedX: (Math.random() - 0.5) * 3,
-                        speedY: -Math.random() * 2,
-                        decay: 0.01 + Math.random() * 0.02
-                    });
-                }
+                // Crear efecto de derrape
+                crearEfectoDerrape();
                 
-                return false;
+                return false; // Eliminar el aceite
             }
-            return aceite.y < gameCanvas.height + aceite.size;
+            return a.y < gameCanvas.height;
         });
 
         objetivos = objetivos.filter(obj => {
-            const hit = patrulla.x < obj.x + obj.size &&
-                        patrulla.x + patrulla.width > obj.x - obj.size &&
-                        patrulla.y < obj.y + obj.size &&
-                        patrulla.y + patrulla.height > obj.y - obj.size;
+            const hit = patrulla.x < obj.x + obj.size/2 &&
+                        patrulla.x + patrulla.width > obj.x - obj.size/2 &&
+                        patrulla.y < obj.y + obj.size/2 &&
+                        patrulla.y + patrulla.height > obj.y - obj.size/2;
             if (hit) {
+                score += 100 * combo;
                 combo++;
-                placasRecolectadasDesdeUltimaVida++;
-                if (combo > maxCombo) maxCombo = combo;
+                maxCombo = Math.max(maxCombo, combo);
                 
-                const puntosBase = 1;
-                const puntosExtra = combo > 1 ? combo * 2 : 0;
-                score += puntosBase + puntosExtra;
-                
-                if (score >= level * 1000) {
-                    level++;
-                    speed += 1;
-                    tiempoUltimoLevelUp = ahora;
-                    
-                    if (level % 2 === 0) {
-                        PLACAS_PARA_VIDA = Math.max(20, PLACAS_PARA_VIDA - 5);
-                    }
-
-                    if (level % 3 === 0) {
-                        NITRO_ITEM_INTERVALO = Math.max(5000, NITRO_ITEM_INTERVALO - 2000);
-                    }
-                    
-                    reproducirSonidoPowerup();
-                }
-                
-                reproducirSonidoPunto();
-                recolectados.push({ 
-                    x: obj.x, 
-                    y: obj.y, 
-                    size: obj.size, 
-                    alpha: 1, 
+                // Añadir efecto de recolección
+                recolectados.push({
+                    x: obj.x,
+                    y: obj.y,
+                    size: obj.size,
                     scale: 1,
-                    color: combo > 3 ? 'gold' : 'yellow'
+                    alpha: 1
                 });
                 
-                if (score > highScore) {
-                    highScore = score;
-                    localStorage.setItem('highScore_' + nombreJugador, highScore);
-                }
-                localStorage.setItem('puntos_' + nombreJugador, score);
-                
-                if (combo % 3 === 0) {
-                    nitro = Math.min(100, nitro + 10);
-                }
-                
-                if (vidas < 3 && placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
+                // Incrementar contador de placas para vida extra
+                placasRecolectadasDesdeUltimaVida++;
+                if (placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
                     spawnVidaItem();
                 }
                 
+                reproducirSonidoPunto();
                 updateHUD();
-                return false;
+                return false; // Eliminar el objetivo
             }
-            return true;
+            return obj.y < gameCanvas.height;
         });
 
         powerups = powerups.filter(p => {
@@ -3199,82 +3163,54 @@
                 escudosRecolectados = Math.min(MAX_ESCUDOS, escudosRecolectados + 1);
                 reproducirSonidoPowerup();
                 updateHUD();
-                return false;
+                return false; // Eliminar el powerup
             }
-            return true;
+            return p.y < gameCanvas.height;
         });
 
         nitroItems = nitroItems.filter(item => {
             const hit = patrulla.x < item.x + 30 &&
-                       patrulla.x + patrulla.width > item.x &&
-                       patrulla.y < item.y + 30 &&
-                       patrulla.y + patrulla.height > item.y;
+                        patrulla.x + patrulla.width > item.x &&
+                        patrulla.y < item.y + 30 &&
+                        patrulla.y + patrulla.height > item.y;
             if (hit) {
-                nitro = Math.min(100, nitro + 25);
+                nitro = Math.min(100, nitro + 30);
                 reproducirSonidoPowerup();
                 updateHUD();
-                return false;
+                return false; // Eliminar el ítem de nitro
             }
-            return item.y < gameCanvas.height + 30;
+            return item.y < gameCanvas.height;
         });
 
         vidaItems = vidaItems.filter(item => {
             const hit = patrulla.x < item.x + 30 &&
-                       patrulla.x + patrulla.width > item.x &&
-                       patrulla.y < item.y + 30 &&
-                       patrulla.y + patrulla.height > item.y;
+                        patrulla.x + patrulla.width > item.x &&
+                        patrulla.y < item.y + 30 &&
+                        patrulla.y + patrulla.height > item.y;
             if (hit) {
                 vidas = Math.min(3, vidas + 1);
                 reproducirSonidoVida();
-                
-                for (let i = 0; i < 15; i++) {
-                    recolectados.push({
-                        x: item.x + 15,
-                        y: item.y + 15,
-                        size: 5 + Math.random() * 10,
-                        alpha: 1,
-                        scale: 1,
-                        color: 'red'
-                    });
-                }
-                
                 updateHUD();
-                return false;
+                return false; // Eliminar el ítem de vida
             }
-            return item.y < gameCanvas.height + 30;
+            return item.y < gameCanvas.height;
         });
 
-        trampaClavosItems = trampaClavosItems.filter(trampa => {
-            const hit = patrulla.x < trampa.x + trampa.width &&
-                       patrulla.x + patrulla.width > trampa.x &&
-                       patrulla.y < trampa.y + trampa.height &&
-                       patrulla.y + patrulla.height > trampa.y;
-            
+        trampaClavosItems = trampaClavosItems.filter(item => {
+            const hit = patrulla.x < item.x + item.width &&
+                        patrulla.x + patrulla.width > item.x &&
+                        patrulla.y < item.y + item.height &&
+                        patrulla.y + patrulla.height > item.y;
             if (hit && !invulnerable) {
-                reproducirSonidoTrampaClavos();
-                
                 if (escudosRecolectados > 0) {
                     escudosRecolectados--;
                     reproducirSonidoAntiPowerup();
                 } else {
                     vidas--;
                     combo = 0;
-                    shakeFrames = 15;
+                    shakeFrames = 10;
                     tiempoUltimoChoque = ahora;
-                    
-                    for (let i = 0; i < 20; i++) {
-                        recolectados.push({
-                            x: trampa.x + trampa.width/2,
-                            y: trampa.y + trampa.height/2,
-                            size: 3 + Math.random() * 5,
-                            alpha: 1,
-                            scale: 1,
-                            color: 'silver'
-                        });
-                    }
-                    
-                    deslizando = true;
-                    tiempoDeslizamiento = ahora;
+                    reproducirSonidoTrampaClavos();
                     
                     if (vidas <= 0) {
                         gameOver = true;
@@ -3283,122 +3219,148 @@
                         document.getElementById('btnReiniciar').style.display = 'block';
                         document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
                         document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+                        document.getElementById('maxComboFinal').textContent = `Máximo Combo: ${maxCombo}`;
+                        
+                        if (score > highScore) {
+                            highScore = score;
+                            localStorage.setItem('highScore_' + nombreJugador, highScore);
+                        }
+                        
+                        totalPuntos += score;
+                        localStorage.setItem('puntos_' + nombreJugador, totalPuntos);
+                        actualizarTienda();
                     }
                 }
                 updateHUD();
-                return false;
+                return false; // Eliminar la trampa de clavos
             }
-            return trampa.y < gameCanvas.height + trampa.height;
+            return item.y < gameCanvas.height;
+        });
+
+        conos = conos.filter(cono => {
+            const hit = patrulla.x < cono.x + cono.width &&
+                        patrulla.x + patrulla.width > cono.x &&
+                        patrulla.y < cono.y + cono.height &&
+                        patrulla.y + patrulla.height > cono.y;
+            if (hit && !invulnerable) {
+                if (escudosRecolectados > 0) {
+                    escudosRecolectados--;
+                    reproducirSonidoAntiPowerup();
+                } else {
+                    vidas--;
+                    combo = 0;
+                    shakeFrames = 10;
+                    tiempoUltimoChoque = ahora;
+                    reproducirSonidoCono();
+                    
+                    if (vidas <= 0) {
+                        gameOver = true;
+                        musicaFondo.pause();
+                        document.getElementById('gameOverScreen').style.display = 'flex';
+                        document.getElementById('btnReiniciar').style.display = 'block';
+                        document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
+                        document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+                        document.getElementById('maxComboFinal').textContent = `Máximo Combo: ${maxCombo}`;
+                        
+                        if (score > highScore) {
+                            highScore = score;
+                            localStorage.setItem('highScore_' + nombreJugador, highScore);
+                        }
+                        
+                        totalPuntos += score;
+                        localStorage.setItem('puntos_' + nombreJugador, totalPuntos);
+                        actualizarTienda();
+                    }
+                }
+                updateHUD();
+                return false; // Eliminar el cono
+            }
+            return cono.y < gameCanvas.height;
         });
     }
 
-    function drawHUD() {
-        if (isMobile) {
-            return;
-        }
-        
-        const ctx = gameCanvas.getContext('2d');
+    function checkLevelUp() {
         const ahora = Date.now();
-        
-        if (ahora - tiempoUltimoLevelUp < 2000) {
-            const alpha = 1 - ((ahora - tiempoUltimoLevelUp) / 2000);
-            ctx.save();
+        if (score >= level * 1000 && ahora - tiempoUltimoLevelUp > 1000) {
+            level++;
+            tiempoUltimoLevelUp = ahora;
+            speed += 0.5;
             
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(gameCanvas.width/2 - 150, 120, 300, 60);
+            // Aumentar dificultad progresivamente
+            if (level % 3 === 0) {
+                PLACAS_PARA_VIDA = Math.min(100, PLACAS_PARA_VIDA + 10);
+                NITRO_ITEM_INTERVALO = Math.max(5000, NITRO_ITEM_INTERVALO - 2000);
+            }
             
-            ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`;
-            ctx.font = 'bold 28px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            // Cambiar clima cada 2 niveles
+            if (level % 2 === 0) {
+                tiempoCambioClima = 0; // Forzar cambio de clima
+            }
             
-            ctx.shadowColor = 'rgba(255, 255, 255, 0.7)';
-            ctx.shadowBlur = 10;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
-            
-            ctx.fillText(`¡NIVEL ${level} DESBLOQUEADO!`, gameCanvas.width / 2, 150);
-            
-            ctx.shadowColor = 'transparent';
-            ctx.restore();
-        }
-        
-        if (deslizando) {
-            ctx.fillStyle = 'yellow';
-            ctx.font = 'bold 16px Arial';
-            ctx.fillText('¡DERRAPANDO!', 10, 180);
-        }
-        
-        // Mostrar clima actual
-        if (climaActual !== 'normal') {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(gameCanvas.width - 150, 180, 140, 30);
-            
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 14px Arial';
-            ctx.textAlign = 'right';
-            ctx.fillText(`Clima: ${climaActual.toUpperCase()}`, gameCanvas.width - 20, 200);
+            updateHUD();
         }
     }
 
-    function aplicarSacudida() {
+    function drawShakeEffect() {
         if (shakeFrames > 0) {
-            const intensity = deslizando ? 15 : 10;
-            const dx = (Math.random() - 0.5) * intensity;
-            const dy = (Math.random() - 0.5) * intensity;
-            gameCanvas.style.transform = `translate(${dx}px, ${dy}px) rotate(${(Math.random() - 0.5) * (deslizando ? 3 : 1)}deg)`;
+            const ctx = gameCanvas.getContext('2d');
+            const intensity = shakeFrames / 15;
+            ctx.setTransform(1, 0, 0, 1, 
+                (Math.random() - 0.5) * 10 * intensity, 
+                (Math.random() - 0.5) * 10 * intensity
+            );
             shakeFrames--;
-        } else {
-            gameCanvas.style.transform = 'translate(0, 0) rotate(0deg)';
         }
     }
 
-    function loop() {
-        if (gameOver || juegoPausado) {
-            return;
-        }
-
-        cambiarClima();
-        aplicarSacudida();
+    function draw() {
         const ctx = gameCanvas.getContext('2d');
+        
+        // Limpiar canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        gameCanvas.style.background = fondoPorNivel();
+        // Aplicar efecto de sacudida si es necesario
+        drawShakeEffect();
         
-        // Dibujar efectos climáticos primero (excepto rayos que necesitan estar sobre algunos elementos)
+        // Fondo del juego
+        ctx.fillStyle = fondoPorNivel();
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+        
+        // Efectos climáticos
+        cambiarClima();
+        drawLluvia();
+        drawTormenta();
+        drawRayos();
+        drawCrateres();
         drawNiebla();
-        drawTormenta();  // Esta función genera los rayos pero no los dibuja
-        drawHojas();
         drawNieve();
+        drawHojas();
         drawArena();
         drawGranizo();
         drawNoche();
+        aplicarEfectosClimaticos();
         
+        // Elementos del juego
         drawRoadLines();
         drawAceites();
         drawObstacles();
         drawObjetivos();
         drawPowerUps();
+        drawRecolectados();
         drawNitroItems();
         drawVidaItems();
         drawTrampaClavos();
         drawConos();
-        
-        // Dibujar rayos y cráteres aquí para que sean visibles sobre la carretera
-        drawRayos();      // Añadir esta línea
-        drawCrateres();   // Añadir esta línea
-        
-        drawRecolectados();
-        drawPatrulla();
-        drawLluvia();
         drawHumo();
         drawDerrapeMarks();
+        drawPatrulla();
+        drawLightEffects();
+    }
+
+    function loop() {
+        if (gameOver || juegoPausado) return;
         
-        aplicarEfectosClimaticos();
-        
-        drawHUD();
-        
-        checkCollisions();
         spawnObstacle();
         spawnAceite();
         spawnObjetivo();
@@ -3411,76 +3373,25 @@
         spawnArena();
         spawnGranizo();
         
-        if (level < 3 && nitro < 100) {
-            nitro += 0.1;
-            updateHUD();
-        }
+        checkCollisions();
+        checkLevelUp();
+        draw();
         
         guardarProgreso();
-
+        
         requestAnimationFrame(loop);
     }
 
-    // Inicialización al cargar la página
-    window.addEventListener('load', function() {
+    // Inicialización del juego
+    window.addEventListener('load', () => {
         resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        if (isMobile) {
-            screen.orientation.addEventListener('change', resizeCanvas);
-        }
-        
-        const colorPatrulla = document.getElementById('colorPatrulla').value;
-        patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
-            const img = new Image();
-            img.src = src;
-            return img;
-        });
-        
         setupControls();
+        updateHUD();
         
-        document.getElementById('btnReiniciar').addEventListener('click', function() {
-            musicaFondo.pause();
-            musicaFondo.currentTime = 0;
-            sonidoViento.pause();
-            sonidoNieve.pause();
-            desactivarNitro();
-            if (sonidoActivado) {
-                sonidoInicio.play();
-            }
-            document.getElementById('inicio').style.display = 'flex';
-            document.getElementById('btnActivarSonido').style.display = 'block';
-            document.getElementById('gameOverScreen').style.display = 'none';
-        });
-        
-        if (!isMobile) {
-            document.addEventListener('keydown', (e) => {
-                if (!deslizando && !juegoPausado) {
-                    if (e.key === 'ArrowLeft') {
-                        patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
-                    }
-                    if (e.key === 'ArrowRight') {
-                        patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
-                    }
-                    if (e.key === ' ' || e.key === 'Spacebar') {
-                        activarNitro();
-                    }
-                    if (e.key === 'p' || e.key === 'P') {
-                        document.getElementById('btnPause').click();
-                    }
-                    if (e.key === 'm' || e.key === 'M') {
-                        document.getElementById('btnMute').click();
-                    }
-                }
-            });
-
-            document.addEventListener('keyup', (e) => {
-                if (e.key === ' ' || e.key === 'Spacebar') {
-                    desactivarNitro();
-                }
-            });
-        }
+        // Ajustar tamaño cuando cambia la orientación o tamaño de pantalla
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('orientationchange', resizeCanvas);
     });
-</script>
+  </script>
 </body>
 </html>
