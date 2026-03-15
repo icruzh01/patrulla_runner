@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Patrulla Runner Arcade</title>
   <!-- Favicon -->
-    <link rel="icon" href="imagenes/patrulla.icon" type="image/x-icon">
+  <link rel="icon" href="imagenes/favicon_amarillo.ico" type="image/x-icon">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -1850,9 +1850,23 @@
         }
     }
 
+    // CORRECCIÓN: Manejo seguro de promesas para el botón de sonido
     document.getElementById('btnActivarSonido').addEventListener('click', async function() {
         if (sonidoActivado) {
-            await Promise.all(allSounds.map(sound => sound.pause().catch(e => {})));
+            // CORRECCIÓN: Filtrar sonidos undefined y asegurar que tengan método pause
+            const validSounds = allSounds.filter(sound => sound && typeof sound.pause === 'function');
+            await Promise.all(validSounds.map(sound => {
+                try {
+                    return sound.pause().catch(e => {
+                        console.warn('Error al pausar sonido:', e);
+                        return Promise.resolve(); // Resolver la promesa aunque haya error
+                    });
+                } catch (e) {
+                    console.warn('Error al pausar sonido:', e);
+                    return Promise.resolve();
+                }
+            }));
+            
             sonidoActivado = false;
             this.textContent = '🔇 Sonido Desactivado';
             this.style.background = '#dc3545';
