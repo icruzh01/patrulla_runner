@@ -232,12 +232,11 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        background: #000;
       }
       
       canvas {
-        width: 100% !important;
-        height: 100% !important;
+        width: 100vw !important;
+        height: 100vh !important;
         display: block;
         object-fit: contain;
       }
@@ -249,58 +248,43 @@
         left: 0;
         right: 0;
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1px;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
         z-index: 20;
         pointer-events: none;
-        font-size: 12px;
+        font-size: 14px;
         padding: 0 10px;
-        box-sizing: border-box;
       }
 
-      .mobile-hud-left,
-        .mobile-hud-right {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            border-radius: 8px;
-            padding: 6px 10px;
-            flex-wrap: wrap;
-            max-width: 70%;
-            gap: 0px;
-        }
+      .mobile-hud-top {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+      }
 
-        .mobile-hud-left {
-            flex-grow: 1;                      
-        }
+      .mobile-hud-item {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 1px 1px 2px black;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        min-width: 80px;
+      }
 
-        .mobile-hud-right {
-            margin-left: auto;
-        }
-
-        .mobile-hud-item {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
-            margin: -1px;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-      /* Estilos para las barras de progreso en móvil */
       .mobile-progress-container {
         width: 100%;
         height: 8px;
         background: rgba(255, 255, 255, 0.2);
         border-radius: 4px;
-        margin-top: 3px;
+        margin-top: 5px;
         overflow: hidden;
       }
 
@@ -314,24 +298,21 @@
         background: #007bff;
       }
 
-      .mobile-hud-right .mobile-hud-item {
-        min-width: 100px;
-        text-align: center;
-      }
-
       .mobile-hud-combo {
         position: absolute;
-        top: 640px;
+        top: 80px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 215, 0, 0.9);
         color: black;
         padding: 8px 15px;
         border-radius: 20px;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: bold;
         display: none;
         white-space: nowrap;
+        border: 2px solid gold;
+        z-index: 30;
       }
 
       /* Controles táctiles en los extremos */
@@ -341,98 +322,88 @@
         bottom: 0;
         width: 30%;
         z-index: 10;
-        opacity: 0.3;
+        opacity: 0.2;
       }
       
       #left-control {
         left: 0;
-        background: rgba(0, 0, 255, 0.1);
+        background: rgba(0, 0, 255, 0.3);
       }
       
       #right-control {
         right: 0;
-        background: rgba(255, 0, 0, 0.1);
+        background: rgba(255, 0, 0, 0.3);
       }
       
       /* Botones de control direccionales */
       .direction-btn {
         position: fixed;
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        border: 2px solid rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.25);
+        border: 3px solid rgba(255, 255, 255, 0.5);
         color: white;
-        font-size: 24px;
+        font-size: 32px;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 15;
         touch-action: manipulation;
         user-select: none;
+        backdrop-filter: blur(5px);
+        font-weight: bold;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
       }
       
       #btnLeft {
         left: 20px;
-        bottom: 100px;
+        bottom: 120px;
       }
       
       #btnRight {
         right: 20px;
-        bottom: 100px;
+        bottom: 120px;
       }
       
       /* Botón de nitro en la parte inferior derecha */
       #btnNitro {
         position: fixed;
-        bottom: 100px;
-        left: 90%;
-        transform: translateX(-50%);
-        padding: 15px;
-        margin: 0;
-        font-size: 20px;
-        background: rgba(255, 87, 34, 0.7);
-        border: 2px solid rgba(255, 255, 255, 0.7);
-        color: white;
+        bottom: 120px;
+        right: 50%;
+        transform: translateX(50%);
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
-        width: 60px;
-        height: 60px;
+        background: rgba(255, 87, 34, 0.7);
+        border: 3px solid rgba(255, 255, 255, 0.7);
+        color: white;
+        font-size: 28px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         touch-action: manipulation;
-        z-index: 10;
+        z-index: 15;
+        backdrop-filter: blur(5px);
+        font-weight: bold;
+        box-shadow: 0 0 15px rgba(255, 87, 34, 0.5);
       }
     }
 
     /* Ajustes específicos para orientación vertical */
     @media (max-width: 768px) and (orientation: portrait) {
-      .mobile-hud {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 5px;
-      }
-      
-      .mobile-hud-item {
-        margin-bottom: 5px;
-      }
-      
-      .mobile-hud-right {
-        align-items: flex-start;
-      }
-      
-      /* Ajustar posición de botones en vertical */
       #btnLeft {
         left: 20px;
-        bottom: 100px;
+        bottom: 120px;
       }
       
       #btnRight {
         right: 20px;
-        bottom: 100px;
+        bottom: 120px;
       }
       
       #btnNitro {
-        left: 88%;
-        bottom: 200px;
-        transform: translateX(-50%);
+        bottom: 120px;
       }
     }
 
@@ -512,6 +483,7 @@
       padding: 20px;
       box-sizing: border-box;
       display: none;
+      overflow-y: auto;
     }
 
     /* Fondo para pantalla de inicio en desktop */
@@ -758,34 +730,31 @@
       <canvas id="game-mobile" width="400" height="600"></canvas>
       
       <div class="mobile-hud">
-        <!-- Elementos de la izquierda -->
-        <div class="mobile-hud-left">
-            <div class="mobile-hud-item" id="mobile-player">👮‍♂️: -</div>
-            <div class="mobile-hud-item" id="mobile-lives">♥️: 3</div>
-            <div class="mobile-hud-item" id="mobile-score">💎: 0</div>
-            <div class="mobile-hud-item" id="mobile-shields">🛡️: 0/2</div>
-            <div class="mobile-hud-item" id="mobile-plates">🟡: 0/50</div>
+        <div class="mobile-hud-top">
+          <div class="mobile-hud-item" id="mobile-player">👮: -</div>
+          <div class="mobile-hud-item" id="mobile-lives">❤️: 3</div>
+          <div class="mobile-hud-item" id="mobile-score">💎: 0</div>
+          <div class="mobile-hud-item" id="mobile-shields">🛡️: 0/2</div>
+          <div class="mobile-hud-item" id="mobile-plates">🟡: 0/50</div>
+          <div class="mobile-hud-item" id="mobile-level">🏆: 1</div>
         </div>
         
-        <!-- Elementos de la derecha -->
-        <div class="mobile-hud-right">
-            <div class="mobile-hud-item" id="mobile-level">🏆: 1</div>
-            
-            <div class="mobile-hud-item">
-                <div>🚩: 0%</div>
-                <div class="mobile-progress-container">
-                    <div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div>
-                </div>
+        <div class="mobile-hud-top">
+          <div class="mobile-hud-item" style="flex: 1;">
+            <div>🚩 Nivel</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div>
             </div>
-            
-            <div class="mobile-hud-item">
-                <div>⚡: 100%</div>
-                <div class="mobile-progress-container">
-                    <div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div>
-                </div>
+          </div>
+          
+          <div class="mobile-hud-item" style="flex: 1;">
+            <div>⚡ Nitro</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
     
       <div class="mobile-hud-combo" id="mobile-combo">COMBO x1</div>
       
@@ -793,7 +762,7 @@
       <div id="left-control" class="touch-control"></div>
       <div id="right-control" class="touch-control"></div>
       
-      <!-- Nuevos botones de control direccional -->
+      <!-- Botones de control direccional -->
       <div id="btnLeft" class="direction-btn">←</div>
       <div id="btnRight" class="direction-btn">→</div>
       
@@ -926,8 +895,8 @@
     let tiempoUltimaPlaca = 0;
     const TIEMPO_RESET_COMBO = 3000; // 3 segundos para resetear combo
     let nitroRegenSpeed = 0.2; // Velocidad base de regeneración
-    const INITIAL_SPEED = 2; // Velocidad inicial del juego
-    let speed = INITIAL_SPEED; // Usamos la constante para la velocidad inicial
+    const INITIAL_SPEED = 1; // Velocidad inicial del juego (CORREGIDO: ahora se usa siempre al reiniciar)
+    let speed = INITIAL_SPEED;
 
     // Variables para controles táctiles (móvil)
     let moveInterval = null;
@@ -1031,25 +1000,18 @@
         }
     }, 5000);
 
-    // Ajustar tamaño del canvas según dispositivo - CORREGIDO para asegurar visibilidad
+    // Ajustar tamaño del canvas según dispositivo
     function resizeCanvas() {
         const container = isMobile ? document.getElementById('game-container') : document.querySelector('.arcade-screen');
         const canvas = gameCanvas;
         
         if (isMobile) {
-            // En móvil, el canvas siempre ocupa el 100% del contenedor
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            
-            // Asegurar que el contenedor sea visible
-            const gameContainer = document.getElementById('game-container');
-            gameContainer.style.display = 'block';
-            gameContainer.style.backgroundColor = '#000';
-            
-            // Forzar un reflow para asegurar que se renderice
-            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+            // En móvil, ocupar toda la pantalla
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.width = 400;
+            canvas.height = 600;
         } else {
-            // En desktop, mantener la relación de aspecto
             const containerWidth = container.clientWidth;
             const containerHeight = container.clientHeight;
             const ratio = 600/400;
@@ -1065,11 +1027,9 @@
             
             canvas.style.width = newWidth + 'px';
             canvas.style.height = newHeight + 'px';
+            canvas.width = 400;
+            canvas.height = 600;
         }
-        
-        // Mantener el tamaño real del canvas
-        canvas.width = 400;
-        canvas.height = 600;
         
         // Escalar el contexto
         const ctx = canvas.getContext('2d');
@@ -1084,11 +1044,6 @@
             const scaleY = parseFloat(canvas.style.height) / 600;
             ctx.scale(scaleX, scaleY);
         }
-        
-        // Forzar una redibujada completa si el juego está activo
-        if (!gameOver && patrulla) {
-            draw();
-        }
     }
 
     // Función mejorada para reproducir sonidos
@@ -1096,23 +1051,18 @@
         if (!sonidoActivado || juegoPausado) return;
         
         try {
-            // Si ya se está reproduciendo, no hacer nada
             if (audioElement.playing) return;
             
-            // Si hay un error previo, resetear el audio
             if (audioElement.error) {
                 audioElement.currentTime = 0;
             }
             
-            // Pausar primero para evitar conflictos
             await audioElement.pause();
             audioElement.currentTime = 0;
             
-            // Intentar reproducir
             await audioElement.play();
         } catch (e) {
             console.error('Error al reproducir sonido:', e);
-            // Intento alternativo después de un pequeño retraso
             setTimeout(async () => {
                 try {
                     await audioElement.pause();
@@ -1125,7 +1075,6 @@
         }
     }
 
-    // Funciones específicas para cada tipo de sonido
     async function reproducirSonidoPunto() {
         await reproducirSonido(sonidoPunto);
     }
@@ -1162,16 +1111,13 @@
         await reproducirSonido(sonidoFrenoDerrape);
     }
 
-    // Funciones para efectos climáticos
     function cambiarClima() {
         const ahora = Date.now();
         
-        // Inicializar tiempoDuracionClima si es la primera vez
         if (tiempoDuracionClima === 0) {
-            tiempoDuracionClima = 15000 + Math.random() * 15000; // 15-30 segundos
+            tiempoDuracionClima = 15000 + Math.random() * 15000;
         }
         
-        // Solo cambiar el clima si ha pasado el tiempo de duración
         if (ahora - tiempoCambioClima > tiempoDuracionClima) {
             const climas = ['normal', 'niebla', 'tormenta', 'viento', 'nieve', 'arena', 'granizo', 'noche'];
             climaActual = climas[Math.floor(Math.random() * climas.length)];
@@ -1185,11 +1131,9 @@
                 climaSecundario = null;
             }
             
-            // Establecer nueva duración (15-30 segundos)
             tiempoDuracionClima = 15000 + Math.random() * 15000;
             tiempoCambioClima = ahora;
             
-            // Limpiar partículas anteriores
             hojas = [];
             copos = [];
             arena = [];
@@ -1200,12 +1144,10 @@
             particulasRayos = [];
             particulasCrateres = [];
             
-            // Activar/desactivar efectos según el clima
             nieblaActiva = climaActual === 'niebla';
             nocheActiva = climaActual === 'noche';
             vientoActivo = climaActual === 'viento';
             
-            // Reproducir sonidos ambientales
             if (sonidoActivado) {
                 sonidoViento.pause();
                 sonidoNieve.pause();
@@ -1244,15 +1186,12 @@
         
         const ahora = Date.now();
         
-        // Generar nuevo rayo cada 5-8 segundos
         if (ahora - ultimotrueno > 5000 + Math.random() * 3000) {
             ultimotrueno = ahora;
             
-            // Flash de pantalla
             gameCanvas.style.backgroundColor = 'white';
             setTimeout(() => { gameCanvas.style.backgroundColor = fondoPorNivel(); }, 100);
             
-            // Sonido del trueno
             if (sonidoActivado) {
                 try {
                     await sonidotrueno.pause();
@@ -1263,7 +1202,6 @@
                 }
             }
             
-            // Crear nuevo rayo con fase de advertencia
             const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth);
             rayos.push({
                 x: x,
@@ -1277,14 +1215,11 @@
             });
         }
         
-        // Actualizar estado de los rayos existentes
         for (const rayo of rayos) {
             if (rayo.estado === 'advertencia' && ahora - rayo.tiempoInicio > rayo.tiempoAdvertencia) {
-                // Cambiar a estado de impacto
                 rayo.estado = 'impacto';
                 rayo.tiempoInicio = ahora;
                 
-                // Crear partículas de impacto
                 for (let i = 0; i < 30; i++) {
                     particulasRayos.push({
                         x: rayo.x + (Math.random() - 0.5) * rayo.ancho,
@@ -1298,7 +1233,6 @@
                     });
                 }
                 
-                // Verificar colisión con el jugador
                 if (patrulla.x < rayo.x + rayo.ancho/2 &&
                     patrulla.x + patrulla.width > rayo.x - rayo.ancho/2) {
                     
@@ -1329,7 +1263,6 @@
                     updateHUD();
                 }
                 
-                // Crear cráter después del impacto
                 crateres.push({
                     x: rayo.x - 20,
                     y: gameCanvas.height - 40,
@@ -1339,7 +1272,6 @@
                     particulas: []
                 });
                 
-                // Sonido de impacto
                 if (sonidoActivado) {
                     try {
                         await sonidoImpactoRayo.pause();
@@ -1351,7 +1283,6 @@
                     }
                 }
             } else if (rayo.estado === 'impacto' && ahora - rayo.tiempoInicio > rayo.tiempoImpacto) {
-                // Eliminar rayo después del impacto
                 rayos = rayos.filter(r => r !== rayo);
             }
         }
@@ -1365,7 +1296,6 @@
         
         rayos.forEach(rayo => {
             if (rayo.estado === 'advertencia') {
-                // Dibujar advertencia (círculo rojo intermitente)
                 const tiempoTranscurrido = ahora - rayo.tiempoInicio;
                 const parpadeo = Math.floor(tiempoTranscurrido / 200) % 2 === 0;
                 
@@ -1376,7 +1306,6 @@
                     ctx.arc(rayo.x, gameCanvas.height - 20, rayo.ancho/2, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Texto de advertencia
                     ctx.fillStyle = 'white';
                     ctx.font = 'bold 16px Arial';
                     ctx.textAlign = 'center';
@@ -1384,20 +1313,17 @@
                     ctx.restore();
                 }
             } else if (rayo.estado === 'impacto') {
-                // Dibujar rayo
                 ctx.save();
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
                 ctx.lineWidth = 3;
                 ctx.shadowColor = 'cyan';
                 ctx.shadowBlur = 15;
                 
-                // Línea principal del rayo
                 ctx.beginPath();
                 ctx.moveTo(rayo.x, 0);
                 ctx.lineTo(rayo.x, gameCanvas.height);
                 ctx.stroke();
                 
-                // Ramificaciones
                 for (let i = 0; i < rayo.ramificaciones; i++) {
                     const offsetX = (Math.random() - 0.5) * rayo.ancho;
                     const startY = Math.random() * gameCanvas.height * 0.7;
@@ -1413,7 +1339,6 @@
             }
         });
         
-        // Dibujar partículas de rayos
         particulasRayos.forEach((p, index) => {
             ctx.fillStyle = p.color.replace('1)', p.alpha + ')');
             ctx.beginPath();
@@ -1436,13 +1361,11 @@
         const ahora = Date.now();
         
         crateres.forEach((crater, index) => {
-            // Eliminar cráter después de 3 segundos (3000ms)
             if (ahora - crater.tiempoCreacion > 3000) {
                 crateres.splice(index, 1);
                 return;
             }
             
-            // Dibujar cráter principal
             ctx.save();
             
             if (craterImg.complete) {
@@ -1459,7 +1382,6 @@
                 );
                 ctx.fill();
                 
-                // Detalles del cráter
                 ctx.fillStyle = '#333';
                 ctx.beginPath();
                 ctx.ellipse(
@@ -1472,7 +1394,6 @@
                 ctx.fill();
             }
             
-            // Efecto de humo si es reciente (solo durante los 3 segundos)
             if (frameCount % 5 === 0) {
                 particulasCrateres.push({
                     x: crater.x + crater.width/2 + (Math.random() - 0.5) * 10,
@@ -1489,7 +1410,6 @@
             ctx.restore();
         });
         
-        // Dibujar partículas de cráteres (se autodestruyen cuando alpha <= 0)
         particulasCrateres.forEach((p, index) => {
             ctx.fillStyle = p.color.replace('0.7)', p.alpha + ')');
             ctx.beginPath();
@@ -1536,10 +1456,8 @@
 
     function spawnNieve() {
         if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
-            // Aumentar la probabilidad de generar copos y la cantidad
-            if (Math.random() < 0.3) { // Cambiado de 0.2 a 0.5 para más frecuencia
-                // Generar más copos a la vez
-                const cantidadCopos = 2 + Math.floor(Math.random() * 3); // Entre 2 y 4 copos
+            if (Math.random() < 0.3) {
+                const cantidadCopos = 2 + Math.floor(Math.random() * 3);
                 for (let i = 0; i < cantidadCopos; i++) {
                     copos.push({
                         x: Math.random() * gameCanvas.width,
@@ -1622,7 +1540,6 @@
                     shakeFrames = 10;
                     tiempoUltimoChoque = Date.now();
                     
-                    // Reproducir sonido de impacto de granizo
                     if (sonidoActivado) {
                         try {
                             await sonidoGranizoGolpe.pause();
@@ -1647,7 +1564,6 @@
             }
         }
         
-        // Dibujar granizos restantes
         granizos.forEach((granizo, i) => {
             ctx.fillStyle = 'rgba(0, 0, 255, 0.8)';
             ctx.beginPath();
@@ -1665,18 +1581,15 @@
         ctx.fillStyle = 'rgba(0, 0, 50, 0.7)';
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Dibujar farolas
         ctx.fillStyle = 'rgba(255, 255, 150, 0.8)';
         for (let i = 0; i < 3; i++) {
             const x = leftBorder + (rightBorder - leftBorder) / 4 * (i + 1);
             const y = 0;
             
-            // Bombilla de la farola
             ctx.beginPath();
             ctx.arc(x, y, 5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Luz de la farola
             const gradient = ctx.createRadialGradient(x, y, 5, x, y, 50);
             gradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
             gradient.addColorStop(0.5, 'rgba(255, 255, 150, 0.3)');
@@ -1727,16 +1640,15 @@
         }
     }
 
-    // Funciones del juego principal
     function updateHUD() {
         const ahora = Date.now();
     if (isMobile) {
-        const nombreCorto = nombreJugador.length > 10 ? nombreJugador.substring(0, 5).toUpperCase() : nombreJugador.toUpperCase();
+        const nombreCorto = nombreJugador.length > 8 ? nombreJugador.substring(0, 6).toUpperCase() : nombreJugador.toUpperCase();
         
-        document.getElementById('mobile-player').textContent = `👮‍♂️: ${nombreCorto}`;
+        document.getElementById('mobile-player').textContent = `👮: ${nombreCorto || 'POLI'}`;
         document.getElementById('mobile-score').textContent = `💎: ${score}`;
         document.getElementById('mobile-level').textContent = `🏆: ${level}`;
-        document.getElementById('mobile-lives').textContent = `♥️: ${vidas}`;
+        document.getElementById('mobile-lives').textContent = `❤️: ${vidas}`;
         if (ahora - tiempoBloqueoChalecos < 10000) {
             const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
             document.getElementById('mobile-shields').textContent = `🛡️: BLOQ (${tiempoRestante}s)`;
@@ -1749,7 +1661,6 @@
         document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
         document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
         
-        // Actualizar combo si es necesario
         const mobileCombo = document.getElementById('mobile-combo');
         if (mobileCombo) {
             if (combo > 1) {
@@ -1761,7 +1672,6 @@
             }
         }
     } else {
-        // Versión desktop - también con verificaciones
         const desktopPlayer = document.getElementById('desktop-player');
         const desktopScore = document.getElementById('desktop-score');
         const desktopLevel = document.getElementById('desktop-level');
@@ -1980,7 +1890,6 @@
                 } catch (e) {
                     console.error('Error al reproducir sonido nitro:', e);
                     nitroSoundPlaying = false;
-                    // Intento alternativo después de un pequeño retraso
                     setTimeout(async () => {
                         try {
                             await sonidoNitro.pause();
@@ -2071,7 +1980,6 @@
 
     function spawnNitroItem() {
         const ahora = Date.now();
-        // Solo aparecer a partir del nivel 4 y si el nitro está por debajo del 80%
         if (level >= 1 && 
             ahora - ultimoNitroItemTiempo > NITRO_ITEM_INTERVALO && 
             nitroItems.length === 0 && 
@@ -2104,7 +2012,6 @@
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
             
-            // Determinar si la trampa se moverá lateralmente (niveles > 8)
             const seMueveLateralmente = level > 8;
             
             trampaClavosItems.push({ 
@@ -2114,8 +2021,8 @@
                 height: 30,
                 rotation: 0,
                 rotationSpeed: (Math.random() - 0.5) * 0.2,
-                slideDirection: seMueveLateralmente ? (Math.random() > 0.5 ? 1 : -1) : 0, // 0 = no se mueve
-                seMueve: seMueveLateralmente // Nueva propiedad para controlar el movimiento
+                slideDirection: seMueveLateralmente ? (Math.random() > 0.5 ? 1 : -1) : 0,
+                seMueve: seMueveLateralmente
             });
         }
     }
@@ -2167,7 +2074,6 @@
             item.y += speed;
             item.rotation += item.rotationSpeed;
             
-            // Solo mover lateralmente si está en niveles > 8
             if (item.seMueve) {
                 item.x += item.slideDirection * 0.5;
                 
@@ -2248,7 +2154,6 @@
         const floatOffset = Math.sin(Date.now() * 0.005) * 3;
         
         nitroItems.forEach(item => {
-            // Efecto de brillo pulsante
             const pulseIntensity = 0.5 + 0.5 * Math.sin(Date.now() * 0.005);
             
             ctx.save();
@@ -2258,7 +2163,6 @@
             if (nitroItemImg.complete) {
                 ctx.drawImage(nitroItemImg, item.x, item.y + floatOffset, 30, 30);
             } else {
-                // Gradiente para el nitro
                 const gradient = ctx.createLinearGradient(item.x, item.y, item.x, item.y + 30);
                 gradient.addColorStop(0, 'rgba(255, 200, 0, 0.8)');
                 gradient.addColorStop(0.5, 'rgba(255, 100, 0, 0.8)');
@@ -2356,7 +2260,8 @@
         particulasCrateres = [];
         score = 0;
         level = 1;
-        speed = INITIAL_SPEED; // Usamos la constante para la velocidad inicial - CORREGIDO
+        // CORRECCIÓN: Usar INITIAL_SPEED en lugar de mantener la velocidad anterior
+        speed = INITIAL_SPEED;
         vidas = 3;
         escudosRecolectados = 0;
         shakeFrames = 0;
@@ -2394,10 +2299,6 @@
         
         document.getElementById('gameOverScreen').style.display = 'none';
         updateHUD();
-        
-        // Forzar una redibujada completa
-        resizeCanvas();
-        
         loop();
     }
 
@@ -2580,7 +2481,6 @@
         const ctx = gameCanvas.getContext('2d');
         const ahora = Date.now();
         
-        // Generar humo de daño si solo queda una vida
         if (vidas === 1 && frameCount % 5 === 0) {
             const centerX = patrulla.x + patrulla.width / 2;
             humoParticles.push({
@@ -2645,22 +2545,16 @@
             ctx.fillRect(patrulla.x, patrulla.y, patrulla.width, patrulla.height);
         }
 
-        // Dibujar faros delanteros (si es de noche)
         if (nocheActiva) {
             ctx.save();
             
-            // Faro izquierdo
             const leftLightX = patrulla.x + 5;
             const leftLightY = patrulla.y + patrulla.height - 60;
-            
-            // Faro derecho
             const rightLightX = patrulla.x + patrulla.width - 5;
             const rightLightY = patrulla.y + patrulla.height - 60;
             
-            // Crear capa de iluminación
             ctx.globalCompositeOperation = 'lighter';
             
-            // Dibujar haz de luz izquierdo
             const leftGradient = ctx.createRadialGradient(
                 leftLightX, leftLightY, 10,
                 leftLightX, leftLightY, 150
@@ -2676,7 +2570,6 @@
             ctx.closePath();
             ctx.fill();
             
-            // Dibujar haz de luz derecho
             const rightGradient = ctx.createRadialGradient(
                 rightLightX, rightLightY, 10,
                 rightLightX, rightLightY, 150
@@ -2692,7 +2585,6 @@
             ctx.closePath();
             ctx.fill();
             
-            // Dibujar focos de luz
             ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
             ctx.beginPath();
             ctx.arc(leftLightX, leftLightY, 8, 0, Math.PI * 2);
@@ -2712,7 +2604,6 @@
             
             ctx.save();
             
-            // Cambiar color según cantidad de escudos
             const shieldColor = escudosRecolectados >= 2 ? 'rgba(255, 215, 0, ' : 'rgba(0, 255, 255, ';
             
             ctx.strokeStyle = shieldColor + flashIntensity1 + ')';
@@ -2864,7 +2755,6 @@
         const ahora = Date.now();
         const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
         
-        // Colisión con objetivos (placas policiales)
         for (let i = 0; i < objetivos.length; i++) {
             const obj = objetivos[i];
             if (
@@ -2876,7 +2766,6 @@
                 objetivos.splice(i, 1);
                 recolectados.push(obj);
                 
-                // Incrementar combo
                 if (ahora - tiempoUltimaPlaca < TIEMPO_RESET_COMBO) {
                     combo++;
                     maxCombo = Math.max(maxCombo, combo);
@@ -2886,7 +2775,6 @@
                 
                 tiempoUltimaPlaca = ahora;
                 
-                // Calcular puntos con combo
                 const puntosBase = 100;
                 const puntosConCombo = puntosBase * combo;
                 score += puntosConCombo;
@@ -2896,7 +2784,6 @@
                     await reproducirSonidoPunto();
                 }
                 
-                // Verificar si se recolectaron suficientes placas para una vida extra
                 if (placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
                     spawnVidaItem();
                 }
@@ -2906,7 +2793,6 @@
             }
         }
         
-        // Colisión con powerups (escudos)
         for (let i = 0; i < powerups.length; i++) {
             const pw = powerups[i];
             if (
@@ -2934,7 +2820,6 @@
             }
         }
         
-        // Colisión con items de nitro
         for (let i = 0; i < nitroItems.length; i++) {
             const item = nitroItems[i];
             if (
@@ -2955,7 +2840,6 @@
             }
         }
         
-        // Colisión con items de vida
         for (let i = 0; i < vidaItems.length; i++) {
             const item = vidaItems[i];
             if (
@@ -2976,7 +2860,6 @@
             }
         }
         
-        // Colisión con trampas de clavos
         for (let i = 0; i < trampaClavosItems.length; i++) {
             const item = trampaClavosItems[i];
             if (
@@ -3015,7 +2898,6 @@
             }
         }
         
-        // Colisión con conos
         for (let i = 0; i < conos.length; i++) {
             const cono = conos[i];
             if (
@@ -3054,7 +2936,6 @@
             }
         }
         
-        // Colisión con aceite (solo si no hay escudos)
         for (let i = 0; i < aceites.length; i++) {
             const aceite = aceites[i];
             if (
@@ -3078,7 +2959,6 @@
             }
         }
         
-        // Colisión con obstáculos
         for (let i = 0; i < obstacles.length; i++) {
             const obs = obstacles[i];
             if (
@@ -3125,7 +3005,6 @@
             speed += 0.5;
             tiempoUltimoLevelUp = Date.now();
             
-            // Aumentar dificultad progresiva
             if (level % 3 === 0) {
                 NITRO_ITEM_INTERVALO = Math.max(5000, NITRO_ITEM_INTERVALO - 1000);
             }
@@ -3139,7 +3018,6 @@
     }
 
     function cleanUpObjects() {
-        // Limpiar objetos que salieron de la pantalla
         objetivos = objetivos.filter(obj => obj.y < gameCanvas.height);
         obstacles = obstacles.filter(obs => obs.y < gameCanvas.height);
         powerups = powerups.filter(pw => pw.y < gameCanvas.height);
@@ -3164,18 +3042,14 @@
     function draw() {
         const ctx = gameCanvas.getContext('2d');
         
-        // Limpiar canvas
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Aplicar efecto de sacudida si es necesario
         ctx.save();
         applyShake(ctx);
         
-        // Dibujar fondo
         ctx.fillStyle = fondoPorNivel();
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Dibujar efectos climáticos
         drawNiebla();
         drawNoche();
         drawLluvia();
@@ -3185,10 +3059,8 @@
         drawRayos();
         drawCrateres();
         
-        // Dibujar carretera
         drawRoadLines();
         
-        // Dibujar objetos del juego
         drawAceites();
         drawObstacles();
         drawObjetivos();
@@ -3198,22 +3070,18 @@
         drawTrampaClavos();
         drawConos();
         
-        // Dibujar efectos de la patrulla
         drawHumo();
         drawDerrapeMarks();
         
-        // Dibujar patrulla
         drawPatrulla();
         
         ctx.restore();
         
-        // Actualizar pulso para animaciones
         pulso += 0.05;
     }
 
     function gameLoop() {
         if (!gameOver) {
-            // Generar objetos
             spawnObstacle();
             spawnObjetivo();
             spawnPowerup();
@@ -3222,34 +3090,27 @@
             spawnTrampaClavos();
             spawnCono();
             
-            // Efectos climáticos
             cambiarClima();
             spawnHojas();
             spawnNieve();
             spawnArena();
             spawnGranizo();
             
-            // Actualizar juego
             checkCollisions();
             checkLevelUp();
             cleanUpObjects();
             
-            // Regenerar nitro gradualmente
             if (!nitroActivo && nitro < 100) {
                 nitro = Math.min(100, nitro + nitroRegenSpeed);
                 updateHUD();
             }
             
-            // Actualizar efectos climáticos
             drawTormenta();
             
-            // Dibujar todo
             draw();
             
-            // Guardar progreso periódicamente
             guardarProgreso();
             
-            // Actualizar puntuación máxima
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('highScore_' + nombreJugador, highScore);
@@ -3264,7 +3125,6 @@
         resizeCanvas();
         setupControls();
         
-        // Selección de vehículo
         const vehicleOptions = document.querySelectorAll('.vehicle-option');
         vehicleOptions.forEach(option => {
             option.addEventListener('click', function() {
@@ -3274,7 +3134,6 @@
             });
         });
         
-        // Iniciar el primer vehículo como seleccionado
         if (vehicleOptions.length > 0) {
             vehicleOptions[0].classList.add('selected');
         }
@@ -3282,19 +3141,10 @@
         gameLoop();
     }
 
-    // Inicialización cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', () => {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         
-        // Forzar visibilidad del canvas en móvil
-        if (isMobile) {
-            const gameContainer = document.getElementById('game-container');
-            gameContainer.style.display = 'block';
-            gameContainer.style.backgroundColor = '#000';
-        }
-        
-        // Precargar imágenes de vehículos
         const vehicleImages = [
             'imagenes/patrulla_1.png', 'imagenes/patrulla_1b.png',
             'imagenes/transito_1.png', 'imagenes/transito_1b.png',
