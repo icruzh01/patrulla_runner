@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Patrulla Runner Arcade</title>
+  <title>Patrulla Runner Arcade - Optimizado</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -22,7 +22,7 @@
       body { font-family: 'Press Start 2P', cursive; }
     }
 
-    /* Estilos de la máquina arcade */
+    /* Máquina arcade desktop */
     .arcade-machine {
       position: relative;
       width: 800px;
@@ -71,10 +71,7 @@
 
     .arcade-bezel {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="none" stroke="rgba(0,255,255,0.2)" stroke-width="10"/></svg>');
       pointer-events: none;
       z-index: 10;
@@ -82,7 +79,7 @@
 
     .arcade-title {
       color: #ff0;
-      text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      text-shadow: 3px 3px 0 #000;
       margin: 15px 0;
       font-size: 24px;
       text-align: center;
@@ -95,9 +92,8 @@
       margin-top: 30px;
     }
 
-    .arcade-button {
-      width: 60px;
-      height: 60px;
+    .arcade-button, .arcade-joystick {
+      width: 60px; height: 60px;
       background: #333;
       border-radius: 50%;
       border: 5px solid #111;
@@ -105,26 +101,7 @@
       position: relative;
     }
 
-    .arcade-button:after {
-      content: '';
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      background: #c00;
-      border-radius: 50%;
-      box-shadow: inset 0 3px 5px rgba(0,0,0,0.5);
-    }
-
-    .arcade-joystick {
-      width: 80px;
-      height: 80px;
-      background: #333;
-      border-radius: 50%;
-      border: 5px solid #111;
-      box-shadow: inset 0 -10px 15px rgba(0,0,0,0.5), 0 10px 10px rgba(0,0,0,0.3);
-    }
+    .arcade-joystick { width: 80px; height: 80px; }
 
     .arcade-footer {
       margin-top: 20px;
@@ -134,66 +111,35 @@
       text-shadow: 2px 2px 0 #000;
     }
 
-    /* Estilos del panel de información */
+    /* Panel información desktop */
     .info-item {
       margin-bottom: 15px;
       padding-bottom: 10px;
       border-bottom: 1px solid #333;
     }
-
-    .info-title {
-      color: #ff0;
-      margin-bottom: 5px;
-      font-size: 14px;
-    }
-
-    .info-value {
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
-
+    .info-title { color: #ff0; margin-bottom: 5px; font-size: 14px; }
+    .info-value { font-size: 16px; margin-bottom: 5px; }
     .progress-container {
-      width: 100%;
-      height: 10px;
+      width: 100%; height: 10px;
       background: #333;
       margin-top: 5px;
       border-radius: 5px;
       overflow: hidden;
     }
-
-    .progress-bar {
-      height: 100%;
-      background: #28a745;
-      transition: width 0.3s;
-    }
-
+    .progress-bar { height: 100%; background: #28a745; transition: width 0.3s; }
     .progress-bar.nitro { background: #007bff; }
     .progress-bar.plates { background: #ffc107; }
-
-    .lives-container {
-      display: flex;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    .life {
-      width: 15px;
-      height: 15px;
-      background: red;
-      border-radius: 50%;
-    }
-
+    .lives-container { display: flex; gap: 5px; margin-top: 5px; }
+    .life { width: 15px; height: 15px; background: red; border-radius: 50%; }
     .combo-container {
-      margin-top: 10px;
-      padding: 5px;
+      margin-top: 10px; padding: 5px;
       background: rgba(255, 215, 0, 0.2);
       border-radius: 5px;
       display: none;
     }
-
     .combo-value { color: #ff0; font-weight: bold; }
 
-    /* Estilos para móvil */
+    /* Vista móvil mejorada */
     @media (max-width: 768px) {
       body {
         background: #111;
@@ -210,10 +156,8 @@
       
       #game-container {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
         overflow: hidden;
       }
       
@@ -230,10 +174,10 @@
         left: 0;
         right: 0;
         display: flex;
-        flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 1px;
+        gap: 5px;
         z-index: 20;
         pointer-events: none;
         font-size: 12px;
@@ -241,37 +185,37 @@
         box-sizing: border-box;
       }
 
-      .mobile-hud-left,
-      .mobile-hud-right {
+      .mobile-hud-left, .mobile-hud-right {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        border-radius: 8px;
-        padding: 6px 10px;
         flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
         max-width: 70%;
-        gap: 0px;
       }
 
-      .mobile-hud-left { flex-grow: 1; }
-      .mobile-hud-right { margin-left: auto; }
+      .mobile-hud-right { margin-left: auto; justify-content: flex-end; }
 
       .mobile-hud-item {
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.8);
         color: white;
-        padding: 6px 10px;
+        padding: 8px 12px;
         border-radius: 8px;
-        font-size: 12px;
+        font-size: clamp(10px, 3vw, 14px);
         font-weight: bold;
         text-align: center;
         text-shadow: 1px 1px 2px black;
-        margin: -1px;
         white-space: nowrap;
         flex-shrink: 0;
+        border: 1px solid rgba(255,255,255,0.2);
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .mobile-progress-container {
-        width: 100%;
+        width: 100px;
         height: 8px;
         background: rgba(255, 255, 255, 0.2);
         border-radius: 4px;
@@ -284,14 +228,11 @@
         background: #28a745;
         transition: width 0.3s;
       }
-
       .mobile-progress-bar.nitro { background: #007bff; }
-
-      .mobile-hud-right .mobile-hud-item { min-width: 100px; text-align: center; }
 
       .mobile-hud-combo {
         position: absolute;
-        top: 640px;
+        top: 70px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 215, 0, 0.9);
@@ -302,281 +243,186 @@
         font-weight: bold;
         display: none;
         white-space: nowrap;
+        z-index: 25;
+        pointer-events: none;
       }
 
-      .touch-control {
+      /* Controles táctiles optimizados */
+      .touch-zone {
         position: fixed;
         top: 0;
         bottom: 0;
-        width: 30%;
+        width: 25%;
         z-index: 10;
-        opacity: 0.3;
+        opacity: 0.2;
+        background: transparent;
       }
       
-      #left-control {
-        left: 0;
-        background: rgba(0, 0, 255, 0.1);
-      }
-      
-      #right-control {
-        right: 0;
-        background: rgba(255, 0, 0, 0.1);
-      }
+      #left-zone { left: 0; }
+      #right-zone { right: 0; }
       
       .direction-btn {
         position: fixed;
         width: 70px;
         height: 70px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        border: 2px solid rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.25);
+        border: 3px solid rgba(255, 255, 255, 0.6);
         color: white;
-        font-size: 28px;
+        font-size: 30px;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 15;
         touch-action: manipulation;
         user-select: none;
-        transition: transform 0.1s;
+        backdrop-filter: blur(2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        transition: transform 0.1s, background 0.1s;
       }
       
       .direction-btn:active {
-        transform: scale(0.9);
-        background: rgba(255, 255, 255, 0.5);
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.4);
       }
       
-      #btnLeft { left: 20px; bottom: 100px; }
-      #btnRight { right: 20px; bottom: 100px; }
+      #btnLeft {
+        left: 20px;
+        bottom: 100px;
+      }
+      
+      #btnRight {
+        right: 20px;
+        bottom: 100px;
+      }
       
       #btnNitro {
         position: fixed;
         bottom: 100px;
-        left: 90%;
+        left: 50%;
         transform: translateX(-50%);
-        padding: 15px;
-        margin: 0;
-        font-size: 24px;
-        background: rgba(255, 87, 34, 0.7);
-        border: 2px solid rgba(255, 255, 255, 0.7);
-        color: white;
+        width: 80px;
+        height: 80px;
         border-radius: 50%;
-        width: 70px;
-        height: 70px;
+        background: rgba(255, 87, 34, 0.8);
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        color: white;
+        font-size: 32px;
         touch-action: manipulation;
-        z-index: 10;
-        transition: transform 0.1s;
+        z-index: 15;
+        box-shadow: 0 4px 12px rgba(255,87,34,0.4);
+        transition: transform 0.1s, background 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       
       #btnNitro:active {
-        transform: translateX(-50%) scale(0.9);
-        background: rgba(255, 87, 34, 0.9);
+        transform: translateX(-50%) scale(0.95);
+        background: rgba(255, 87, 34, 1);
+      }
+
+      @media (orientation: portrait) {
+        #btnLeft { left: 15px; bottom: 120px; }
+        #btnRight { right: 15px; bottom: 120px; }
+        #btnNitro { bottom: 120px; width: 90px; height: 90px; }
       }
     }
 
-    @media (max-width: 768px) and (orientation: portrait) {
-      .mobile-hud { flex-direction: row; align-items: flex-start; gap: 5px; }
-      .mobile-hud-item { margin-bottom: 5px; }
-      .mobile-hud-right { align-items: flex-start; }
-      #btnLeft { left: 20px; bottom: 100px; }
-      #btnRight { right: 20px; bottom: 100px; }
-      #btnNitro { left: 88%; bottom: 200px; transform: translateX(-50%); }
-    }
-
-    @media (max-width: 768px) and (orientation: landscape) {
-      .mobile-hud { font-size: 10px; }
-      .mobile-hud-item { padding: 4px 6px; }
-      #btnLeft { left: 20px; bottom: 20px; }
-      #btnRight { right: 20px; bottom: 20px; }
-      #btnNitro { left: 90%; bottom: 20px; }
-    }
-
+    /* Elementos comunes */
     #game-container { position: relative; }
     canvas { display: block; background: #111; }
 
-    /* Pantalla de carga */
     #loading-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       background: #000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      gap: 20px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 100; gap: 20px;
     }
-
-    @media (min-width: 769px) {
-      #loading-screen { background: url('imagenes/cargaInicioPC_1.png') center/cover no-repeat; }
-    }
-
-    @media (max-width: 768px) {
-      #loading-screen { background: url('imagenes/cargaInicioMovil_1.png') center/cover no-repeat; }
-    }
-
+    @media (min-width: 769px) { #loading-screen { background: url('imagenes/cargaInicioPC_1.png') center/cover no-repeat; } }
+    @media (max-width: 768px) { #loading-screen { background: url('imagenes/cargaInicioMovil_1.png') center/cover no-repeat; } }
+    
     .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(255, 255, 255, 0.3);
+      width: 50px; height: 50px;
+      border: 5px solid rgba(255,255,255,0.3);
       border-radius: 50%;
       border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
     }
-
-    .loading-progress {
-      width: 200px;
-      height: 20px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .loading-progress-bar {
-      height: 100%;
-      background: #28a745;
-      width: 0%;
-      transition: width 0.3s;
-    }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .loading-text { color: white; font-size: 18px; text-shadow: 0 0 5px #000; }
 
     #inicio {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 20;
-      gap: 15px;
-      padding: 20px;
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 20; gap: 15px; padding: 20px;
       box-sizing: border-box;
       display: none;
     }
-
-    @media (min-width: 769px) {
-      #inicio { background: url('imagenes/fondoComputadora_1.png') center/cover no-repeat, rgba(0, 0, 0, 0.7); background-blend-mode: overlay; }
-    }
-
-    @media (max-width: 768px) {
-      #inicio { background: url('imagenes/fondo_movil_1.png') center/cover no-repeat, rgba(0, 0, 0, 0.7); background-blend-mode: overlay; }
-    }
-
+    @media (min-width: 769px) { #inicio { background: url('imagenes/fondoComputadora_1.png') center/cover no-repeat, rgba(0,0,0,0.7); background-blend-mode: overlay; } }
+    @media (max-width: 768px) { #inicio { background: url('imagenes/fondo_movil_1.png') center/cover no-repeat, rgba(0,0,0,0.7); background-blend-mode: overlay; } }
+    
     #inicio h2 { font-size: 28px; color: gold; text-shadow: 0 0 5px #fff; margin-bottom: 10px; text-align: center; }
-
     #inicio input, #inicio select {
-      padding: 12px;
-      font-size: 18px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 8px;
-      width: 250px;
-      text-align: center;
-      background: #222;
-      color: white;
+      padding: 12px; font-size: 18px; margin: 5px 0;
+      border: none; border-radius: 8px; width: 250px;
+      text-align: center; background: #222; color: white;
     }
-
     #inicio button {
-      padding: 12px 25px;
-      font-size: 18px;
-      background: #28a745;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
+      padding: 12px 25px; font-size: 18px;
+      background: #28a745; border: none; border-radius: 8px;
+      color: white; cursor: pointer; font-weight: bold;
       transition: transform 0.2s, background 0.2s;
-      width: 100%;
-      max-width: 300px;
-      margin: 5px auto;
+      width: 100%; max-width: 300px; margin: 5px auto;
     }
-
-    #inicio button:active { transform: scale(0.95); }
-
     #btnActivarSonido { background: #6c757d; margin-bottom: 10px; }
 
     #gameOverScreen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 30;
-      gap: 15px;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: none; flex-direction: column; justify-content: center; align-items: center;
+      background: rgba(0,0,0,0.9); z-index: 30; gap: 15px;
     }
-
     #gameOverText { color: red; font-size: 42px; margin-bottom: 10px; text-align: center; text-shadow: 0 0 10px #ff0000; }
-
     #btnReiniciar {
-      padding: 12px 25px;
-      font-size: 18px;
-      background: #ff5722;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
-      display: none;
-      font-weight: bold;
+      padding: 12px 25px; font-size: 18px; background: #ff5722;
+      color: white; border: none; border-radius: 8px; cursor: pointer;
+      margin-top: 20px; display: none; font-weight: bold;
     }
-
     .tienda { color: cyan; font-size: 16px; text-align: center; margin: 10px 0; font-weight: bold; }
 
     .vehicle-selector-container { margin-bottom: 15px; width: 100%; }
-    .vehicle-selector { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-
-    .vehicle-option {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px;
-      border: 2px solid #555;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(0, 0, 0, 0.5);
-      width: 100px;
-      text-align: center;
+    .vehicle-selector {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
     }
-
-    .vehicle-option:hover { border-color: gold; background: rgba(255, 215, 0, 0.2); transform: translateY(-3px); }
-    .vehicle-option.selected { border-color: cyan; background: rgba(0, 255, 255, 0.2); box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
-
+    .vehicle-option {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 10px; border: 2px solid #555; border-radius: 8px;
+      cursor: pointer; transition: all 0.2s;
+      background: rgba(0,0,0,0.5); width: 100px; text-align: center;
+      min-height: 44px;
+    }
+    .vehicle-option:hover { border-color: gold; background: rgba(255,215,0,0.2); transform: translateY(-3px); }
+    .vehicle-option.selected { border-color: cyan; background: rgba(0,255,255,0.2); box-shadow: 0 0 10px rgba(0,255,255,0.5); }
     .vehicle-thumb { width: 50px; height: 30px; object-fit: contain; margin-bottom: 5px; image-rendering: pixelated; }
     .vehicle-option span { font-size: 14px; color: white; text-shadow: 1px 1px 2px black; }
   </style>
 </head>
 <body>
+  <!-- Pantalla de carga -->
   <div id="loading-screen">
     <div class="loading-spinner"></div>
-    <div class="loading-progress">
-      <div class="loading-progress-bar" id="loading-progress-bar"></div>
-    </div>
-    <div class="loading-text" id="loading-text">Cargando... 0%</div>
+    <div class="loading-text">Cargando...</div>
   </div>
 
+  <!-- Contenedor desktop -->
   <div id="desktop-view">
     <div class="arcade-machine">
       <div class="arcade-title">PATRULLA RUNNER</div>
       <div class="arcade-screen-container">
         <div class="arcade-screen">
           <div id="game-container-desktop">
-            <canvas id="game-desktop" width="400" height="600"></canvas>
+            <canvas id="game" width="400" height="600"></canvas>
             <div class="arcade-bezel"></div>
           </div>
         </div>
@@ -598,8 +444,9 @@
     </div>
   </div>
 
+  <!-- Versión móvil -->
   <div id="mobile-view" style="display: none;">
-    <div id="game-container-mobile">
+    <div id="game-container">
       <canvas id="game-mobile" width="400" height="600"></canvas>
       
       <div class="mobile-hud">
@@ -610,35 +457,42 @@
           <div class="mobile-hud-item" id="mobile-shields">🛡️: 0/2</div>
           <div class="mobile-hud-item" id="mobile-plates">🟡: 0/50</div>
         </div>
-        
         <div class="mobile-hud-right">
           <div class="mobile-hud-item" id="mobile-level">🏆: 1</div>
-          <div class="mobile-hud-item"><div>🚩: 0%</div><div class="mobile-progress-container"><div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div></div></div>
-          <div class="mobile-hud-item"><div>⚡: 100%</div><div class="mobile-progress-container"><div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div></div></div>
+          <div class="mobile-hud-item">
+            <div>🚩: 0%</div>
+            <div class="mobile-progress-container"><div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div></div>
+          </div>
+          <div class="mobile-hud-item">
+            <div>⚡: 100%</div>
+            <div class="mobile-progress-container"><div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div></div>
+          </div>
         </div>
       </div>
       
       <div class="mobile-hud-combo" id="mobile-combo">COMBO x1</div>
       
-      <div id="left-control" class="touch-control"></div>
-      <div id="right-control" class="touch-control"></div>
+      <!-- Zonas táctiles optimizadas -->
+      <div id="left-zone" class="touch-zone"></div>
+      <div id="right-zone" class="touch-zone"></div>
       
+      <!-- Botones direccionales -->
       <div id="btnLeft" class="direction-btn">←</div>
       <div id="btnRight" class="direction-btn">→</div>
-      
       <button id="btnNitro">💨</button>
     </div>
   </div>
 
+  <!-- Elementos comunes -->
   <div id="inicio">
     <h2>Patrulla Runner</h2>
     <button id="btnActivarSonido">🔊 Activar Sonido</button>
-    <input id="nombreJugador" type="text" placeholder="Tu nombre..." maxlength="20" />
+    <input id="nombreJugador" type="text" placeholder="Tu nombre..." maxlength="20" pattern="[A-Za-z0-9 ]+" />
     
     <div class="vehicle-selector-container">
       <label style="color: white; margin-bottom: 5px; display: block; text-align: center;">Selecciona tu vehículo:</label>
       <div class="vehicle-selector">
-        <div class="vehicle-option selected" data-value="imagenes/patrulla_1.png"><img src="imagenes/patrulla_1.png" alt="Patrulla de Cuadrante" class="vehicle-thumb"><span>Cuadrante</span></div>
+        <div class="vehicle-option" data-value="imagenes/patrulla_1.png"><img src="imagenes/patrulla_1.png" alt="Patrulla de Cuadrante" class="vehicle-thumb"><span>Cuadrante</span></div>
         <div class="vehicle-option" data-value="imagenes/transito_1.png"><img src="imagenes/transito_1.png" alt="Patrulla de Tránsito" class="vehicle-thumb"><span>Tránsito</span></div>
         <div class="vehicle-option" data-value="imagenes/pbi_1.png"><img src="imagenes/pbi_1.png" alt="Patrulla P.B.I." class="vehicle-thumb"><span>P.B.I.</span></div>
         <div class="vehicle-option" data-value="imagenes/auxiliar_1.png"><img src="imagenes/auxiliar_1.png" alt="Patrulla Auxiliar" class="vehicle-thumb"><span>P.A.</span></div>
@@ -660,78 +514,88 @@
 
   <script>
     (function() {
-      // ==================== CONSTANTES ====================
-      const CONSTANTS = {
+      'use strict';
+
+      // ==================== CONFIGURACIÓN ====================
+      const CONFIG = {
         CANVAS_WIDTH: 400,
         CANVAS_HEIGHT: 600,
         LEFT_BORDER: 40,
         RIGHT_BORDER: 360,
         BORDER_WIDTH: 8,
+        LINE_POSITIONS: [120, 200, 280],
+        LINE_HEIGHT: 30,
+        LINE_GAP: 50,
         INITIAL_SPEED: 5,
         MAX_SPEED: 15,
-        MIN_SPEED: 3,
         NITRO_BOOST: 3,
-        NITRO_REGEN_SPEED: 0.2,
-        NITRO_CONSUMPTION_INTERVAL: 50,
-        NITRO_ITEM_BASE_INTERVAL: 15000,
-        PLACAS_BASE_FOR_VIDA: 50,
-        INVULNERABLE_TIME: 1000,
-        DESLIZAMIENTO_MAX_TIME: 1000,
-        COMBO_RESET_TIME: 3000,
+        NITRO_CONSUME_RATE: 1, // por 50ms
+        NITRO_REGEN: 0.2,
         MAX_ESCUDOS: 2,
-        MAX_PARTICLES: 100,
+        TIEMPO_INVULNERABLE: 1000,
+        TIEMPO_DESLIZAMIENTO_MAX: 1000,
+        TIEMPO_RESET_COMBO: 3000,
+        PLACAS_PARA_VIDA_BASE: 50,
+        SCORE_PER_LEVEL: 1000,
+        MAX_PARTICULAS: 100,
         MAX_DERRAPE_MARKS: 10,
-        CLIMA_DURATION_MIN: 15000,
-        CLIMA_DURATION_MAX: 30000,
-        RAYO_ADVERTENCIA_TIME: 1500,
-        RAYO_IMPACTO_TIME: 150,
-        CRATER_LIFETIME: 3000,
-        SHAKE_INTENSITY: 10,
-        SHAKE_FRAMES: 15
+        NITRO_ITEM_INTERVALO_BASE: 15000
       };
 
-      // ==================== ESTADO DEL JUEGO ====================
-      const GameState = {
+      // ==================== DETECCIÓN DISPOSITIVO ====================
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const desktopView = document.getElementById('desktop-view');
+      const mobileView = document.getElementById('mobile-view');
+      const gameCanvas = isMobile ? document.getElementById('game-mobile') : document.getElementById('game');
+      
+      if (isMobile) {
+        desktopView.style.display = 'none';
+        mobileView.style.display = 'block';
+      } else {
+        desktopView.style.display = 'block';
+        mobileView.style.display = 'none';
+      }
+
+      // ==================== ESTADO GLOBAL ====================
+      const state = {
         // Jugador
         nombreJugador: '',
-        patrulla: { x: 180, y: CONSTANTS.CANVAS_HEIGHT - 100, width: 40, height: 60, targetX: 180 },
-        vidas: 3,
-        escudosRecolectados: 0,
-        tiempoBloqueoChalecos: 0,
+        patrulla: { x: 180, y: CONFIG.CANVAS_HEIGHT - 100, width: 40, height: 60, targetX: 180 },
+        patrullaImgs: [],
+        currentPatrullaImgIndex: 0,
+        frameCount: 0,
         
         // Puntuación
         score: 0,
         highScore: 0,
-        totalPuntos: 0,
-        combo: 0,
-        maxCombo: 0,
-        tiempoUltimaPlaca: 0,
-        comboTimeout: null,
-        
-        // Nivel
         level: 1,
-        speed: CONSTANTS.INITIAL_SPEED,
-        tiempoUltimoLevelUp: 0,
-        
-        // Nitro
+        vidas: 3,
+        escudosRecolectados: 0,
         nitro: 100,
         nitroActivo: false,
-        nitroSoundPlaying: false,
-        nitroConsumptionInterval: null,
-        
-        // Progresión
+        combo: 0,
+        maxCombo: 0,
         placasRecolectadasDesdeUltimaVida: 0,
-        nitroItemInterval: CONSTANTS.NITRO_ITEM_BASE_INTERVAL,
-        placasParaVida: CONSTANTS.PLACAS_BASE_FOR_VIDA,
-        ultimoNitroItemTiempo: 0,
+        placasParaVida: CONFIG.PLACAS_PARA_VIDA_BASE,
         
-        // Efectos
-        deslizando: false,
-        tiempoDeslizamiento: 0,
+        // Tiempos
+        tiempoUltimaPlaca: 0,
         tiempoUltimoChoque: 0,
-        shakeFrames: 0,
+        tiempoDeslizamiento: 0,
+        tiempoBloqueoChalecos: 0,
+        tiempoUltimoLevelUp: 0,
+        tiempoUltimoNitroItem: 0,
+        tiempoUltimoGuardado: 0,
         
-        // Arrays de objetos
+        // Estados
+        gameOver: false,
+        juegoPausado: false,
+        deslizando: false,
+        invulnerable: false,
+        nitroSoundPlaying: false,
+        sonidoActivado: false,
+        
+        // Colecciones de objetos
         obstacles: [],
         objetivos: [],
         powerups: [],
@@ -741,7 +605,7 @@
         trampaClavosItems: [],
         conos: [],
         
-        // Partículas y efectos
+        // Efectos
         humoParticles: [],
         derrapeMarks: [],
         gotas: [],
@@ -764,293 +628,517 @@
         vientoActivo: false,
         ultimoTrueno: 0,
         
-        // Control
-        gameOver: false,
-        juegoPausado: false,
+        // Otros
+        speed: CONFIG.INITIAL_SPEED,
+        lineOffset: 0,
         pulso: 0,
-        frameCount: 0,
-        currentPatrullaImgIndex: 0,
-        
-        // Tiempo
-        tiempoUltimoGuardado: 0
+        shakeFrames: 0,
+        nitroItemIntervalo: CONFIG.NITRO_ITEM_INTERVALO_BASE
       };
 
-      // ==================== CONFIGURACIÓN INICIAL ====================
-      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const desktopView = document.getElementById('desktop-view');
-      const mobileView = document.getElementById('mobile-view');
+      // ==================== RECURSOS (IMÁGENES) ====================
+      const images = {
+        loadingDesktop: new Image(),
+        loadingMobile: new Image(),
+        cono: new Image(),
+        crater: new Image(),
+        placaPolicia: new Image(),
+        barrera: new Image(),
+        powerup: new Image(),
+        nitroItem: new Image(),
+        vidaItem: new Image(),
+        trampaClavos: new Image(),
+        fondoInicioDesktop: new Image(),
+        fondoInicioMovil: new Image()
+      };
       
-      let gameCanvas;
-      if (isMobile) {
-        desktopView.style.display = 'none';
-        mobileView.style.display = 'block';
-        gameCanvas = document.getElementById('game-mobile');
-      } else {
-        desktopView.style.display = 'block';
-        mobileView.style.display = 'none';
-        gameCanvas = document.getElementById('game-desktop');
-      }
+      images.loadingDesktop.src = 'imagenes/cargaInicioPC_1.png';
+      images.loadingMobile.src = 'imagenes/cargaInicioMovil_1.png';
+      images.cono.src = 'imagenes/cono_1.png';
+      images.crater.src = 'imagenes/crater_1.png';
+      images.placaPolicia.src = 'imagenes/placaPolicia_1.png';
+      images.barrera.src = 'imagenes/barrera_1.png';
+      images.powerup.src = 'imagenes/powerup_1.png';
+      images.nitroItem.src = 'imagenes/nitro_1.png';
+      images.vidaItem.src = 'imagenes/vida_1.png';
+      images.trampaClavos.src = 'imagenes/trampaclavos_1.png';
+      images.fondoInicioDesktop.src = 'imagenes/fondoComputadora_1.png';
+      images.fondoInicioMovil.src = 'imagenes/fondo_movil_1.png';
 
-      // ==================== ASSETS ====================
       const patrullaAssets = {
         'imagenes/patrulla_1.png': ['imagenes/patrulla_1.png', 'imagenes/patrulla_1b.png'],
         'imagenes/transito_1.png': ['imagenes/transito_1.png', 'imagenes/transito_1b.png'],
         'imagenes/pbi_1.png': ['imagenes/pbi_1.png', 'imagenes/pbi_1b.png'],
         'imagenes/auxiliar_1.png': ['imagenes/auxiliar_1.png', 'imagenes/auxiliar_1b.png']
       };
-      
-      let patrullaImgs = [];
+
+      // Precargar imágenes de vehículos
+      Object.values(patrullaAssets).flat().forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
 
       // ==================== SONIDOS ====================
-      const sonidoPunto = new Audio('sonidos/estrella_1.mp3');
-      const sonidoChoque = new Audio('sonidos/choque_1.mp3');
-      const sonidoPowerup = new Audio('sonidos/powerup_1.mp3');
-      const sonidoAntiPowerup = new Audio('sonidos/anti_powerup.mp3');
-      const sonidoAceite = new Audio('sonidos/aceite.mp3');
-      const sonidoNitro = new Audio('sonidos/nitro_1.mp3');
-      const sonidoVida = new Audio('sonidos/vida_1.mp3');
-      const sonidoFrenoDerrape = new Audio('sonidos/freno_1.mp3');
-      const sonidoTrampaClavos = new Audio('sonidos/trampaclavos_1.mp3');
-      const sonidoCono = new Audio('sonidos/choque_1.mp3');
-      const sonidoTrueno = new Audio('sonidos/trueno.mp3');
-      const sonidoImpactoRayo = new Audio('sonidos/rayo_1.mp3');
-      const sonidoViento = new Audio('sonidos/viento.mp3');
-      const sonidoNieve = new Audio('sonidos/nieve.mp3');
-      const sonidoNoche = new Audio('sonidos/noche.mp3');
-      const sonidoGranizoGolpe = new Audio('sonidos/granizoGolpe_1.mp3');
-      const musicaFondo = new Audio('sonidos/musicaFondo_1.mp3');
-      const sonidoInicio = new Audio('sonidos/musicaInicio_1.mp3');
+      const sounds = {
+        punto: new Audio('sonidos/estrella_1.mp3'),
+        choque: new Audio('sonidos/choque_1.mp3'),
+        powerup: new Audio('sonidos/powerup_1.mp3'),
+        antiPowerup: new Audio('sonidos/anti_powerup.mp3'),
+        aceite: new Audio('sonidos/aceite.mp3'),
+        nitro: new Audio('sonidos/nitro_1.mp3'),
+        vida: new Audio('sonidos/vida_1.mp3'),
+        frenoDerrape: new Audio('sonidos/freno_1.mp3'),
+        trampaClavos: new Audio('sonidos/trampaclavos_1.mp3'),
+        cono: new Audio('sonidos/choque_1.mp3'),
+        trueno: new Audio('sonidos/trueno.mp3'),
+        impactoRayo: new Audio('sonidos/rayo_1.mp3'),
+        viento: new Audio('sonidos/viento.mp3'),
+        nieve: new Audio('sonidos/nieve.mp3'),
+        noche: new Audio('sonidos/noche.mp3'),
+        granizoGolpe: new Audio('sonidos/granizoGolpe_1.mp3'),
+        musicaFondo: new Audio('sonidos/musicaFondo_1.mp3'),
+        musicaInicio: new Audio('sonidos/musicaInicio_1.mp3')
+      };
 
-      sonidoNoche.loop = true;
-      sonidoNoche.volume = 0.3;
-      musicaFondo.loop = true;
-      musicaFondo.volume = 0.2;
-      sonidoInicio.loop = true;
-      sonidoInicio.volume = 0.3;
-      sonidoViento.loop = true;
-      sonidoViento.volume = 0.5;
-      sonidoNieve.loop = true;
-      sonidoNieve.volume = 0.3;
+      // Configurar loops
+      sounds.viento.loop = true;
+      sounds.nieve.loop = true;
+      sounds.noche.loop = true;
+      sounds.musicaFondo.loop = true;
+      sounds.musicaInicio.loop = true;
 
-      const allSounds = [
-        sonidoPunto, sonidoChoque, sonidoPowerup, sonidoAntiPowerup,
-        sonidoAceite, sonidoNitro, sonidoVida, sonidoFrenoDerrape,
-        sonidoTrampaClavos, sonidoCono, sonidoTrueno, sonidoImpactoRayo,
-        sonidoViento, sonidoNieve, sonidoNoche, sonidoGranizoGolpe,
-        musicaFondo, sonidoInicio
-      ];
+      // Configurar volúmenes
+      sounds.viento.volume = 0.5;
+      sounds.nieve.volume = 0.3;
+      sounds.noche.volume = 0.3;
+      sounds.musicaFondo.volume = 0.2;
+      sounds.musicaInicio.volume = 0.3;
 
-      let sonidoActivado = false;
+      // Cola de reproducción de sonidos para evitar sobrecarga de promesas
+      const soundQueue = [];
+      let isProcessingSound = false;
 
-      // ==================== FUNCIONES DE SONIDO ====================
-      async function reproducirSonido(audio) {
-        if (!sonidoActivado || GameState.juegoPausado) return;
+      async function processSoundQueue() {
+        if (isProcessingSound || soundQueue.length === 0) return;
+        isProcessingSound = true;
         
+        const audio = soundQueue.shift();
         try {
-          if (audio.playing) {
-            audio.currentTime = 0;
-          } else {
-            audio.currentTime = 0;
-            await audio.play();
-            audio.playing = true;
-            audio.addEventListener('ended', () => { audio.playing = false; }, { once: true });
-          }
+          audio.currentTime = 0;
+          await audio.play();
         } catch (e) {
-          console.warn('Error reproduciendo sonido:', e);
-          audio.playing = false;
+          // Silenciar errores de reproducción (autoplay policy, etc.)
+        } finally {
+          isProcessingSound = false;
+          if (soundQueue.length > 0) processSoundQueue();
         }
       }
 
-      function pausarTodosLosSonidos() {
-        allSounds.forEach(sound => {
-          try {
-            sound.pause();
-            sound.currentTime = 0;
-            sound.playing = false;
-          } catch (e) {}
-        });
+      function playSound(audio) {
+        if (!state.sonidoActivado || state.juegoPausado) return;
+        soundQueue.push(audio);
+        if (!isProcessingSound) processSoundQueue();
+      }
+
+      function stopSound(audio) {
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+        } catch (e) {}
+      }
+
+      function stopAllAmbientSounds() {
+        stopSound(sounds.viento);
+        stopSound(sounds.nieve);
+        stopSound(sounds.noche);
       }
 
       // ==================== FUNCIONES DE UTILIDAD ====================
-      function sanitizarNombre(nombre) {
-        const div = document.createElement('div');
-        div.textContent = nombre.substring(0, 20);
-        return div.innerHTML;
+      function sanitizeName(name) {
+        return name.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 20) || 'Jugador';
       }
 
       function updateHUD() {
         const ahora = Date.now();
         
         if (isMobile) {
-          const nombreCorto = GameState.nombreJugador.length > 10 ? 
-            GameState.nombreJugador.substring(0, 5).toUpperCase() : 
-            GameState.nombreJugador.toUpperCase();
+          const nombreCorto = state.nombreJugador.length > 8 ? state.nombreJugador.substring(0, 5).toUpperCase() : state.nombreJugador.toUpperCase();
           
           document.getElementById('mobile-player').textContent = `👮‍♂️: ${nombreCorto}`;
-          document.getElementById('mobile-score').textContent = `💎: ${GameState.score}`;
-          document.getElementById('mobile-level').textContent = `🏆: ${GameState.level}`;
-          document.getElementById('mobile-lives').textContent = `♥️: ${GameState.vidas}`;
+          document.getElementById('mobile-score').textContent = `💎: ${state.score}`;
+          document.getElementById('mobile-level').textContent = `🏆: ${state.level}`;
+          document.getElementById('mobile-lives').textContent = `♥️: ${state.vidas}`;
           
-          if (ahora - GameState.tiempoBloqueoChalecos < 10000) {
-            const tiempoRestante = Math.ceil((10000 - (ahora - GameState.tiempoBloqueoChalecos)) / 1000);
-            document.getElementById('mobile-shields').textContent = `🛡️: BLOQ (${tiempoRestante}s)`;
+          if (ahora - state.tiempoBloqueoChalecos < 10000) {
+            const tiempoRestante = Math.ceil((10000 - (ahora - state.tiempoBloqueoChalecos)) / 1000);
+            document.getElementById('mobile-shields').textContent = `🛡️: BLOQ(${tiempoRestante}s)`;
           } else {
-            document.getElementById('mobile-shields').textContent = `🛡️: ${GameState.escudosRecolectados}/${CONSTANTS.MAX_ESCUDOS}`;
+            document.getElementById('mobile-shields').textContent = `🛡️: ${state.escudosRecolectados}/${CONFIG.MAX_ESCUDOS}`;
           }
           
-          document.getElementById('mobile-plates').textContent = `🟡: ${GameState.placasRecolectadasDesdeUltimaVida}/${GameState.placasParaVida}`;
+          document.getElementById('mobile-plates').textContent = `🟡: ${state.placasRecolectadasDesdeUltimaVida}/${state.placasParaVida}`;
           
-          const progress = Math.min(100, (GameState.score / (GameState.level * 1000)) * 100);
+          const progress = Math.min(100, (state.score / (state.level * CONFIG.SCORE_PER_LEVEL)) * 100);
           document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
-          document.getElementById('mobile-nitro-bar').style.width = `${GameState.nitro}%`;
+          document.getElementById('mobile-nitro-bar').style.width = `${state.nitro}%`;
           
           const mobileCombo = document.getElementById('mobile-combo');
           if (mobileCombo) {
-            if (GameState.combo > 1) {
-              mobileCombo.textContent = `COMBO x${GameState.combo}`;
+            if (state.combo > 1) {
+              mobileCombo.textContent = `COMBO x${state.combo}`;
               mobileCombo.style.display = 'block';
-              mobileCombo.style.backgroundColor = GameState.combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
+              mobileCombo.style.backgroundColor = state.combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
             } else {
               mobileCombo.style.display = 'none';
             }
           }
         } else {
-          document.getElementById('desktop-player').textContent = GameState.nombreJugador;
-          document.getElementById('desktop-score').textContent = GameState.score;
-          document.getElementById('desktop-level').textContent = GameState.level;
-          document.getElementById('desktop-highscore').textContent = GameState.highScore;
-          document.getElementById('desktop-nitro-progress').style.width = `${GameState.nitro}%`;
-          document.getElementById('desktop-plates').textContent = `${GameState.placasRecolectadasDesdeUltimaVida}/${GameState.placasParaVida}`;
-          document.getElementById('desktop-plates-progress').style.width = `${(GameState.placasRecolectadasDesdeUltimaVida / GameState.placasParaVida) * 100}%`;
+          document.getElementById('desktop-player').textContent = state.nombreJugador;
+          document.getElementById('desktop-score').textContent = state.score;
+          document.getElementById('desktop-level').textContent = state.level;
+          document.getElementById('desktop-highscore').textContent = state.highScore;
+          document.getElementById('desktop-nitro-progress').style.width = `${state.nitro}%`;
+          document.getElementById('desktop-plates').textContent = `${state.placasRecolectadasDesdeUltimaVida}/${state.placasParaVida}`;
+          document.getElementById('desktop-plates-progress').style.width = `${(state.placasRecolectadasDesdeUltimaVida / state.placasParaVida) * 100}%`;
           
-          if (ahora - GameState.tiempoBloqueoChalecos < 10000) {
-            const tiempoRestante = Math.ceil((10000 - (ahora - GameState.tiempoBloqueoChalecos)) / 1000);
+          if (ahora - state.tiempoBloqueoChalecos < 10000) {
+            const tiempoRestante = Math.ceil((10000 - (ahora - state.tiempoBloqueoChalecos)) / 1000);
             document.getElementById('desktop-shields').textContent = `BLOQ (${tiempoRestante}s)`;
             document.getElementById('desktop-shields').style.color = 'red';
           } else {
-            document.getElementById('desktop-shields').textContent = `${GameState.escudosRecolectados}/${CONSTANTS.MAX_ESCUDOS}`;
+            document.getElementById('desktop-shields').textContent = `${state.escudosRecolectados}/${CONFIG.MAX_ESCUDOS}`;
             document.getElementById('desktop-shields').style.color = 'white';
           }
+          document.getElementById('desktop-shields-progress').style.width = `${(state.escudosRecolectados / CONFIG.MAX_ESCUDOS) * 100}%`;
           
-          document.getElementById('desktop-shields-progress').style.width = `${(GameState.escudosRecolectados / CONSTANTS.MAX_ESCUDOS) * 100}%`;
-          
-          const progress = Math.min(100, (GameState.score / (GameState.level * 1000)) * 100);
+          const progress = Math.min(100, (state.score / (state.level * CONFIG.SCORE_PER_LEVEL)) * 100);
           document.getElementById('desktop-level-progress').style.width = `${progress}%`;
           
           const livesContainer = document.getElementById('desktop-lives');
           livesContainer.innerHTML = '';
-          for (let i = 0; i < GameState.vidas; i++) {
+          for (let i = 0; i < state.vidas; i++) {
             const life = document.createElement('div');
             life.className = 'life';
             livesContainer.appendChild(life);
           }
           
           const comboContainer = document.getElementById('desktop-combo-container');
-          const comboElement = document.getElementById('desktop-combo');
-          if (GameState.combo > 1) {
+          const comboEl = document.getElementById('desktop-combo');
+          if (state.combo > 1) {
             comboContainer.style.display = 'block';
-            comboElement.textContent = `x${GameState.combo}`;
-            comboContainer.style.backgroundColor = GameState.combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+            comboEl.textContent = `x${state.combo}`;
+            comboContainer.style.backgroundColor = state.combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
           } else {
             comboContainer.style.display = 'none';
           }
         }
       }
 
-      // ==================== FUNCIONES DE COLISIÓN ====================
-      function checkRectCollision(rect1, rect2) {
-        return rect1.x < rect2.x + rect2.width &&
-               rect1.x + rect1.width > rect2.x &&
-               rect1.y < rect2.y + rect2.height &&
-               rect1.y + rect1.height > rect2.y;
+      // ==================== CONTROLES ====================
+      let moveInterval = null;
+      let leftActive = false;
+      let rightActive = false;
+
+      function handleContinuousMove() {
+        if (leftActive) {
+          state.patrulla.targetX = Math.max(CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH, state.patrulla.targetX - 5);
+        }
+        if (rightActive) {
+          state.patrulla.targetX = Math.min(CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - state.patrulla.width, state.patrulla.targetX + 5);
+        }
       }
 
-      function checkCircleCollision(rect, circle) {
-        const closestX = Math.max(rect.x, Math.min(circle.x, rect.x + rect.width));
-        const closestY = Math.max(rect.y, Math.min(circle.y, rect.y + rect.height));
-        const dx = circle.x - closestX;
-        const dy = circle.y - closestY;
-        return (dx * dx + dy * dy) < (circle.size * circle.size);
+      function setupControls() {
+        if (isMobile) {
+          const leftZone = document.getElementById('left-zone');
+          const rightZone = document.getElementById('right-zone');
+          const btnNitro = document.getElementById('btnNitro');
+          const btnLeft = document.getElementById('btnLeft');
+          const btnRight = document.getElementById('btnRight');
+          
+          const startMove = (direction) => {
+            return (e) => {
+              e.preventDefault();
+              if (direction === 'left') leftActive = true;
+              if (direction === 'right') rightActive = true;
+              if (!moveInterval) moveInterval = setInterval(handleContinuousMove, 16);
+            };
+          };
+          
+          const stopMove = (direction) => {
+            return (e) => {
+              e.preventDefault();
+              if (direction === 'left') leftActive = false;
+              if (direction === 'right') rightActive = false;
+              if (!leftActive && !rightActive && moveInterval) {
+                clearInterval(moveInterval);
+                moveInterval = null;
+              }
+            };
+          };
+
+          // Zonas táctiles
+          leftZone.addEventListener('touchstart', startMove('left'), { passive: false });
+          leftZone.addEventListener('touchend', stopMove('left'), { passive: false });
+          leftZone.addEventListener('touchcancel', stopMove('left'), { passive: false });
+          
+          rightZone.addEventListener('touchstart', startMove('right'), { passive: false });
+          rightZone.addEventListener('touchend', stopMove('right'), { passive: false });
+          rightZone.addEventListener('touchcancel', stopMove('right'), { passive: false });
+
+          // Botones direccionales
+          btnLeft.addEventListener('touchstart', startMove('left'), { passive: false });
+          btnLeft.addEventListener('touchend', stopMove('left'), { passive: false });
+          btnLeft.addEventListener('touchcancel', stopMove('left'), { passive: false });
+          
+          btnRight.addEventListener('touchstart', startMove('right'), { passive: false });
+          btnRight.addEventListener('touchend', stopMove('right'), { passive: false });
+          btnRight.addEventListener('touchcancel', stopMove('right'), { passive: false });
+
+          // Nitro
+          btnNitro.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            activarNitro();
+          }, { passive: false });
+          
+          btnNitro.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            desactivarNitro();
+          }, { passive: false });
+          
+          btnNitro.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            desactivarNitro();
+          }, { passive: false });
+        }
       }
 
-      // ==================== FUNCIONES DE OBJETOS ====================
+      // ==================== NITRO ====================
+      let nitroConsumptionInterval = null;
+
+      function activarNitro() {
+        if (state.nitro > 0 && !state.nitroActivo && !state.juegoPausado) {
+          state.nitroActivo = true;
+          state.speed += CONFIG.NITRO_BOOST;
+          
+          if (!state.nitroSoundPlaying && state.sonidoActivado) {
+            playSound(sounds.nitro);
+            state.nitroSoundPlaying = true;
+          }
+          
+          if (nitroConsumptionInterval) clearInterval(nitroConsumptionInterval);
+          nitroConsumptionInterval = setInterval(() => {
+            if (state.nitroActivo && state.nitro > 0 && !state.juegoPausado) {
+              state.nitro = Math.max(0, state.nitro - CONFIG.NITRO_CONSUME_RATE);
+              if (state.nitro <= 0) desactivarNitro();
+              updateHUD();
+            }
+          }, 50);
+        }
+      }
+
+      function desactivarNitro() {
+        if (state.nitroActivo) {
+          state.nitroActivo = false;
+          state.speed = Math.max(CONFIG.INITIAL_SPEED, state.speed - CONFIG.NITRO_BOOST);
+          
+          if (state.nitroSoundPlaying) {
+            stopSound(sounds.nitro);
+            state.nitroSoundPlaying = false;
+          }
+          
+          if (nitroConsumptionInterval) {
+            clearInterval(nitroConsumptionInterval);
+            nitroConsumptionInterval = null;
+          }
+          
+          if (state.sonidoActivado) playSound(sounds.frenoDerrape);
+          crearEfectoDerrape();
+        }
+      }
+
+      function crearEfectoDerrape() {
+        const centerX = state.patrulla.x + state.patrulla.width / 2;
+        const wheelWidth = 10;
+        
+        if (state.derrapeMarks.length < CONFIG.MAX_DERRAPE_MARKS - 2) {
+          state.derrapeMarks.push({
+            x1: centerX - wheelWidth, y1: state.patrulla.y + state.patrulla.height,
+            x2: centerX - wheelWidth, y2: state.patrulla.y + state.patrulla.height + 30 + Math.random() * 20,
+            width: 3 + Math.random() * 2, alpha: 0.8
+          });
+          state.derrapeMarks.push({
+            x1: centerX + wheelWidth, y1: state.patrulla.y + state.patrulla.height,
+            x2: centerX + wheelWidth, y2: state.patrulla.y + state.patrulla.height + 30 + Math.random() * 20,
+            width: 3 + Math.random() * 2, alpha: 0.8
+          });
+        }
+        
+        for (let i = 0; i < 15 && state.humoParticles.length < CONFIG.MAX_PARTICULAS; i++) {
+          state.humoParticles.push({
+            x: centerX + (Math.random() - 0.5) * wheelWidth * 1.5,
+            y: state.patrulla.y + state.patrulla.height - 5 + Math.random() * 30,
+            size: 5 + Math.random() * 15, alpha: 0.6,
+            speedX: (Math.random() - 0.5) * 2, speedY: -Math.random() * 2,
+            decay: 0.01 + Math.random() * 0.03
+          });
+        }
+        
+        state.shakeFrames = 5;
+      }
+
+      // ==================== CLIMA ====================
+      function cambiarClima() {
+        const ahora = Date.now();
+        
+        if (state.tiempoDuracionClima === 0) {
+          state.tiempoDuracionClima = 15000 + Math.random() * 15000;
+        }
+        
+        if (ahora - state.tiempoCambioClima > state.tiempoDuracionClima) {
+          const climas = ['normal', 'niebla', 'tormenta', 'viento', 'nieve', 'arena', 'granizo', 'noche'];
+          state.climaActual = climas[Math.floor(Math.random() * climas.length)];
+          
+          if (state.climaActual === 'granizo') {
+            const opciones = ['nieve', 'lluvia'];
+            state.climaSecundario = opciones[Math.floor(Math.random() * opciones.length)];
+          } else if (state.climaActual === 'tormenta') {
+            state.climaSecundario = 'lluvia';
+          } else {
+            state.climaSecundario = null;
+          }
+          
+          state.tiempoDuracionClima = 15000 + Math.random() * 15000;
+          state.tiempoCambioClima = ahora;
+          
+          // Limpiar partículas anteriores
+          state.hojas = [];
+          state.copos = [];
+          state.arena = [];
+          state.granizos = [];
+          state.gotas = [];
+          state.rayos = [];
+          state.crateres = [];
+          state.particulasRayos = [];
+          state.particulasCrateres = [];
+          
+          state.nieblaActiva = state.climaActual === 'niebla';
+          state.nocheActiva = state.climaActual === 'noche';
+          state.vientoActivo = state.climaActual === 'viento';
+          
+          stopAllAmbientSounds();
+          
+          if (state.sonidoActivado) {
+            if (state.climaActual === 'viento') playSound(sounds.viento);
+            else if (state.climaActual === 'nieve' || (state.climaActual === 'granizo' && state.climaSecundario === 'nieve')) playSound(sounds.nieve);
+            else if (state.climaActual === 'noche') playSound(sounds.noche);
+          }
+        }
+      }
+
+      function spawnNieve() {
+        if (state.climaActual === 'nieve' || (state.climaActual === 'granizo' && state.climaSecundario === 'nieve')) {
+          if (Math.random() < 0.3 && state.copos.length < CONFIG.MAX_PARTICULAS) {
+            for (let i = 0; i < 2 + Math.floor(Math.random() * 3); i++) {
+              if (state.copos.length < CONFIG.MAX_PARTICULAS) {
+                state.copos.push({
+                  x: Math.random() * CONFIG.CANVAS_WIDTH,
+                  y: -5,
+                  speed: 1 + Math.random() * 2,
+                  size: 2 + Math.random() * 3
+                });
+              }
+            }
+          }
+        }
+      }
+
+      function spawnGranizo() {
+        if (state.climaActual === 'granizo' && state.granizos.length < CONFIG.MAX_PARTICULAS) {
+          if (Math.random() < 0.03) {
+            state.granizos.push({
+              x: Math.random() * CONFIG.CANVAS_WIDTH,
+              y: -10,
+              speed: 5 + Math.random() * 4,
+              size: 5 + Math.random() * 5
+            });
+          }
+        }
+      }
+
+      // ==================== OBJETOS ====================
       function spawnObstacle() {
         if (Math.random() < 0.02) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
           const width = 30 + Math.random() * 20;
           const height = 30 + Math.random() * 20;
-          GameState.obstacles.push({ x, y: -height, width, height });
+          state.obstacles.push({ x, y: -height, width, height });
         }
       }
 
       function spawnObjetivo() {
         if (Math.random() < 0.03) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
-          GameState.objetivos.push({ x, y: -30, width: 30, height: 30 });
+          state.objetivos.push({ x, y: -30, width: 30, height: 30 });
         }
       }
 
       function spawnPowerup() {
         if (Math.random() < 0.01) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
-          GameState.powerups.push({ x, y: -30, width: 30, height: 30 });
+          state.powerups.push({ x, y: -30, width: 30, height: 30 });
         }
       }
 
       function spawnAceite() {
-        if (GameState.level >= 3 && Math.random() < 0.005) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+        if (state.level >= 3 && Math.random() < 0.005) {
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
-          GameState.aceites.push({ x, y: -10, size: 15 + Math.random() * 15 });
+          state.aceites.push({ x, y: -10, size: 15 + Math.random() * 15 });
         }
       }
 
       function spawnNitroItem() {
         const ahora = Date.now();
-        if (GameState.level >= 1 && 
-            ahora - GameState.ultimoNitroItemTiempo > GameState.nitroItemInterval && 
-            GameState.nitroItems.length === 0 && 
-            GameState.nitro < 80) {
-          
+        if (state.level >= 1 && ahora - state.tiempoUltimoNitroItem > state.nitroItemIntervalo && 
+            state.nitroItems.length === 0 && state.nitro < 80) {
           if (Math.random() < 0.05) {
-            const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-            const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+            const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+            const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
             const x = Math.random() * (maxX - minX) + minX;
-            GameState.nitroItems.push({ x, y: -30 });
-            GameState.ultimoNitroItemTiempo = ahora;
+            state.nitroItems.push({ x, y: -30 });
+            state.tiempoUltimoNitroItem = ahora;
           }
         }
       }
 
       function spawnVidaItem() {
-        if (GameState.vidas < 3 && GameState.placasRecolectadasDesdeUltimaVida >= GameState.placasParaVida) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+        if (state.vidas < 3 && state.placasRecolectadasDesdeUltimaVida >= state.placasParaVida) {
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
-          GameState.vidaItems.push({ x, y: -30 });
-          GameState.placasRecolectadasDesdeUltimaVida = 0;
+          state.vidaItems.push({ x, y: -30 });
+          state.placasRecolectadasDesdeUltimaVida = 0;
           updateHUD();
         }
       }
 
       function spawnTrampaClavos() {
-        if (GameState.level >= 5 && Math.random() < 0.003 && GameState.trampaClavosItems.length === 0) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+        if (state.level >= 5 && Math.random() < 0.003 && state.trampaClavosItems.length === 0) {
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
-          const seMueveLateralmente = GameState.level > 8;
-          
-          GameState.trampaClavosItems.push({ 
+          const seMueveLateralmente = state.level > 8;
+          state.trampaClavosItems.push({ 
             x, y: -30, width: 30, height: 30,
-            rotation: 0,
-            rotationSpeed: (Math.random() - 0.5) * 0.2,
+            rotation: 0, rotationSpeed: (Math.random() - 0.5) * 0.2,
             slideDirection: seMueveLateralmente ? (Math.random() > 0.5 ? 1 : -1) : 0,
             seMueve: seMueveLateralmente
           });
@@ -1058,536 +1146,501 @@
       }
 
       function spawnCono() {
-        if (GameState.level >= 2 && Math.random() < 0.003) {
-          const minX = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH;
-          const maxX = CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - 30;
+        if (state.level >= 2 && Math.random() < 0.003) {
+          const minX = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH;
+          const maxX = CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - 30;
           const x = Math.random() * (maxX - minX) + minX;
-          GameState.conos.push({ x, y: -30, width: 20, height: 30 });
+          state.conos.push({ x, y: -30, width: 20, height: 30 });
         }
       }
 
-      // ==================== FUNCIONES DE PARTÍCULAS ====================
-      function addParticle(array, particle, max = CONSTANTS.MAX_PARTICLES) {
-        if (array.length < max) {
-          array.push(particle);
-        }
-      }
-
-      function crearEfectoDerrape() {
-        const centerX = GameState.patrulla.x + GameState.patrulla.width / 2;
-        const wheelWidth = 10;
-        
-        addParticle(GameState.derrapeMarks, {
-          x1: centerX - wheelWidth,
-          y1: GameState.patrulla.y + GameState.patrulla.height,
-          x2: centerX - wheelWidth,
-          y2: GameState.patrulla.y + GameState.patrulla.height + 30 + Math.random() * 20,
-          width: 3 + Math.random() * 2,
-          alpha: 0.8
-        }, CONSTANTS.MAX_DERRAPE_MARKS);
-        
-        addParticle(GameState.derrapeMarks, {
-          x1: centerX + wheelWidth,
-          y1: GameState.patrulla.y + GameState.patrulla.height,
-          x2: centerX + wheelWidth,
-          y2: GameState.patrulla.y + GameState.patrulla.height + 30 + Math.random() * 20,
-          width: 3 + Math.random() * 2,
-          alpha: 0.8
-        }, CONSTANTS.MAX_DERRAPE_MARKS);
-        
-        for (let i = 0; i < 15; i++) {
-          addParticle(GameState.humoParticles, {
-            x: centerX + (Math.random() - 0.5) * wheelWidth * 1.5,
-            y: GameState.patrulla.y + GameState.patrulla.height - 5 + Math.random() * 30,
-            size: 5 + Math.random() * 15,
-            alpha: 0.6,
-            speedX: (Math.random() - 0.5) * 2,
-            speedY: -Math.random() * 2,
-            decay: 0.01 + Math.random() * 0.03,
-            color: 'rgba(50, 50, 50, 0.6)'
-          });
-        }
-        
-        GameState.shakeFrames = 5;
-      }
-
-      // ==================== FUNCIONES DE NITRO ====================
-      async function activarNitro() {
-        if (GameState.nitro > 0 && !GameState.nitroActivo && !GameState.juegoPausado) {
-          GameState.nitroActivo = true;
-          GameState.speed += CONSTANTS.NITRO_BOOST;
-          
-          if (!GameState.nitroSoundPlaying && sonidoActivado) {
-            try {
-              sonidoNitro.currentTime = 0;
-              sonidoNitro.loop = true;
-              await sonidoNitro.play();
-              GameState.nitroSoundPlaying = true;
-            } catch (e) {
-              console.warn('Error al reproducir sonido nitro');
-              GameState.nitroSoundPlaying = false;
-            }
-          }
-          
-          GameState.nitroConsumptionInterval = setInterval(() => {
-            if (GameState.nitroActivo && GameState.nitro > 0 && !GameState.juegoPausado) {
-              GameState.nitro -= 1;
-              if (GameState.nitro <= 0) {
-                GameState.nitro = 0;
-                desactivarNitro();
-              }
-              updateHUD();
-            }
-          }, 50);
-        }
-      }
-
-      async function desactivarNitro() {
-        if (GameState.nitroActivo) {
-          GameState.nitroActivo = false;
-          GameState.speed -= CONSTANTS.NITRO_BOOST;
-          
-          if (GameState.nitroSoundPlaying) {
-            try {
-              sonidoNitro.pause();
-              sonidoNitro.currentTime = 0;
-              GameState.nitroSoundPlaying = false;
-            } catch (e) {}
-          }
-          
-          clearInterval(GameState.nitroConsumptionInterval);
-          if (sonidoActivado) {
-            await reproducirSonido(sonidoFrenoDerrape);
-          }
-          crearEfectoDerrape();
-        }
-      }
-
-      // ==================== FUNCIONES DE CLIMA ====================
-      function cambiarClima() {
-        const ahora = Date.now();
-        
-        if (GameState.tiempoDuracionClima === 0) {
-          GameState.tiempoDuracionClima = CONSTANTS.CLIMA_DURATION_MIN + Math.random() * (CONSTANTS.CLIMA_DURATION_MAX - CONSTANTS.CLIMA_DURATION_MIN);
-        }
-        
-        if (ahora - GameState.tiempoCambioClima > GameState.tiempoDuracionClima) {
-          const climas = ['normal', 'niebla', 'tormenta', 'viento', 'nieve', 'arena', 'granizo', 'noche'];
-          GameState.climaActual = climas[Math.floor(Math.random() * climas.length)];
-          
-          if (GameState.climaActual === 'granizo') {
-            const opciones = ['nieve', 'lluvia'];
-            GameState.climaSecundario = opciones[Math.floor(Math.random() * opciones.length)];
-          } else if (GameState.climaActual === 'tormenta') {
-            GameState.climaSecundario = 'lluvia';
-          } else {
-            GameState.climaSecundario = null;
-          }
-          
-          GameState.tiempoDuracionClima = CONSTANTS.CLIMA_DURATION_MIN + Math.random() * (CONSTANTS.CLIMA_DURATION_MAX - CONSTANTS.CLIMA_DURATION_MIN);
-          GameState.tiempoCambioClima = ahora;
-          
-          // Limpiar partículas anteriores
-          GameState.hojas = [];
-          GameState.copos = [];
-          GameState.arena = [];
-          GameState.granizos = [];
-          GameState.gotas = [];
-          GameState.rayos = [];
-          GameState.crateres = [];
-          GameState.particulasRayos = [];
-          GameState.particulasCrateres = [];
-          
-          GameState.nieblaActiva = GameState.climaActual === 'niebla';
-          GameState.nocheActiva = GameState.climaActual === 'noche';
-          GameState.vientoActivo = GameState.climaActual === 'viento';
-          
-          if (sonidoActivado) {
-            sonidoViento.pause();
-            sonidoNieve.pause();
-            sonidoNoche.pause();
-            
-            if (GameState.climaActual === 'viento') {
-              sonidoViento.currentTime = 0;
-              sonidoViento.play().catch(() => {});
-            } else if (GameState.climaActual === 'nieve' || (GameState.climaActual === 'granizo' && GameState.climaSecundario === 'nieve')) {
-              sonidoNieve.currentTime = 0;
-              sonidoNieve.play().catch(() => {});
-            } else if (GameState.climaActual === 'noche') {
-              sonidoNoche.currentTime = 0;
-              sonidoNoche.play().catch(() => {});
-            }
-          }
-        }
-      }
-
-      async function drawTormenta() {
-        if (GameState.climaActual !== 'tormenta') return;
-        
-        const ahora = Date.now();
-        
-        if (ahora - GameState.ultimoTrueno > 5000 + Math.random() * 3000) {
-          GameState.ultimoTrueno = ahora;
-          
-          gameCanvas.style.backgroundColor = 'white';
-          setTimeout(() => { gameCanvas.style.backgroundColor = fondoPorNivel(); }, 100);
-          
-          if (sonidoActivado) {
-            try {
-              sonidoTrueno.currentTime = 0;
-              await sonidoTrueno.play();
-            } catch (e) {}
-          }
-          
-          const x = CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH + Math.random() * (CONSTANTS.RIGHT_BORDER - CONSTANTS.LEFT_BORDER - 2 * CONSTANTS.BORDER_WIDTH);
-          GameState.rayos.push({
-            x, y: 0,
-            estado: 'advertencia',
-            tiempoInicio: ahora,
-            tiempoAdvertencia: CONSTANTS.RAYO_ADVERTENCIA_TIME,
-            tiempoImpacto: CONSTANTS.RAYO_IMPACTO_TIME,
-            ancho: 20 + Math.random() * 30,
-            ramificaciones: Math.floor(Math.random() * 3) + 1,
-            impactoRegistrado: false
-          });
-        }
-        
-        for (let i = GameState.rayos.length - 1; i >= 0; i--) {
-          const rayo = GameState.rayos[i];
-          
-          if (rayo.estado === 'advertencia' && ahora - rayo.tiempoInicio > rayo.tiempoAdvertencia) {
-            rayo.estado = 'impacto';
-            rayo.tiempoInicio = ahora;
-            
-            for (let j = 0; j < 30; j++) {
-              addParticle(GameState.particulasRayos, {
-                x: rayo.x + (Math.random() - 0.5) * rayo.ancho,
-                y: Math.random() * CONSTANTS.CANVAS_HEIGHT,
-                size: 2 + Math.random() * 5,
-                alpha: 0.8,
-                speedX: (Math.random() - 0.5) * 5,
-                speedY: -Math.random() * 10,
-                decay: 0.02 + Math.random() * 0.03,
-                color: `rgba(255, ${200 + Math.random() * 55}, 0, 1)`
-              });
-            }
-            
-            if (!rayo.impactoRegistrado) {
-              rayo.impactoRegistrado = true;
-              
-              if (GameState.patrulla.x < rayo.x + rayo.ancho/2 &&
-                  GameState.patrulla.x + GameState.patrulla.width > rayo.x - rayo.ancho/2) {
-                
-                if (GameState.escudosRecolectados >= 2) {
-                  GameState.escudosRecolectados = 1;
-                  await reproducirSonido(sonidoAntiPowerup);
-                } else if (GameState.escudosRecolectados === 1) {
-                  GameState.escudosRecolectados = 0;
-                  GameState.vidas--;
-                  await reproducirSonido(sonidoChoque);
-                } else {
-                  GameState.vidas = Math.max(0, GameState.vidas - 2);
-                  await reproducirSonido(sonidoChoque);
-                }
-                
-                GameState.shakeFrames = CONSTANTS.SHAKE_FRAMES;
-                GameState.tiempoUltimoChoque = ahora;
-                
-                if (GameState.vidas <= 0) {
-                  gameOverHandler();
-                }
-                
-                updateHUD();
-              }
-              
-              GameState.crateres.push({
-                x: rayo.x - 20,
-                y: CONSTANTS.CANVAS_HEIGHT - 40,
-                width: 40,
-                height: 30,
-                tiempoCreacion: ahora
-              });
-              
-              if (sonidoActivado) {
-                try {
-                  sonidoImpactoRayo.currentTime = 0;
-                  sonidoImpactoRayo.volume = 0.7;
-                  await sonidoImpactoRayo.play();
-                } catch (e) {}
-              }
-            }
-          } else if (rayo.estado === 'impacto' && ahora - rayo.tiempoInicio > rayo.tiempoImpacto) {
-            GameState.rayos.splice(i, 1);
-          }
-        }
-      }
-
-      function aplicarEfectosClimaticos() {
-        if (GameState.vientoActivo) {
-          GameState.patrulla.targetX += (Math.random() - 0.5) * 5;
-          GameState.patrulla.targetX = Math.max(CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH, 
-            Math.min(CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - GameState.patrulla.width, GameState.patrulla.targetX));
-        }
-      }
-
-      // ==================== FUNCIONES DE COLISIONES ====================
+      // ==================== COLISIONES (OPTIMIZADA) ====================
       async function checkCollisions() {
         const ahora = Date.now();
-        const invulnerable = ahora - GameState.tiempoUltimoChoque < CONSTANTS.INVULNERABLE_TIME;
-        
+        const invulnerable = ahora - state.tiempoUltimoChoque < CONFIG.TIEMPO_INVULNERABLE;
+        let danioAplicado = false;
+
         // Objetivos (placas)
-        for (let i = GameState.objetivos.length - 1; i >= 0; i--) {
-          const obj = GameState.objetivos[i];
-          if (checkRectCollision(GameState.patrulla, obj)) {
-            GameState.objetivos.splice(i, 1);
+        for (let i = state.objetivos.length - 1; i >= 0; i--) {
+          const obj = state.objetivos[i];
+          if (checkRectCollision(state.patrulla, obj)) {
+            state.objetivos.splice(i, 1);
             
-            if (ahora - GameState.tiempoUltimaPlaca < CONSTANTS.COMBO_RESET_TIME) {
-              GameState.combo++;
-              GameState.maxCombo = Math.max(GameState.maxCombo, GameState.combo);
-              
-              if (GameState.comboTimeout) clearTimeout(GameState.comboTimeout);
-              GameState.comboTimeout = setTimeout(() => {
-                GameState.combo = 0;
-                updateHUD();
-              }, CONSTANTS.COMBO_RESET_TIME);
+            if (ahora - state.tiempoUltimaPlaca < CONFIG.TIEMPO_RESET_COMBO) {
+              state.combo++;
+              state.maxCombo = Math.max(state.maxCombo, state.combo);
             } else {
-              GameState.combo = 1;
+              state.combo = 1;
             }
             
-            GameState.tiempoUltimaPlaca = ahora;
+            state.tiempoUltimaPlaca = ahora;
+            state.score += 100 * state.combo;
+            state.placasRecolectadasDesdeUltimaVida++;
             
-            const puntosBase = 100;
-            const puntosConCombo = puntosBase * GameState.combo;
-            GameState.score += puntosConCombo;
-            GameState.placasRecolectadasDesdeUltimaVida++;
+            if (state.sonidoActivado) playSound(sounds.punto);
             
-            if (sonidoActivado) {
-              await reproducirSonido(sonidoPunto);
-            }
-            
-            if (GameState.placasRecolectadasDesdeUltimaVida >= GameState.placasParaVida) {
+            if (state.placasRecolectadasDesdeUltimaVida >= state.placasParaVida) {
               spawnVidaItem();
             }
             
             updateHUD();
-            break;
           }
         }
-        
+
         // Powerups (escudos)
-        for (let i = GameState.powerups.length - 1; i >= 0; i--) {
-          const pw = GameState.powerups[i];
-          if (checkRectCollision(GameState.patrulla, pw)) {
-            GameState.powerups.splice(i, 1);
+        for (let i = state.powerups.length - 1; i >= 0; i--) {
+          const pw = state.powerups[i];
+          if (checkRectCollision(state.patrulla, pw)) {
+            state.powerups.splice(i, 1);
             
-            if (GameState.escudosRecolectados < CONSTANTS.MAX_ESCUDOS && ahora - GameState.tiempoBloqueoChalecos > 10000) {
-              GameState.escudosRecolectados++;
-              if (sonidoActivado) await reproducirSonido(sonidoPowerup);
+            if (state.escudosRecolectados < CONFIG.MAX_ESCUDOS && ahora - state.tiempoBloqueoChalecos > 10000) {
+              state.escudosRecolectados++;
+              if (state.sonidoActivado) playSound(sounds.powerup);
             } else {
-              GameState.score += 200;
-              if (sonidoActivado) await reproducirSonido(sonidoPunto);
+              state.score += 200;
+              if (state.sonidoActivado) playSound(sounds.punto);
             }
             
             updateHUD();
-            break;
           }
         }
-        
+
         // Nitro items
-        for (let i = GameState.nitroItems.length - 1; i >= 0; i--) {
-          const item = GameState.nitroItems[i];
-          if (checkRectCollision(GameState.patrulla, { x: item.x, y: item.y, width: 30, height: 30 })) {
-            GameState.nitroItems.splice(i, 1);
-            GameState.nitro = Math.min(100, GameState.nitro + 30);
-            if (sonidoActivado) await reproducirSonido(sonidoPowerup);
+        for (let i = state.nitroItems.length - 1; i >= 0; i--) {
+          const item = state.nitroItems[i];
+          if (checkRectCollision(state.patrulla, { x: item.x, y: item.y, width: 30, height: 30 })) {
+            state.nitroItems.splice(i, 1);
+            state.nitro = Math.min(100, state.nitro + 30);
+            if (state.sonidoActivado) playSound(sounds.powerup);
             updateHUD();
-            break;
           }
         }
-        
+
         // Vida items
-        for (let i = GameState.vidaItems.length - 1; i >= 0; i--) {
-          const item = GameState.vidaItems[i];
-          if (checkRectCollision(GameState.patrulla, { x: item.x, y: item.y, width: 30, height: 30 })) {
-            GameState.vidaItems.splice(i, 1);
-            GameState.vidas = Math.min(3, GameState.vidas + 1);
-            if (sonidoActivado) await reproducirSonido(sonidoVida);
+        for (let i = state.vidaItems.length - 1; i >= 0; i--) {
+          const item = state.vidaItems[i];
+          if (checkRectCollision(state.patrulla, { x: item.x, y: item.y, width: 30, height: 30 })) {
+            state.vidaItems.splice(i, 1);
+            state.vidas = Math.min(3, state.vidas + 1);
+            if (state.sonidoActivado) playSound(sounds.vida);
             updateHUD();
-            break;
           }
         }
-        
+
         // Trampas de clavos
-        for (let i = GameState.trampaClavosItems.length - 1; i >= 0; i--) {
-          const item = GameState.trampaClavosItems[i];
-          if (checkRectCollision(GameState.patrulla, { x: item.x, y: item.y, width: item.width, height: item.height })) {
-            GameState.trampaClavosItems.splice(i, 1);
+        for (let i = state.trampaClavosItems.length - 1; i >= 0; i--) {
+          const item = state.trampaClavosItems[i];
+          if (checkRectCollision(state.patrulla, item)) {
+            state.trampaClavosItems.splice(i, 1);
             
-            if (GameState.escudosRecolectados > 0) {
-              GameState.escudosRecolectados--;
-              GameState.tiempoBloqueoChalecos = ahora;
-              await reproducirSonido(sonidoAntiPowerup);
-            } else {
-              GameState.vidas--;
-              GameState.combo = 0;
-              GameState.shakeFrames = 10;
-              GameState.tiempoUltimoChoque = ahora;
-              
-              if (sonidoActivado) await reproducirSonido(sonidoTrampaClavos);
-              
-              if (GameState.vidas <= 0) {
-                gameOverHandler();
-              }
+            if (state.escudosRecolectados > 0 && !danioAplicado) {
+              state.escudosRecolectados--;
+              if (state.sonidoActivado) playSound(sounds.antiPowerup);
+            } else if (!invulnerable && !danioAplicado) {
+              state.vidas--;
+              state.combo = 0;
+              state.shakeFrames = 10;
+              state.tiempoUltimoChoque = ahora;
+              danioAplicado = true;
+              if (state.sonidoActivado) playSound(sounds.trampaClavos);
             }
             
+            if (state.vidas <= 0) gameOverHandler();
             updateHUD();
-            break;
           }
         }
-        
+
         // Conos
-        for (let i = GameState.conos.length - 1; i >= 0; i--) {
-          const cono = GameState.conos[i];
-          if (checkRectCollision(GameState.patrulla, cono)) {
-            GameState.conos.splice(i, 1);
+        for (let i = state.conos.length - 1; i >= 0; i--) {
+          const cono = state.conos[i];
+          if (checkRectCollision(state.patrulla, cono)) {
+            state.conos.splice(i, 1);
             
-            if (GameState.escudosRecolectados > 0) {
-              GameState.escudosRecolectados--;
-              GameState.tiempoBloqueoChalecos = ahora;
-              await reproducirSonido(sonidoAntiPowerup);
-            } else {
-              GameState.vidas--;
-              GameState.combo = 0;
-              GameState.shakeFrames = 10;
-              GameState.tiempoUltimoChoque = ahora;
-              
-              if (sonidoActivado) await reproducirSonido(sonidoCono);
-              
-              if (GameState.vidas <= 0) {
-                gameOverHandler();
-              }
+            if (state.escudosRecolectados > 0 && !danioAplicado) {
+              state.escudosRecolectados--;
+              if (state.sonidoActivado) playSound(sounds.antiPowerup);
+            } else if (!invulnerable && !danioAplicado) {
+              state.vidas--;
+              state.combo = 0;
+              state.shakeFrames = 10;
+              state.tiempoUltimoChoque = ahora;
+              danioAplicado = true;
+              if (state.sonidoActivado) playSound(sounds.cono);
             }
             
+            if (state.vidas <= 0) gameOverHandler();
             updateHUD();
-            break;
           }
         }
-        
+
         // Aceite
-        for (let i = GameState.aceites.length - 1; i >= 0; i--) {
-          const aceite = GameState.aceites[i];
-          if (checkCircleCollision(GameState.patrulla, aceite)) {
-            if (GameState.escudosRecolectados === 0 && !invulnerable && !GameState.deslizando) {
-              GameState.deslizando = true;
-              GameState.tiempoDeslizamiento = ahora;
-              
-              if (sonidoActivado) await reproducirSonido(sonidoAceite);
-              
+        for (let i = state.aceites.length - 1; i >= 0; i--) {
+          const aceite = state.aceites[i];
+          if (checkCircleRectCollision(aceite, state.patrulla)) {
+            if (state.escudosRecolectados === 0 && !invulnerable && !state.deslizando && !danioAplicado) {
+              state.deslizando = true;
+              state.tiempoDeslizamiento = ahora;
+              if (state.sonidoActivado) playSound(sounds.aceite);
               crearEfectoDerrape();
             }
-            GameState.aceites.splice(i, 1);
-            break;
+            state.aceites.splice(i, 1);
           }
         }
-        
+
         // Obstáculos
-        for (let i = GameState.obstacles.length - 1; i >= 0; i--) {
-          const obs = GameState.obstacles[i];
-          if (checkRectCollision(GameState.patrulla, obs)) {
-            if (!invulnerable) {
-              if (GameState.escudosRecolectados > 0) {
-                GameState.escudosRecolectados--;
-                GameState.tiempoBloqueoChalecos = ahora;
-                await reproducirSonido(sonidoAntiPowerup);
+        for (let i = state.obstacles.length - 1; i >= 0; i--) {
+          const obs = state.obstacles[i];
+          if (checkRectCollision(state.patrulla, obs)) {
+            if (!invulnerable && !danioAplicado) {
+              if (state.escudosRecolectados > 0) {
+                state.escudosRecolectados--;
+                if (state.sonidoActivado) playSound(sounds.antiPowerup);
               } else {
-                GameState.vidas--;
-                GameState.combo = 0;
-                GameState.shakeFrames = 15;
-                GameState.tiempoUltimoChoque = ahora;
-                
-                if (sonidoActivado) await reproducirSonido(sonidoChoque);
-                
-                if (GameState.vidas <= 0) {
-                  gameOverHandler();
-                }
+                state.vidas--;
+                state.combo = 0;
+                state.shakeFrames = 15;
+                state.tiempoUltimoChoque = ahora;
+                danioAplicado = true;
+                if (state.sonidoActivado) playSound(sounds.choque);
               }
               
+              if (state.vidas <= 0) gameOverHandler();
               updateHUD();
             }
-            GameState.obstacles.splice(i, 1);
-            break;
+            state.obstacles.splice(i, 1);
           }
         }
+      }
+
+      function checkRectCollision(r1, r2) {
+        return r1.x < r2.x + r2.width &&
+               r1.x + r1.width > r2.x &&
+               r1.y < r2.y + r2.height &&
+               r1.y + r1.height > r2.y;
+      }
+
+      function checkCircleRectCollision(circle, rect) {
+        const closestX = Math.max(rect.x, Math.min(circle.x, rect.x + rect.width));
+        const closestY = Math.max(rect.y, Math.min(circle.y, rect.y + rect.height));
+        const dx = circle.x - closestX;
+        const dy = circle.y - closestY;
+        return (dx * dx + dy * dy) < circle.size * circle.size;
       }
 
       function gameOverHandler() {
-        GameState.gameOver = true;
-        musicaFondo.pause();
+        state.gameOver = true;
+        stopSound(sounds.musicaFondo);
+        stopAllAmbientSounds();
         desactivarNitro();
-        pausarTodosLosSonidos();
         
         document.getElementById('gameOverScreen').style.display = 'flex';
         document.getElementById('btnReiniciar').style.display = 'block';
-        document.getElementById('puntosFinales').textContent = `Puntos: ${GameState.score}`;
-        document.getElementById('highScoreFinal').textContent = `Récord: ${GameState.highScore}`;
-        document.getElementById('maxComboFinal').textContent = `Máximo Combo: ${GameState.maxCombo}`;
+        document.getElementById('puntosFinales').textContent = `Puntos: ${state.score}`;
+        document.getElementById('highScoreFinal').textContent = `Récord: ${state.highScore}`;
+        document.getElementById('maxComboFinal').textContent = `Máximo Combo: x${state.maxCombo}`;
       }
 
-      // ==================== FUNCIONES DE DIBUJADO ====================
+      // ==================== ACTUALIZACIONES ====================
+      function checkLevelUp() {
+        if (state.score >= state.level * CONFIG.SCORE_PER_LEVEL) {
+          state.level++;
+          state.speed = Math.min(CONFIG.MAX_SPEED, state.speed + 0.5);
+          state.tiempoUltimoLevelUp = Date.now();
+          
+          if (state.level % 3 === 0) {
+            state.nitroItemIntervalo = Math.max(5000, state.nitroItemIntervalo - 1000);
+          }
+          
+          if (state.level % 5 === 0) {
+            state.placasParaVida = Math.max(20, state.placasParaVida - 5);
+          }
+          
+          updateHUD();
+        }
+      }
+
+      function cleanUpObjects() {
+        // Combinar filtrado en una sola pasada (evitar múltiples iteraciones)
+        const altura = CONFIG.CANVAS_HEIGHT;
+        
+        state.objetivos = state.objetivos.filter(obj => obj.y < altura);
+        state.obstacles = state.obstacles.filter(obs => obs.y < altura);
+        state.powerups = state.powerups.filter(pw => pw.y < altura);
+        state.aceites = state.aceites.filter(aceite => aceite.y < altura);
+        state.nitroItems = state.nitroItems.filter(item => item.y < altura);
+        state.vidaItems = state.vidaItems.filter(item => item.y < altura);
+        state.trampaClavosItems = state.trampaClavosItems.filter(item => item.y < altura);
+        state.conos = state.conos.filter(cono => cono.y < altura);
+        
+        // Limitar partículas
+        if (state.humoParticles.length > CONFIG.MAX_PARTICULAS) {
+          state.humoParticles = state.humoParticles.slice(-CONFIG.MAX_PARTICULAS);
+        }
+        
+        state.copos = state.copos.filter(c => c.y < altura);
+        state.hojas = state.hojas.filter(h => h.y < altura);
+        state.arena = state.arena.filter(a => a.y < altura);
+        state.granizos = state.granizos.filter(g => g.y < altura);
+      }
+
+      function updateObjects() {
+        // Mover objetos con la velocidad actual
+        const speed = state.speed;
+        
+        state.objetivos.forEach(obj => obj.y += speed);
+        state.obstacles.forEach(obs => obs.y += speed);
+        state.powerups.forEach(pw => pw.y += speed);
+        state.aceites.forEach(aceite => aceite.y += speed);
+        state.nitroItems.forEach(item => item.y += speed);
+        state.vidaItems.forEach(item => item.y += speed);
+        state.conos.forEach(cono => cono.y += speed);
+        
+        state.trampaClavosItems.forEach(item => {
+          item.y += speed;
+          item.rotation += item.rotationSpeed;
+          if (item.seMueve) {
+            item.x += item.slideDirection * 0.5;
+            if (item.x < CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH || item.x + item.width > CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH) {
+              item.slideDirection *= -1;
+            }
+          }
+        });
+      }
+
+      // ==================== RENDERIZADO ====================
       function fondoPorNivel() {
-        if (GameState.nocheActiva) return '#001122';
-        if (GameState.level <= 2) return '#222';
-        if (GameState.level <= 4) return '#001144';
+        if (state.nocheActiva) return '#001122';
+        if (state.level <= 2) return '#222';
+        if (state.level <= 4) return '#001144';
         return '#552200';
       }
 
       function drawRoadLines(ctx) {
         ctx.strokeStyle = 'gold';
-        ctx.lineWidth = CONSTANTS.BORDER_WIDTH;
+        ctx.lineWidth = CONFIG.BORDER_WIDTH;
         
         ctx.beginPath();
-        ctx.moveTo(CONSTANTS.LEFT_BORDER, 0);
-        ctx.lineTo(CONSTANTS.LEFT_BORDER, CONSTANTS.CANVAS_HEIGHT);
+        ctx.moveTo(CONFIG.LEFT_BORDER, 0);
+        ctx.lineTo(CONFIG.LEFT_BORDER, CONFIG.CANVAS_HEIGHT);
         ctx.stroke();
         
         ctx.beginPath();
-        ctx.moveTo(CONSTANTS.RIGHT_BORDER, 0);
-        ctx.lineTo(CONSTANTS.RIGHT_BORDER, CONSTANTS.CANVAS_HEIGHT);
+        ctx.moveTo(CONFIG.RIGHT_BORDER, 0);
+        ctx.lineTo(CONFIG.RIGHT_BORDER, CONFIG.CANVAS_HEIGHT);
         ctx.stroke();
         
-        if (GameState.level >= 5) {
+        if (state.level >= 5) {
           ctx.strokeStyle = `hsl(${Date.now()/50 % 360}, 80%, 50%)`;
         } else {
           ctx.strokeStyle = 'white';
         }
         ctx.lineWidth = 3;
         
-        const linePositions = [120, 200, 280];
-        const lineHeight = 30;
-        const lineGap = 50;
+        state.lineOffset += state.speed;
+        if (state.lineOffset > CONFIG.LINE_GAP + CONFIG.LINE_HEIGHT) {
+          state.lineOffset = 0;
+        }
         
-        let lineOffset = (GameState.frameCount * GameState.speed * 0.5) % (lineGap + lineHeight);
-        
-        linePositions.forEach(posX => {
-          for (let y = -lineHeight; y < CONSTANTS.CANVAS_HEIGHT; y += lineGap + lineHeight) {
-            const lineY = y + lineOffset;
+        CONFIG.LINE_POSITIONS.forEach(posX => {
+          for (let y = -CONFIG.LINE_HEIGHT; y < CONFIG.CANVAS_HEIGHT; y += CONFIG.LINE_GAP + CONFIG.LINE_HEIGHT) {
+            const lineY = y + state.lineOffset;
             ctx.beginPath();
             ctx.moveTo(posX, lineY);
-            ctx.lineTo(posX, lineY + lineHeight);
+            ctx.lineTo(posX, lineY + CONFIG.LINE_HEIGHT);
             ctx.stroke();
           }
         });
       }
 
-      function drawAceites(ctx) {
-        GameState.aceites.forEach(aceite => {
+      function drawPatrulla(ctx) {
+        const ahora = Date.now();
+        
+        // Humo de daño
+        if (state.vidas === 1 && state.frameCount % 5 === 0 && state.humoParticles.length < CONFIG.MAX_PARTICULAS) {
+          const centerX = state.patrulla.x + state.patrulla.width / 2;
+          state.humoParticles.push({
+            x: centerX + (Math.random() - 0.5) * 15,
+            y: state.patrulla.y + state.patrulla.height - 10,
+            size: 1 + Math.random() * 15, alpha: 0.7,
+            speedX: (Math.random() - 0.5) * 1.5, speedY: -Math.random() * 1.5,
+            decay: 0.01 + Math.random() * 0.02,
+            color: 'rgba(200, 200, 200, 0.8)'
+          });
+        }
+        
+        // Deslizamiento
+        if (state.deslizando) {
+          if (ahora - state.tiempoDeslizamiento > CONFIG.TIEMPO_DESLIZAMIENTO_MAX) {
+            state.deslizando = false;
+          } else {
+            state.patrulla.x += (Math.random() - 0.5) * 4;
+            state.patrulla.x = Math.max(CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH, 
+                               Math.min(CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - state.patrulla.width, state.patrulla.x));
+            state.patrulla.targetX = state.patrulla.x;
+            
+            ctx.save();
+            ctx.translate(state.patrulla.x + state.patrulla.width/2, state.patrulla.y + state.patrulla.height/2);
+            ctx.rotate((Math.random() - 0.5) * 0.3);
+            ctx.translate(-(state.patrulla.x + state.patrulla.width/2), -(state.patrulla.y + state.patrulla.height/2));
+          }
+        } else {
+          state.patrulla.x += (state.patrulla.targetX - state.patrulla.x) * 0.2;
+        }
+
+        const invulnerable = ahora - state.tiempoUltimoChoque < CONFIG.TIEMPO_INVULNERABLE;
+
+        if (invulnerable && Math.floor(ahora / 100) % 2 === 0) {
+          if (state.deslizando) ctx.restore();
+          return;
+        }
+
+        state.frameCount++;
+        if (state.frameCount % 8 === 0) {
+          state.currentPatrullaImgIndex = (state.currentPatrullaImgIndex + 1) % state.patrullaImgs.length;
+        }
+
+        const imgToDraw = state.patrullaImgs[state.currentPatrullaImgIndex];
+        if (imgToDraw && imgToDraw.complete) {
+          ctx.drawImage(imgToDraw, Math.round(state.patrulla.x), Math.round(state.patrulla.y), state.patrulla.width, state.patrulla.height);
+        } else {
+          ctx.fillStyle = '#0033aa';
+          ctx.fillRect(state.patrulla.x, state.patrulla.y, state.patrulla.width, state.patrulla.height);
+        }
+
+        // Faros (noche)
+        if (state.nocheActiva) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          
+          // Faro izquierdo
+          const leftLightX = state.patrulla.x + 5;
+          const leftLightY = state.patrulla.y + state.patrulla.height - 60;
+          
+          const leftGradient = ctx.createRadialGradient(leftLightX, leftLightY, 10, leftLightX, leftLightY, 150);
+          leftGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+          leftGradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
+          leftGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
+          ctx.fillStyle = leftGradient;
+          ctx.beginPath();
+          ctx.moveTo(leftLightX, leftLightY);
+          ctx.lineTo(leftLightX - 100, leftLightY - 200);
+          ctx.lineTo(leftLightX + 100, leftLightY - 200);
+          ctx.closePath();
+          ctx.fill();
+          
+          // Faro derecho
+          const rightLightX = state.patrulla.x + state.patrulla.width - 5;
+          const rightLightY = state.patrulla.y + state.patrulla.height - 60;
+          
+          const rightGradient = ctx.createRadialGradient(rightLightX, rightLightY, 10, rightLightX, rightLightY, 150);
+          rightGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
+          rightGradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
+          rightGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
+          ctx.fillStyle = rightGradient;
+          ctx.beginPath();
+          ctx.moveTo(rightLightX, rightLightY);
+          ctx.lineTo(rightLightX - 100, rightLightY - 200);
+          ctx.lineTo(rightLightX + 100, rightLightY - 200);
+          ctx.closePath();
+          ctx.fill();
+          
+          ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
+          ctx.beginPath();
+          ctx.arc(leftLightX, leftLightY, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(rightLightX, rightLightY, 8, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.restore();
+        }
+
+        // Escudos
+        if (state.escudosRecolectados > 0) {
+          const time = Date.now() / 100;
+          const flashIntensity1 = 0.5 + 0.5 * Math.sin(time);
+          const flashIntensity2 = 0.3 + 0.3 * Math.sin(time + 1);
+          
+          ctx.save();
+          
+          const shieldColor = state.escudosRecolectados >= 2 ? 'rgba(255, 215, 0, ' : 'rgba(0, 255, 255, ';
+          
+          ctx.strokeStyle = shieldColor + flashIntensity1 + ')';
+          ctx.lineWidth = 3;
+          ctx.shadowColor = state.escudosRecolectados >= 2 ? 'gold' : 'cyan';
+          ctx.shadowBlur = 15 * flashIntensity1;
+          
+          ctx.beginPath();
+          ctx.arc(state.patrulla.x + state.patrulla.width / 2, state.patrulla.y + state.patrulla.height / 2, 35, 0, Math.PI * 2);
+          ctx.stroke();
+          
+          ctx.strokeStyle = state.escudosRecolectados >= 2 ? 'rgba(255, 235, 150, ' + flashIntensity2 + ')' : 'rgba(100, 255, 255, ' + flashIntensity2 + ')';
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 10 * flashIntensity2;
+          ctx.beginPath();
+          ctx.arc(state.patrulla.x + state.patrulla.width / 2, state.patrulla.y + state.patrulla.height / 2, 40, 0, Math.PI * 2);
+          ctx.stroke();
+          
+          ctx.restore();
+        }
+
+        if (state.deslizando) ctx.restore();
+      }
+
+      function draw(ctx) {
+        // Limpiar canvas
+        ctx.clearRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+        
+        // Aplicar shake
+        ctx.save();
+        if (state.shakeFrames > 0) {
+          const intensity = state.shakeFrames / 15;
+          ctx.translate((Math.random() - 0.5) * 10 * intensity, (Math.random() - 0.5) * 10 * intensity);
+          state.shakeFrames--;
+        }
+        
+        // Fondo
+        ctx.fillStyle = fondoPorNivel();
+        ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+        
+        // Efectos climáticos (simplificados para rendimiento)
+        if (state.nieblaActiva) {
+          const gradient = ctx.createLinearGradient(0, 0, 0, CONFIG.CANVAS_HEIGHT);
+          gradient.addColorStop(0, 'rgba(200, 200, 200, 0.1)');
+          gradient.addColorStop(1, 'rgba(200, 200, 200, 0.5)');
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+        }
+        
+        if (state.nocheActiva) {
+          ctx.fillStyle = 'rgba(0, 0, 50, 0.5)';
+          ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+        }
+        
+        // Carretera
+        drawRoadLines(ctx);
+        
+        // Objetos
+        drawObjetos(ctx);
+        
+        // Efectos
+        drawEfectos(ctx);
+        
+        // Patrulla (última para estar encima)
+        drawPatrulla(ctx);
+        
+        ctx.restore();
+        
+        state.pulso += 0.05;
+      }
+
+      function drawObjetos(ctx) {
+        // Aceite
+        state.aceites.forEach(aceite => {
           ctx.beginPath();
           ctx.ellipse(aceite.x, aceite.y, aceite.size, aceite.size * 0.7, 0, 0, Math.PI * 2);
           
-          const gradient = ctx.createRadialGradient(
-            aceite.x, aceite.y, aceite.size * 0.3,
-            aceite.x, aceite.y, aceite.size
-          );
+          const gradient = ctx.createRadialGradient(aceite.x, aceite.y, aceite.size * 0.3, aceite.x, aceite.y, aceite.size);
           gradient.addColorStop(0, 'rgba(50, 50, 50, 0.8)');
           gradient.addColorStop(0.5, 'rgba(20, 20, 20, 0.9)');
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
@@ -1596,168 +1649,158 @@
           ctx.fill();
           
           ctx.beginPath();
-          ctx.ellipse(
-            aceite.x - aceite.size * 0.3, 
-            aceite.y - aceite.size * 0.2, 
-            aceite.size * 0.15, 
-            aceite.size * 0.1, 
-            0, 0, Math.PI * 2
-          );
+          ctx.ellipse(aceite.x - aceite.size * 0.3, aceite.y - aceite.size * 0.2, aceite.size * 0.15, aceite.size * 0.1, 0, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
           ctx.fill();
-          
-          aceite.y += GameState.speed;
         });
-      }
 
-      function drawObstacles(ctx) {
-        GameState.obstacles.forEach(obs => {
+        // Obstáculos
+        state.obstacles.forEach(obs => {
           ctx.fillStyle = '#333';
           ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-          obs.y += GameState.speed;
         });
-      }
 
-      function drawObjetivos(ctx) {
-        const pulseSize = 0.9 + Math.abs(Math.sin(GameState.pulso * 2)) * 0.2;
-        
-        GameState.objetivos.forEach(obj => {
-          ctx.fillStyle = 'gold';
-          ctx.beginPath();
-          ctx.arc(obj.x + 15, obj.y + 15, 15 * pulseSize, 0, Math.PI * 2);
-          ctx.fill();
-          
-          ctx.fillStyle = 'black';
-          ctx.font = 'bold 12px Arial';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('P', obj.x + 15, obj.y + 15);
-          
-          obj.y += GameState.speed;
+        // Objetivos (placas)
+        const pulseSize = 0.9 + Math.abs(Math.sin(state.pulso * 2)) * 0.2;
+        state.objetivos.forEach(obj => {
+          if (images.placaPolicia.complete) {
+            const size = 30 * pulseSize;
+            ctx.drawImage(images.placaPolicia, obj.x + (30 - size)/2, obj.y + (30 - size)/2, size, size);
+          } else {
+            ctx.fillStyle = 'gold';
+            ctx.beginPath();
+            ctx.arc(obj.x + 15, obj.y + 15, 15 * pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('P', obj.x + 15, obj.y + 15);
+          }
         });
-      }
 
-      function drawPowerups(ctx) {
+        // Powerups
         const floatOffset = Math.sin(Date.now() * 0.005) * 3;
-        const pulseSize = 0.9 + Math.abs(Math.sin(GameState.pulso * 2)) * 0.2;
-        
-        GameState.powerups.forEach(pw => {
-          ctx.fillStyle = 'cyan';
-          ctx.beginPath();
-          ctx.arc(pw.x + 15, pw.y + 15 + floatOffset, 15 * pulseSize, 0, Math.PI * 2);
-          ctx.fill();
-          
-          ctx.fillStyle = 'white';
-          ctx.font = 'bold 12px Arial';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('S', pw.x + 15, pw.y + 15 + floatOffset);
-          
-          pw.y += GameState.speed;
+        state.powerups.forEach(pw => {
+          if (images.powerup.complete) {
+            const size = 30 * pulseSize;
+            ctx.drawImage(images.powerup, pw.x + (30 - size)/2, pw.y + (30 - size)/2 + floatOffset, size, size);
+          } else {
+            ctx.fillStyle = 'cyan';
+            ctx.beginPath();
+            ctx.arc(pw.x + 15, pw.y + 15 + floatOffset, 15 * pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('S', pw.x + 15, pw.y + 15 + floatOffset);
+          }
         });
-      }
 
-      function drawNitroItems(ctx) {
-        const floatOffset = Math.sin(Date.now() * 0.005) * 3;
-        
-        GameState.nitroItems.forEach(item => {
-          ctx.fillStyle = 'orange';
-          ctx.fillRect(item.x, item.y + floatOffset, 30, 30);
+        // Nitro items
+        state.nitroItems.forEach(item => {
+          const pulseIntensity = 0.5 + 0.5 * Math.sin(Date.now() * 0.005);
+          ctx.save();
+          ctx.shadowColor = `rgba(255, 165, 0, ${pulseIntensity * 0.7})`;
+          ctx.shadowBlur = 10 * pulseIntensity;
           
-          ctx.fillStyle = 'white';
-          ctx.font = 'bold 8px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText('NITRO', item.x + 15, item.y + 15 + floatOffset);
-          
-          item.y += GameState.speed;
+          if (images.nitroItem.complete) {
+            ctx.drawImage(images.nitroItem, item.x, item.y + floatOffset, 30, 30);
+          } else {
+            const gradient = ctx.createLinearGradient(item.x, item.y, item.x, item.y + 30);
+            gradient.addColorStop(0, 'rgba(255, 200, 0, 0.8)');
+            gradient.addColorStop(0.5, 'rgba(255, 100, 0, 0.8)');
+            gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(item.x, item.y + floatOffset, 30, 30);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('NITRO', item.x + 15, item.y + 15 + floatOffset);
+          }
+          ctx.restore();
         });
-      }
 
-      function drawVidaItems(ctx) {
-        const floatOffset = Math.sin(Date.now() * 0.005) * 3;
-        const pulseSize = 0.9 + Math.abs(Math.sin(GameState.pulso * 2)) * 0.2;
-        
-        GameState.vidaItems.forEach(item => {
-          ctx.fillStyle = '#00CED1';
-          ctx.beginPath();
-          ctx.arc(item.x + 15, item.y + 15 + floatOffset, (15 * pulseSize)/2, 0, Math.PI * 2);
-          ctx.fill();
+        // Vida items
+        state.vidaItems.forEach(item => {
+          ctx.save();
+          const glowIntensity = 0.5 + 0.5 * Math.sin(Date.now() / 200);
+          ctx.shadowColor = 'rgba(0, 255, 255, ' + glowIntensity + ')';
+          ctx.shadowBlur = 15 * glowIntensity;
           
-          ctx.fillStyle = 'white';
-          ctx.font = 'bold 12px Arial';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('+', item.x + 15, item.y + 15 + floatOffset);
-          
-          item.y += GameState.speed;
+          const size = 30 * pulseSize;
+          if (images.vidaItem.complete) {
+            ctx.drawImage(images.vidaItem, item.x + (30 - size)/2, item.y + (30 - size)/2 + floatOffset, size, size);
+          } else {
+            ctx.fillStyle = '#00CED1';
+            ctx.beginPath();
+            ctx.arc(item.x + 15, item.y + 15 + floatOffset, size/2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('+', item.x + 15, item.y + 15 + floatOffset);
+          }
+          ctx.restore();
         });
-      }
 
-      function drawTrampaClavos(ctx) {
-        GameState.trampaClavosItems.forEach(item => {
+        // Trampas de clavos
+        state.trampaClavosItems.forEach(item => {
           ctx.save();
           ctx.translate(item.x + item.width / 2, item.y + item.height / 2);
           ctx.rotate(item.rotation);
           ctx.translate(-(item.x + item.width / 2), -(item.y + item.height / 2));
           
-          ctx.fillStyle = '#8B4513';
-          ctx.beginPath();
-          ctx.arc(item.x + 15, item.y + 15, 15, 0, Math.PI * 2);
-          ctx.fill();
-          
-          ctx.fillStyle = 'black';
-          for (let i = 0; i < 8; i++) {
-            const angle = (Math.PI * 2 / 8) * i;
-            const nailX = item.x + 15 + Math.cos(angle) * 10;
-            const nailY = item.y + 15 + Math.sin(angle) * 10;
+          if (images.trampaClavos.complete) {
+            ctx.drawImage(images.trampaClavos, item.x, item.y, item.width, item.height);
+          } else {
+            ctx.fillStyle = '#8B4513';
             ctx.beginPath();
-            ctx.moveTo(nailX, nailY);
-            ctx.lineTo(item.x + 15 + Math.cos(angle) * 5, item.y + 15 + Math.sin(angle) * 5);
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'silver';
-            ctx.stroke();
-          }
-          
-          ctx.restore();
-          
-          item.y += GameState.speed;
-          item.rotation += item.rotationSpeed;
-          
-          if (item.seMueve) {
-            item.x += item.slideDirection * 0.5;
-            
-            if (item.x < CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH || 
-                item.x + item.width > CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH) {
-              item.slideDirection *= -1;
+            ctx.arc(item.x + 15, item.y + 15, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            for (let i = 0; i < 8; i++) {
+              const angle = (Math.PI * 2 / 8) * i;
+              const nailX = item.x + 15 + Math.cos(angle) * 10;
+              const nailY = item.y + 15 + Math.sin(angle) * 10;
+              ctx.beginPath();
+              ctx.moveTo(nailX, nailY);
+              ctx.lineTo(item.x + 15 + Math.cos(angle) * 5, item.y + 15 + Math.sin(angle) * 5);
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = 'silver';
+              ctx.stroke();
             }
           }
+          ctx.restore();
+        });
+
+        // Conos
+        state.conos.forEach(cono => {
+          if (images.cono.complete) {
+            ctx.drawImage(images.cono, cono.x, cono.y, cono.width, cono.height);
+          } else {
+            ctx.fillStyle = 'orange';
+            ctx.beginPath();
+            ctx.moveTo(cono.x + cono.width/2, cono.y);
+            ctx.lineTo(cono.x + cono.width, cono.y + cono.height);
+            ctx.lineTo(cono.x, cono.y + cono.height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(cono.x + cono.width/3, cono.y + cono.height/3);
+            ctx.lineTo(cono.x + cono.width/2, cono.y + cono.height/2);
+            ctx.stroke();
+          }
         });
       }
 
-      function drawConos(ctx) {
-        GameState.conos.forEach(cono => {
-          ctx.fillStyle = 'orange';
-          ctx.beginPath();
-          ctx.moveTo(cono.x + cono.width/2, cono.y);
-          ctx.lineTo(cono.x + cono.width, cono.y + cono.height);
-          ctx.lineTo(cono.x, cono.y + cono.height);
-          ctx.closePath();
-          ctx.fill();
-          
-          ctx.strokeStyle = 'white';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(cono.x + cono.width/3, cono.y + cono.height/3);
-          ctx.lineTo(cono.x + cono.width/2, cono.y + cono.height/2);
-          ctx.stroke();
-          
-          cono.y += GameState.speed;
-        });
-      }
-
-      function drawHumo(ctx) {
-        for (let i = GameState.humoParticles.length - 1; i >= 0; i--) {
-          const p = GameState.humoParticles[i];
+      function drawEfectos(ctx) {
+        // Humo
+        state.humoParticles.forEach((p, i) => {
           ctx.fillStyle = p.color || `rgba(50, 50, 50, ${p.alpha})`;
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -1769,18 +1812,12 @@
           p.size *= 0.99;
           
           if (p.alpha <= 0) {
-            GameState.humoParticles.splice(i, 1);
+            state.humoParticles.splice(i, 1);
           }
-        }
-      }
+        });
 
-      function drawDerrapeMarks(ctx) {
-        if (GameState.deslizando && GameState.frameCount % 5 === 0) {
-          crearEfectoDerrape();
-        }
-        
-        for (let i = GameState.derrapeMarks.length - 1; i >= 0; i--) {
-          const mark = GameState.derrapeMarks[i];
+        // Marcas de derrape
+        state.derrapeMarks.forEach((mark, i) => {
           ctx.strokeStyle = `rgba(150, 150, 150, ${mark.alpha})`;
           ctx.lineWidth = mark.width;
           ctx.beginPath();
@@ -1790,254 +1827,126 @@
           
           mark.alpha -= 0.01;
           if (mark.alpha <= 0) {
-            GameState.derrapeMarks.splice(i, 1);
+            state.derrapeMarks.splice(i, 1);
           }
-        }
-      }
+        });
 
-      function drawPatrulla(ctx) {
-        const ahora = Date.now();
-        
-        if (GameState.vidas === 1 && GameState.frameCount % 5 === 0) {
-          const centerX = GameState.patrulla.x + GameState.patrulla.width / 2;
-          addParticle(GameState.humoParticles, {
-            x: centerX + (Math.random() - 0.5) * 15,
-            y: GameState.patrulla.y + GameState.patrulla.height - 10,
-            size: 1 + Math.random() * 15,
-            alpha: 0.7,
-            speedX: (Math.random() - 0.5) * 1.5,
-            speedY: -Math.random() * 1.5,
-            decay: 0.01 + Math.random() * 0.02,
-            color: 'rgba(200, 200, 200, 0.8)'
-          });
-        }
-        
-        if (GameState.deslizando) {
-          if (ahora - GameState.tiempoDeslizamiento > CONSTANTS.DESLIZAMIENTO_MAX_TIME) {
-            GameState.deslizando = false;
-          } else {
-            GameState.patrulla.x += (Math.random() - 0.5) * 4;
-            GameState.patrulla.x = Math.max(CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH, 
-              Math.min(CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - GameState.patrulla.width, GameState.patrulla.x));
-            GameState.patrulla.targetX = GameState.patrulla.x;
-            
-            ctx.save();
-            const inclineAngle = (Math.random() - 0.5) * 0.3;
-            ctx.translate(GameState.patrulla.x + GameState.patrulla.width/2, GameState.patrulla.y + GameState.patrulla.height/2);
-            ctx.rotate(inclineAngle);
-            ctx.translate(-(GameState.patrulla.x + GameState.patrulla.width/2), -(GameState.patrulla.y + GameState.patrulla.height/2));
+        // Lluvia
+        if (state.level >= 6 || state.climaActual === 'tormenta' || (state.climaActual === 'granizo' && state.climaSecundario === 'lluvia')) {
+          if (Math.random() < 0.3 && state.gotas.length < 200) {
+            state.gotas.push({ x: Math.random() * CONFIG.CANVAS_WIDTH, y: -10, speed: 2 + Math.random() * 5, length: 10 + Math.random() * 10 });
           }
-        } else {
-          GameState.patrulla.x += (GameState.patrulla.targetX - GameState.patrulla.x) * 0.2;
-        }
-
-        const invulnerable = ahora - GameState.tiempoUltimoChoque < CONSTANTS.INVULNERABLE_TIME;
-
-        if (invulnerable && Math.floor(ahora / 100) % 2 === 0) {
-          if (GameState.deslizando) ctx.restore();
-          return;
-        }
-
-        GameState.frameCount++;
-        if (GameState.frameCount % 8 === 0) {
-          GameState.currentPatrullaImgIndex = (GameState.currentPatrullaImgIndex + 1) % patrullaImgs.length;
-        }
-
-        const imgToDraw = patrullaImgs[GameState.currentPatrullaImgIndex];
-        if (imgToDraw && imgToDraw.complete) {
-          ctx.drawImage(imgToDraw, Math.round(GameState.patrulla.x), Math.round(GameState.patrulla.y), GameState.patrulla.width, GameState.patrulla.height);
-        } else {
-          ctx.fillStyle = '#0033aa';
-          ctx.fillRect(GameState.patrulla.x, GameState.patrulla.y, GameState.patrulla.width, GameState.patrulla.height);
-        }
-
-        if (GameState.escudosRecolectados > 0) {
-          const time = Date.now() / 100;
-          const flashIntensity1 = 0.5 + 0.5 * Math.sin(time);
-          const flashIntensity2 = 0.3 + 0.3 * Math.sin(time + 1);
           
-          ctx.save();
-          
-          const shieldColor = GameState.escudosRecolectados >= 2 ? 'rgba(255, 215, 0, ' : 'rgba(0, 255, 255, ';
-          
-          ctx.strokeStyle = shieldColor + flashIntensity1 + ')';
-          ctx.lineWidth = 3;
-          ctx.shadowColor = GameState.escudosRecolectados >= 2 ? 'gold' : 'cyan';
-          ctx.shadowBlur = 15 * flashIntensity1;
-          
-          ctx.beginPath();
-          ctx.arc(
-            GameState.patrulla.x + GameState.patrulla.width / 2, 
-            GameState.patrulla.y + GameState.patrulla.height / 2, 
-            35, 0, Math.PI * 2
-          );
-          ctx.stroke();
-          
-          ctx.strokeStyle = GameState.escudosRecolectados >= 2 ? 
-            'rgba(255, 235, 150, ' + flashIntensity2 + ')' : 
-            'rgba(100, 255, 255, ' + flashIntensity2 + ')';
-          ctx.lineWidth = 2;
-          ctx.shadowBlur = 10 * flashIntensity2;
-          ctx.beginPath();
-          ctx.arc(
-            GameState.patrulla.x + GameState.patrulla.width / 2, 
-            GameState.patrulla.y + GameState.patrulla.height / 2, 
-            40, 0, Math.PI * 2
-          );
-          ctx.stroke();
-          
-          ctx.restore();
-        }
-
-        if (GameState.deslizando) ctx.restore();
-      }
-
-      function drawNiebla(ctx) {
-        if (!GameState.nieblaActiva) return;
-        
-        const gradient = ctx.createLinearGradient(0, 0, 0, CONSTANTS.CANVAS_HEIGHT);
-        gradient.addColorStop(0, 'rgba(200, 200, 200, 0.1)');
-        gradient.addColorStop(0.5, 'rgba(200, 200, 200, 0.4)');
-        gradient.addColorStop(1, 'rgba(200, 200, 200, 0.7)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, CONSTANTS.CANVAS_WIDTH, CONSTANTS.CANVAS_HEIGHT);
-      }
-
-      function drawNoche(ctx) {
-        if (!GameState.nocheActiva) return;
-        
-        ctx.fillStyle = 'rgba(0, 0, 50, 0.5)';
-        ctx.fillRect(0, 0, CONSTANTS.CANVAS_WIDTH, CONSTANTS.CANVAS_HEIGHT);
-      }
-
-      function drawLluvia(ctx) {
-        if (GameState.level >= 6 || GameState.climaActual === 'tormenta' || 
-            (GameState.climaActual === 'granizo' && GameState.climaSecundario === 'lluvia')) {
-          
-          if (Math.random() < 0.3) {
-            addParticle(GameState.gotas, {
-              x: Math.random() * CONSTANTS.CANVAS_WIDTH,
-              y: -10,
-              speed: 2 + Math.random() * 5,
-              length: 10 + Math.random() * 10
-            });
-          }
-
           ctx.strokeStyle = 'rgba(200, 200, 255, 0.7)';
           ctx.lineWidth = 1;
-          
-          for (let i = GameState.gotas.length - 1; i >= 0; i--) {
-            const g = GameState.gotas[i];
+          for (let i = state.gotas.length - 1; i >= 0; i--) {
+            const g = state.gotas[i];
             ctx.beginPath();
             ctx.moveTo(g.x, g.y);
             ctx.lineTo(g.x - g.length * 0.3, g.y + g.length);
             ctx.stroke();
             g.y += g.speed;
-
-            if (g.y > CONSTANTS.CANVAS_HEIGHT) {
-              GameState.gotas.splice(i, 1);
-            }
+            if (g.y > CONFIG.CANVAS_HEIGHT) state.gotas.splice(i, 1);
           }
         }
-      }
 
-      function drawHojas(ctx) {
-        GameState.hojas.forEach((hoja, i) => {
-          ctx.fillStyle = 'rgba(150, 100, 50, 0.7)';
+        // Nieve
+        ctx.fillStyle = 'white';
+        state.copos.forEach((copo, i) => {
           ctx.beginPath();
-          ctx.arc(hoja.x, hoja.y, hoja.size, 0, Math.PI * 2);
+          ctx.arc(copo.x, copo.y, copo.size, 0, Math.PI * 2);
           ctx.fill();
-          hoja.x += hoja.speedX;
-          hoja.y += hoja.speedY;
-          if (hoja.y > CONSTANTS.CANVAS_HEIGHT) GameState.hojas.splice(i, 1);
+          copo.y += copo.speed;
+          copo.x += Math.sin(copo.y * 0.1) * 1.5;
         });
-      }
 
-      function drawNieve(ctx) {
-        if (GameState.climaActual === 'nieve' || (GameState.climaActual === 'granizo' && GameState.climaSecundario === 'nieve')) {
-          GameState.copos.forEach((copo, i) => {
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.arc(copo.x, copo.y, copo.size, 0, Math.PI * 2);
-            ctx.fill();
-            copo.y += copo.speed;
-            copo.x += Math.sin(copo.y * 0.1) * 1.5;
-            if (copo.y > CONSTANTS.CANVAS_HEIGHT) GameState.copos.splice(i, 1);
+        // Granizo
+        ctx.fillStyle = 'rgba(0, 0, 255, 0.8)';
+        state.granizos.forEach((g, i) => {
+          ctx.beginPath();
+          ctx.arc(g.x, g.y, g.size, 0, Math.PI * 2);
+          ctx.fill();
+          g.y += g.speed;
+        });
+
+        // Rayos
+        const ahora = Date.now();
+        if (state.climaActual === 'tormenta' && ahora - state.ultimoTrueno > 5000 + Math.random() * 3000) {
+          state.ultimoTrueno = ahora;
+          
+          // Flash de pantalla (usando overlay en lugar de modificar estilo)
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+          
+          if (state.sonidoActivado) playSound(sounds.trueno);
+          
+          const x = CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH + Math.random() * (CONFIG.RIGHT_BORDER - CONFIG.LEFT_BORDER - 2 * CONFIG.BORDER_WIDTH);
+          state.rayos.push({
+            x, y: 0, estado: 'advertencia', tiempoInicio: ahora,
+            tiempoAdvertencia: 1500, tiempoImpacto: 150,
+            ancho: 20 + Math.random() * 30, ramificaciones: Math.floor(Math.random() * 3) + 1
           });
         }
-      }
 
-      function drawArena(ctx) {
-        GameState.arena.forEach((grano, i) => {
-          ctx.fillStyle = 'rgba(194, 178, 128, 0.8)';
-          ctx.beginPath();
-          ctx.arc(grano.x, grano.y, grano.size, 0, Math.PI * 2);
-          ctx.fill();
-          grano.y += grano.speed;
-          if (grano.y > CONSTANTS.CANVAS_HEIGHT) GameState.arena.splice(i, 1);
-        });
-      }
-
-      async function drawGranizo(ctx) {
-        if (GameState.climaActual !== 'granizo') return;
-        
-        const ahora = Date.now();
-        
-        for (let i = GameState.granizos.length - 1; i >= 0; i--) {
-          const granizo = GameState.granizos[i];
-          
-          if (checkCircleCollision(GameState.patrulla, { x: granizo.x, y: granizo.y, size: granizo.size })) {
-            if (GameState.escudosRecolectados > 0) {
-              GameState.escudosRecolectados--;
-              GameState.tiempoBloqueoChalecos = ahora;
-              await reproducirSonido(sonidoAntiPowerup);
-            } else {
-              GameState.vidas--;
-              GameState.combo = 0;
-              GameState.shakeFrames = 10;
-              GameState.tiempoUltimoChoque = ahora;
-              
-              await reproducirSonido(sonidoGranizoGolpe);
-              
-              if (GameState.vidas <= 0) {
-                gameOverHandler();
-              }
-            }
-            GameState.granizos.splice(i, 1);
-            updateHUD();
-          }
-        }
-        
-        GameState.granizos.forEach((granizo, i) => {
-          ctx.fillStyle = 'rgba(0, 0, 255, 0.8)';
-          ctx.beginPath();
-          ctx.arc(granizo.x, granizo.y, granizo.size, 0, Math.PI * 2);
-          ctx.fill();
-          granizo.y += granizo.speed;
-          if (granizo.y > CONSTANTS.CANVAS_HEIGHT) GameState.granizos.splice(i, 1);
-        });
-      }
-
-      function drawRayosVisual(ctx) {
-        const ahora = Date.now();
-        
-        GameState.rayos.forEach(rayo => {
+        state.rayos.forEach((rayo, idx) => {
           if (rayo.estado === 'advertencia') {
-            const tiempoTranscurrido = ahora - rayo.tiempoInicio;
-            const parpadeo = Math.floor(tiempoTranscurrido / 200) % 2 === 0;
-            
-            if (parpadeo) {
-              ctx.save();
-              ctx.fillStyle = `rgba(255, 0, 0, ${0.3 + 0.3 * Math.sin(tiempoTranscurrido / 100)})`;
-              ctx.beginPath();
-              ctx.arc(rayo.x, CONSTANTS.CANVAS_HEIGHT - 20, rayo.ancho/2, 0, Math.PI * 2);
-              ctx.fill();
+            if (ahora - rayo.tiempoInicio > rayo.tiempoAdvertencia) {
+              rayo.estado = 'impacto';
+              rayo.tiempoInicio = ahora;
               
-              ctx.fillStyle = 'white';
-              ctx.font = 'bold 16px Arial';
-              ctx.textAlign = 'center';
-              ctx.fillText('¡RAYO INMINENTE!', rayo.x, CONSTANTS.CANVAS_HEIGHT - 40);
-              ctx.restore();
+              for (let i = 0; i < 30 && state.particulasRayos.length < CONFIG.MAX_PARTICULAS; i++) {
+                state.particulasRayos.push({
+                  x: rayo.x + (Math.random() - 0.5) * rayo.ancho,
+                  y: Math.random() * CONFIG.CANVAS_HEIGHT,
+                  size: 2 + Math.random() * 5, alpha: 0.8,
+                  speedX: (Math.random() - 0.5) * 5, speedY: -Math.random() * 10,
+                  decay: 0.02 + Math.random() * 0.03,
+                  color: `rgba(255, ${200 + Math.random() * 55}, 0, 1)`
+                });
+              }
+              
+              // Colisión con jugador
+              if (state.patrulla.x < rayo.x + rayo.ancho/2 && state.patrulla.x + state.patrulla.width > rayo.x - rayo.ancho/2) {
+                if (state.escudosRecolectados >= 2) {
+                  state.escudosRecolectados = 1;
+                  playSound(sounds.antiPowerup);
+                } else if (state.escudosRecolectados === 1) {
+                  state.escudosRecolectados = 0;
+                  state.vidas--;
+                  playSound(sounds.choque);
+                } else {
+                  state.vidas = Math.max(0, state.vidas - 2);
+                  playSound(sounds.choque);
+                }
+                
+                state.shakeFrames = 15;
+                state.tiempoUltimoChoque = ahora;
+                
+                if (state.vidas <= 0) gameOverHandler();
+                updateHUD();
+              }
+              
+              state.crateres.push({
+                x: rayo.x - 20, y: CONFIG.CANVAS_HEIGHT - 40,
+                width: 40, height: 30, tiempoCreacion: ahora, particulas: []
+              });
+              
+              if (state.sonidoActivado) playSound(sounds.impactoRayo);
+            } else {
+              const tiempoTranscurrido = ahora - rayo.tiempoInicio;
+              const parpadeo = Math.floor(tiempoTranscurrido / 200) % 2 === 0;
+              
+              if (parpadeo) {
+                ctx.fillStyle = `rgba(255, 0, 0, ${0.3 + 0.3 * Math.sin(tiempoTranscurrido / 100)})`;
+                ctx.beginPath();
+                ctx.arc(rayo.x, CONFIG.CANVAS_HEIGHT - 20, rayo.ancho/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('¡RAYO INMINENTE!', rayo.x, CONFIG.CANVAS_HEIGHT - 40);
+              }
             }
           } else if (rayo.estado === 'impacto') {
             ctx.save();
@@ -2048,25 +1957,29 @@
             
             ctx.beginPath();
             ctx.moveTo(rayo.x, 0);
-            ctx.lineTo(rayo.x, CONSTANTS.CANVAS_HEIGHT);
+            ctx.lineTo(rayo.x, CONFIG.CANVAS_HEIGHT);
             ctx.stroke();
             
             for (let i = 0; i < rayo.ramificaciones; i++) {
               const offsetX = (Math.random() - 0.5) * rayo.ancho;
-              const startY = Math.random() * CONSTANTS.CANVAS_HEIGHT * 0.7;
-              const endY = startY + Math.random() * CONSTANTS.CANVAS_HEIGHT * 0.3;
+              const startY = Math.random() * CONFIG.CANVAS_HEIGHT * 0.7;
+              const endY = startY + Math.random() * CONFIG.CANVAS_HEIGHT * 0.3;
               
               ctx.beginPath();
               ctx.moveTo(rayo.x, startY);
               ctx.lineTo(rayo.x + offsetX, endY);
               ctx.stroke();
             }
-            
             ctx.restore();
+            
+            if (ahora - rayo.tiempoInicio > rayo.tiempoImpacto) {
+              state.rayos.splice(idx, 1);
+            }
           }
         });
-        
-        GameState.particulasRayos.forEach((p, index) => {
+
+        // Partículas de rayos
+        state.particulasRayos.forEach((p, idx) => {
           ctx.fillStyle = p.color.replace('1)', p.alpha + ')');
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -2077,60 +1990,42 @@
           p.alpha -= p.decay;
           p.size *= 0.98;
           
-          if (p.alpha <= 0) {
-            GameState.particulasRayos.splice(index, 1);
-          }
+          if (p.alpha <= 0) state.particulasRayos.splice(idx, 1);
         });
-      }
 
-      function drawCrateres(ctx) {
-        const ahora = Date.now();
-        
-        for (let i = GameState.crateres.length - 1; i >= 0; i--) {
-          const crater = GameState.crateres[i];
-          
-          if (ahora - crater.tiempoCreacion > CONSTANTS.CRATER_LIFETIME) {
-            GameState.crateres.splice(i, 1);
-            continue;
+        // Cráteres
+        state.crateres.forEach((crater, idx) => {
+          if (ahora - crater.tiempoCreacion > 3000) {
+            state.crateres.splice(idx, 1);
+            return;
           }
           
-          ctx.fillStyle = '#111';
-          ctx.beginPath();
-          ctx.ellipse(
-            crater.x + crater.width/2,
-            crater.y + crater.height/2,
-            crater.width/2,
-            crater.height/2,
-            0, 0, Math.PI * 2
-          );
-          ctx.fill();
+          if (images.crater.complete) {
+            ctx.drawImage(images.crater, crater.x, crater.y, crater.width, crater.height);
+          } else {
+            ctx.fillStyle = '#111';
+            ctx.beginPath();
+            ctx.ellipse(crater.x + crater.width/2, crater.y + crater.height/2, crater.width/2, crater.height/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.ellipse(crater.x + crater.width/2, crater.y + crater.height/2, crater.width/3, crater.height/3, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
           
-          ctx.fillStyle = '#333';
-          ctx.beginPath();
-          ctx.ellipse(
-            crater.x + crater.width/2,
-            crater.y + crater.height/2,
-            crater.width/3,
-            crater.height/3,
-            0, 0, Math.PI * 2
-          );
-          ctx.fill();
-          
-          if (GameState.frameCount % 5 === 0) {
-            addParticle(GameState.particulasCrateres, {
+          if (state.frameCount % 5 === 0 && state.particulasCrateres.length < CONFIG.MAX_PARTICULAS) {
+            state.particulasCrateres.push({
               x: crater.x + crater.width/2 + (Math.random() - 0.5) * 10,
               y: crater.y + (Math.random() * 5),
-              size: 5 + Math.random() * 10,
-              alpha: 0.6,
-              speedX: (Math.random() - 0.5) * 0.5,
-              speedY: -Math.random() * 1.5,
+              size: 5 + Math.random() * 10, alpha: 0.6,
+              speedX: (Math.random() - 0.5) * 0.5, speedY: -Math.random() * 1.5,
               decay: 0.01 + Math.random() * 0.02,
               color: 'rgba(100, 100, 100, 0.7)'
             });
           }
-        }
-        
-        GameState.particulasCrateres.forEach((p, index) => {
+        });
+
+        state.particulasCrateres.forEach((p, idx) => {
           ctx.fillStyle = p.color.replace('0.7)', p.alpha + ')');
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -2141,595 +2036,287 @@
           p.alpha -= p.decay;
           p.size *= 0.99;
           
-          if (p.alpha <= 0) {
-            GameState.particulasCrateres.splice(index, 1);
-          }
+          if (p.alpha <= 0) state.particulasCrateres.splice(idx, 1);
         });
       }
 
-      function applyShake(ctx) {
-        if (GameState.shakeFrames > 0) {
-          const intensity = GameState.shakeFrames / CONSTANTS.SHAKE_FRAMES;
-          ctx.translate(
-            (Math.random() - 0.5) * CONSTANTS.SHAKE_INTENSITY * intensity,
-            (Math.random() - 0.5) * CONSTANTS.SHAKE_INTENSITY * intensity
-          );
-          GameState.shakeFrames--;
-        }
-      }
-
-      function cleanUpObjects() {
-        GameState.objetivos = GameState.objetivos.filter(obj => obj.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.obstacles = GameState.obstacles.filter(obs => obs.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.powerups = GameState.powerups.filter(pw => pw.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.aceites = GameState.aceites.filter(aceite => aceite.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.nitroItems = GameState.nitroItems.filter(item => item.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.vidaItems = GameState.vidaItems.filter(item => item.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.trampaClavosItems = GameState.trampaClavosItems.filter(item => item.y < CONSTANTS.CANVAS_HEIGHT);
-        GameState.conos = GameState.conos.filter(cono => cono.y < CONSTANTS.CANVAS_HEIGHT);
-      }
-
-      function checkLevelUp() {
-        if (GameState.score >= GameState.level * 1000) {
-          GameState.level++;
-          GameState.speed = Math.min(CONSTANTS.MAX_SPEED, GameState.speed + 0.5);
-          GameState.tiempoUltimoLevelUp = Date.now();
-          
-          if (GameState.level % 3 === 0) {
-            GameState.nitroItemInterval = Math.max(5000, GameState.nitroItemInterval - 1000);
-          }
-          
-          if (GameState.level % 5 === 0) {
-            GameState.placasParaVida = Math.max(20, GameState.placasParaVida - 5);
-          }
-          
-          updateHUD();
-        }
-      }
-
-      function spawnClimaticParticles() {
-        if (GameState.climaActual === 'viento' && Math.random() < 0.5) {
-          addParticle(GameState.hojas, {
-            x: Math.random() * CONSTANTS.CANVAS_WIDTH,
-            y: -10,
-            speedX: (Math.random() - 0.5) * 3,
-            speedY: 2 + Math.random() * 3,
-            size: 5 + Math.random() * 5
-          });
-        }
-        
-        if ((GameState.climaActual === 'nieve' || (GameState.climaActual === 'granizo' && GameState.climaSecundario === 'nieve')) && Math.random() < 0.3) {
-          const cantidadCopos = 2 + Math.floor(Math.random() * 3);
-          for (let i = 0; i < cantidadCopos; i++) {
-            addParticle(GameState.copos, {
-              x: Math.random() * CONSTANTS.CANVAS_WIDTH,
-              y: -5,
-              speed: 1 + Math.random() * 2,
-              size: 2 + Math.random() * 3
-            });
-          }
-        }
-        
-        if (GameState.climaActual === 'arena' && Math.random() < 0.3) {
-          addParticle(GameState.arena, {
-            x: Math.random() * CONSTANTS.CANVAS_WIDTH,
-            y: -5,
-            speed: 3 + Math.random() * 4,
-            size: 1 + Math.random() * 2
-          });
-        }
-        
-        if (GameState.climaActual === 'granizo' && Math.random() < 0.03) {
-          addParticle(GameState.granizos, {
-            x: Math.random() * CONSTANTS.CANVAS_WIDTH,
-            y: -10,
-            speed: 5 + Math.random() * 4,
-            size: 5 + Math.random() * 5
-          });
-        }
-      }
-
-      function draw() {
-        const ctx = gameCanvas.getContext('2d');
-        
-        ctx.clearRect(0, 0, CONSTANTS.CANVAS_WIDTH, CONSTANTS.CANVAS_HEIGHT);
-        
-        ctx.save();
-        applyShake(ctx);
-        
-        ctx.fillStyle = fondoPorNivel();
-        ctx.fillRect(0, 0, CONSTANTS.CANVAS_WIDTH, CONSTANTS.CANVAS_HEIGHT);
-        
-        drawNiebla(ctx);
-        drawNoche(ctx);
-        drawLluvia(ctx);
-        drawHojas(ctx);
-        drawNieve(ctx);
-        drawArena(ctx);
-        drawRayosVisual(ctx);
-        drawCrateres(ctx);
-        
-        drawRoadLines(ctx);
-        
-        drawAceites(ctx);
-        drawObstacles(ctx);
-        drawObjetivos(ctx);
-        drawPowerups(ctx);
-        drawNitroItems(ctx);
-        drawVidaItems(ctx);
-        drawTrampaClavos(ctx);
-        drawConos(ctx);
-        
-        drawHumo(ctx);
-        drawDerrapeMarks(ctx);
-        
-        drawPatrulla(ctx);
-        
-        ctx.restore();
-        
-        GameState.pulso += 0.05;
-      }
-
-      // ==================== FUNCIONES DE GUARDADO ====================
-      function guardarProgreso() {
-        const ahora = Date.now();
-        if (ahora - GameState.tiempoUltimoGuardado > 10000) {
-          try {
-            localStorage.setItem('autosave_' + GameState.nombreJugador, JSON.stringify({
-              score: GameState.score,
-              level: GameState.level,
-              highScore: GameState.highScore,
-              totalPuntos: GameState.totalPuntos,
-              maxCombo: GameState.maxCombo
-            }));
-            GameState.tiempoUltimoGuardado = ahora;
-          } catch (e) {
-            console.warn('Error guardando progreso');
-          }
-        }
+      // ==================== GUARDADO / CARGA ====================
+      function sanitizeKey(name) {
+        return 'autosave_' + name.replace(/[^a-zA-Z0-9]/g, '');
       }
 
       function cargarProgreso() {
-        try {
-          const datos = JSON.parse(localStorage.getItem('autosave_' + GameState.nombreJugador) || '{}');
-          if (datos.score) {
-            GameState.score = datos.score;
-            GameState.level = datos.level;
-            GameState.highScore = datos.highScore || 0;
-            GameState.totalPuntos = datos.totalPuntos || 0;
-            GameState.maxCombo = datos.maxCombo || 0;
-          }
-        } catch (e) {}
-      }
-
-      // ==================== FUNCIONES DE JUEGO ====================
-      function resetGame() {
-        GameState.patrulla.x = CONSTANTS.CANVAS_WIDTH / 2 - 20;
-        GameState.patrulla.y = CONSTANTS.CANVAS_HEIGHT - 100;
-        GameState.patrulla.targetX = CONSTANTS.CANVAS_WIDTH / 2 - 20;
-        
-        GameState.obstacles = [];
-        GameState.objetivos = [];
-        GameState.powerups = [];
-        GameState.aceites = [];
-        GameState.nitroItems = [];
-        GameState.vidaItems = [];
-        GameState.trampaClavosItems = [];
-        GameState.conos = [];
-        GameState.humoParticles = [];
-        GameState.derrapeMarks = [];
-        GameState.rayos = [];
-        GameState.crateres = [];
-        GameState.particulasRayos = [];
-        GameState.particulasCrateres = [];
-        GameState.gotas = [];
-        GameState.hojas = [];
-        GameState.copos = [];
-        GameState.arena = [];
-        GameState.granizos = [];
-        
-        GameState.score = 0;
-        GameState.level = 1;
-        GameState.speed = CONSTANTS.INITIAL_SPEED;
-        GameState.vidas = 3;
-        GameState.escudosRecolectados = 0;
-        GameState.shakeFrames = 0;
-        GameState.gameOver = false;
-        GameState.tiempoUltimoChoque = 0;
-        GameState.deslizando = false;
-        GameState.tiempoDeslizamiento = 0;
-        GameState.combo = 0;
-        GameState.nitro = 100;
-        GameState.placasRecolectadasDesdeUltimaVida = 0;
-        GameState.ultimoNitroItemTiempo = 0;
-        GameState.nitroItemInterval = CONSTANTS.NITRO_ITEM_BASE_INTERVAL;
-        GameState.placasParaVida = CONSTANTS.PLACAS_BASE_FOR_VIDA;
-        GameState.tiempoUltimoLevelUp = 0;
-        GameState.juegoPausado = false;
-        
-        GameState.climaActual = 'normal';
-        GameState.climaSecundario = null;
-        GameState.tiempoCambioClima = 0;
-        GameState.tiempoDuracionClima = 0;
-        GameState.nieblaActiva = false;
-        GameState.nocheActiva = false;
-        GameState.vientoActivo = false;
-        GameState.ultimoTrueno = 0;
-        GameState.tiempoUltimaPlaca = 0;
-        
-        if (GameState.comboTimeout) {
-          clearTimeout(GameState.comboTimeout);
-          GameState.comboTimeout = null;
+        const key = sanitizeKey(state.nombreJugador);
+        const datos = JSON.parse(localStorage.getItem(key) || '{}');
+        if (datos.score) {
+          state.score = datos.score;
+          state.level = datos.level;
+          state.highScore = datos.highScore || 0;
+          state.maxCombo = datos.maxCombo || 0;
         }
-        
-        sonidoViento.pause();
-        sonidoNieve.pause();
-        sonidoNoche.pause();
-        
-        document.getElementById('gameOverScreen').style.display = 'none';
-        updateHUD();
       }
 
+      function guardarProgreso() {
+        const ahora = Date.now();
+        if (ahora - state.tiempoUltimoGuardado > 10000) {
+          const key = sanitizeKey(state.nombreJugador);
+          localStorage.setItem(key, JSON.stringify({
+            score: state.score,
+            level: state.level,
+            highScore: state.highScore,
+            maxCombo: state.maxCombo
+          }));
+          state.tiempoUltimoGuardado = ahora;
+        }
+      }
+
+      // ==================== INICIO / RESET ====================
       async function iniciarJuego() {
-        const nombreInput = document.getElementById('nombreJugador').value.trim() || 'Jugador';
-        GameState.nombreJugador = sanitizarNombre(nombreInput);
+        const nombreInput = document.getElementById('nombreJugador');
+        state.nombreJugador = sanitizeName(nombreInput.value.trim() || 'Jugador');
         
         const colorPatrulla = document.getElementById('colorPatrulla').value;
-        patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
+        state.patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
           const img = new Image();
           img.src = src;
           return img;
         });
         
-        try {
-          GameState.highScore = parseInt(localStorage.getItem('highScore_' + GameState.nombreJugador)) || 0;
-          GameState.totalPuntos = parseInt(localStorage.getItem('puntos_' + GameState.nombreJugador)) || 0;
-        } catch (e) {}
-        
+        state.highScore = parseInt(localStorage.getItem('highScore_' + state.nombreJugador) || '0');
         cargarProgreso();
         
-        document.getElementById('puntosTotales').textContent = 'Tus puntos: ' + GameState.totalPuntos;
         document.getElementById('inicio').style.display = 'none';
-        
-        sonidoInicio.pause();
-        sonidoInicio.currentTime = 0;
-        
-        if (sonidoActivado) {
-          musicaFondo.currentTime = 0;
-          musicaFondo.play().catch(() => {});
-        }
+        stopSound(sounds.musicaInicio);
+        if (state.sonidoActivado) playSound(sounds.musicaFondo);
         
         resetGame();
       }
 
-      // ==================== CONTROLADORES DE EVENTOS ====================
-      function setupControls() {
-        if (isMobile) {
-          const leftControl = document.getElementById('left-control');
-          const rightControl = document.getElementById('right-control');
-          const btnNitro = document.getElementById('btnNitro');
-          const btnLeft = document.getElementById('btnLeft');
-          const btnRight = document.getElementById('btnRight');
-          
-          let moveInterval = null;
-          let leftControlActive = false;
-          let rightControlActive = false;
-          
-          function handleContinuousMove() {
-            if (leftControlActive && !GameState.gameOver && !GameState.juegoPausado) {
-              GameState.patrulla.targetX = Math.max(CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH, 
-                GameState.patrulla.targetX - 5);
-            }
-            if (rightControlActive && !GameState.gameOver && !GameState.juegoPausado) {
-              GameState.patrulla.targetX = Math.min(CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - GameState.patrulla.width, 
-                GameState.patrulla.targetX + 5);
-            }
-          }
-          
-          leftControl.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            leftControlActive = true;
-            if (!moveInterval) {
-              moveInterval = setInterval(handleContinuousMove, 16);
-            }
-          }, { passive: false });
-          
-          leftControl.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            leftControlActive = false;
-            if (!rightControlActive && moveInterval) {
-              clearInterval(moveInterval);
-              moveInterval = null;
-            }
-          }, { passive: false });
-          
-          rightControl.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            rightControlActive = true;
-            if (!moveInterval) {
-              moveInterval = setInterval(handleContinuousMove, 16);
-            }
-          }, { passive: false });
-          
-          rightControl.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            rightControlActive = false;
-            if (!leftControlActive && moveInterval) {
-              clearInterval(moveInterval);
-              moveInterval = null;
-            }
-          }, { passive: false });
-          
-          btnNitro.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (!GameState.gameOver && !GameState.juegoPausado) {
-              activarNitro();
-            }
-          }, { passive: false });
-          
-          btnNitro.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            desactivarNitro();
-          }, { passive: false });
-          
-          btnNitro.addEventListener('mouseup', (e) => {
-            e.preventDefault();
-            desactivarNitro();
-          });
-          
-          btnNitro.addEventListener('mouseleave', (e) => {
-            e.preventDefault();
-            desactivarNitro();
-          });
-          
-          btnLeft.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            leftControlActive = true;
-            if (!moveInterval) {
-              moveInterval = setInterval(handleContinuousMove, 16);
-            }
-          }, { passive: false });
-          
-          btnLeft.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            leftControlActive = false;
-            if (!rightControlActive && moveInterval) {
-              clearInterval(moveInterval);
-              moveInterval = null;
-            }
-          }, { passive: false });
-          
-          btnRight.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            rightControlActive = true;
-            if (!moveInterval) {
-              moveInterval = setInterval(handleContinuousMove, 16);
-            }
-          }, { passive: false });
-          
-          btnRight.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            rightControlActive = false;
-            if (!leftControlActive && moveInterval) {
-              clearInterval(moveInterval);
-              moveInterval = null;
-            }
-          }, { passive: false });
-        } else {
-          document.addEventListener('keydown', (e) => {
-            if (!GameState.deslizando && !GameState.juegoPausado && !GameState.gameOver) {
-              if (e.key === 'ArrowLeft') {
-                GameState.patrulla.targetX = Math.max(CONSTANTS.LEFT_BORDER + CONSTANTS.BORDER_WIDTH, 
-                  GameState.patrulla.targetX - 40);
-              }
-              if (e.key === 'ArrowRight') {
-                GameState.patrulla.targetX = Math.min(CONSTANTS.RIGHT_BORDER - CONSTANTS.BORDER_WIDTH - GameState.patrulla.width, 
-                  GameState.patrulla.targetX + 40);
-              }
-              if (e.key === ' ' || e.key === 'Spacebar') {
-                activarNitro();
-              }
-            }
-          });
-
-          document.addEventListener('keyup', (e) => {
-            if (e.key === ' ' || e.key === 'Spacebar') {
-              desactivarNitro();
-            }
-          });
-        }
+      function resetGame() {
+        state.patrulla.x = CONFIG.CANVAS_WIDTH / 2 - 20;
+        state.patrulla.y = CONFIG.CANVAS_HEIGHT - 100;
+        state.patrulla.targetX = CONFIG.CANVAS_WIDTH / 2 - 20;
+        
+        state.obstacles = [];
+        state.objetivos = [];
+        state.powerups = [];
+        state.aceites = [];
+        state.nitroItems = [];
+        state.vidaItems = [];
+        state.trampaClavosItems = [];
+        state.conos = [];
+        state.humoParticles = [];
+        state.derrapeMarks = [];
+        state.gotas = [];
+        state.hojas = [];
+        state.copos = [];
+        state.arena = [];
+        state.granizos = [];
+        state.rayos = [];
+        state.crateres = [];
+        state.particulasRayos = [];
+        state.particulasCrateres = [];
+        
+        state.score = 0;
+        state.level = 1;
+        state.speed = CONFIG.INITIAL_SPEED;
+        state.vidas = 3;
+        state.escudosRecolectados = 0;
+        state.shakeFrames = 0;
+        state.gameOver = false;
+        state.tiempoUltimoChoque = 0;
+        state.deslizando = false;
+        state.lineOffset = 0;
+        state.combo = 0;
+        state.nitro = 100;
+        state.placasRecolectadasDesdeUltimaVida = 0;
+        state.placasParaVida = CONFIG.PLACAS_PARA_VIDA_BASE;
+        state.tiempoUltimoNitroItem = 0;
+        state.nitroItemIntervalo = CONFIG.NITRO_ITEM_INTERVALO_BASE;
+        state.juegoPausado = false;
+        state.climaActual = 'normal';
+        state.tiempoCambioClima = 0;
+        state.tiempoDuracionClima = 0;
+        state.nieblaActiva = false;
+        state.nocheActiva = false;
+        state.vientoActivo = false;
+        state.tiempoUltimaPlaca = 0;
+        
+        stopAllAmbientSounds();
+        desactivarNitro();
+        
+        document.getElementById('gameOverScreen').style.display = 'none';
+        updateHUD();
       }
 
-      // ==================== BUCLE PRINCIPAL ====================
+      // ==================== EVENT LISTENERS ====================
+      document.getElementById('btnActivarSonido').addEventListener('click', function() {
+        state.sonidoActivado = !state.sonidoActivado;
+        if (state.sonidoActivado) {
+          this.textContent = '🔊 Sonido Activado';
+          this.style.background = '#28a745';
+          if (document.getElementById('inicio').style.display === 'flex') {
+            playSound(sounds.musicaInicio);
+          }
+        } else {
+          stopAllAmbientSounds();
+          stopSound(sounds.musicaFondo);
+          stopSound(sounds.musicaInicio);
+          this.textContent = '🔇 Sonido Desactivado';
+          this.style.background = '#dc3545';
+        }
+      });
+
+      document.getElementById('btnReiniciar').addEventListener('click', async () => {
+        stopSound(sounds.musicaFondo);
+        stopAllAmbientSounds();
+        desactivarNitro();
+        
+        if (state.sonidoActivado) playSound(sounds.musicaInicio);
+        
+        document.getElementById('inicio').style.display = 'flex';
+        document.getElementById('gameOverScreen').style.display = 'none';
+      });
+
+      if (!isMobile) {
+        document.addEventListener('keydown', (e) => {
+          if (!state.deslizando && !state.juegoPausado && !state.gameOver) {
+            if (e.key === 'ArrowLeft') {
+              state.patrulla.targetX = Math.max(CONFIG.LEFT_BORDER + CONFIG.BORDER_WIDTH, state.patrulla.targetX - 40);
+            }
+            if (e.key === 'ArrowRight') {
+              state.patrulla.targetX = Math.min(CONFIG.RIGHT_BORDER - CONFIG.BORDER_WIDTH - state.patrulla.width, state.patrulla.targetX + 40);
+            }
+            if (e.key === ' ' || e.key === 'Spacebar') {
+              e.preventDefault();
+              activarNitro();
+            }
+          }
+        });
+
+        document.addEventListener('keyup', (e) => {
+          if (e.key === ' ' || e.key === 'Spacebar') {
+            desactivarNitro();
+          }
+        });
+      }
+
+      // Selección de vehículo
+      document.querySelectorAll('.vehicle-option').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('.vehicle-option').forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+          document.getElementById('colorPatrulla').value = this.getAttribute('data-value');
+        });
+      });
+
+      // ==================== RESIZE ====================
+      function resizeCanvas() {
+        const container = isMobile ? document.getElementById('game-container') : document.querySelector('.arcade-screen');
+        const canvas = gameCanvas;
+        
+        if (isMobile) {
+          const containerHeight = container.clientHeight;
+          const containerWidth = container.clientWidth;
+          const targetRatio = CONFIG.CANVAS_HEIGHT / CONFIG.CANVAS_WIDTH;
+          const currentRatio = containerHeight / containerWidth;
+          
+          if (currentRatio > targetRatio) {
+            canvas.style.width = '100%';
+            canvas.style.height = (containerWidth * targetRatio) + 'px';
+          } else {
+            canvas.style.height = '100%';
+            canvas.style.width = (containerHeight / targetRatio) + 'px';
+          }
+        } else {
+          const containerWidth = container.clientWidth;
+          const containerHeight = container.clientHeight;
+          const ratio = CONFIG.CANVAS_HEIGHT / CONFIG.CANVAS_WIDTH;
+          
+          if (containerHeight / containerWidth > ratio) {
+            canvas.style.width = containerWidth + 'px';
+            canvas.style.height = containerWidth * ratio + 'px';
+          } else {
+            canvas.style.height = containerHeight + 'px';
+            canvas.style.width = containerHeight / ratio + 'px';
+          }
+        }
+        
+        canvas.width = CONFIG.CANVAS_WIDTH;
+        canvas.height = CONFIG.CANVAS_HEIGHT;
+      }
+
+      // ==================== GAME LOOP ====================
       function gameLoop() {
-        if (GameState.gameOver) {
-          requestAnimationFrame(gameLoop);
-          return;
-        }
-        
-        spawnObstacle();
-        spawnObjetivo();
-        spawnPowerup();
-        spawnAceite();
-        spawnNitroItem();
-        spawnTrampaClavos();
-        spawnCono();
-        
-        cambiarClima();
-        spawnClimaticParticles();
-        
-        checkCollisions();
-        checkLevelUp();
-        cleanUpObjects();
-        
-        if (!GameState.nitroActivo && GameState.nitro < 100) {
-          GameState.nitro = Math.min(100, GameState.nitro + CONSTANTS.NITRO_REGEN_SPEED);
-          updateHUD();
-        }
-        
-        drawTormenta();
-        aplicarEfectosClimaticos();
-        
-        draw();
-        
-        guardarProgreso();
-        
-        if (GameState.score > GameState.highScore) {
-          GameState.highScore = GameState.score;
-          try {
-            localStorage.setItem('highScore_' + GameState.nombreJugador, GameState.highScore);
-          } catch (e) {}
-          updateHUD();
+        if (!state.gameOver) {
+          // Spawn objetos
+          spawnObstacle();
+          spawnObjetivo();
+          spawnPowerup();
+          spawnAceite();
+          spawnNitroItem();
+          spawnTrampaClavos();
+          spawnCono();
+          
+          // Clima
+          cambiarClima();
+          spawnNieve();
+          spawnGranizo();
+          
+          // Actualizaciones
+          updateObjects();
+          checkCollisions();
+          checkLevelUp();
+          cleanUpObjects();
+          
+          // Nitro regeneración
+          if (!state.nitroActivo && state.nitro < 100) {
+            state.nitro = Math.min(100, state.nitro + CONFIG.NITRO_REGEN);
+            updateHUD();
+          }
+          
+          // Score high
+          if (state.score > state.highScore) {
+            state.highScore = state.score;
+            localStorage.setItem('highScore_' + state.nombreJugador, state.highScore);
+            updateHUD();
+          }
+          
+          // Guardado
+          guardarProgreso();
+          
+          // Dibujar
+          const ctx = gameCanvas.getContext('2d');
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          const scaleX = parseFloat(gameCanvas.style.width) / CONFIG.CANVAS_WIDTH;
+          const scaleY = parseFloat(gameCanvas.style.height) / CONFIG.CANVAS_HEIGHT;
+          ctx.scale(scaleX, scaleY);
+          
+          draw(ctx);
         }
         
         requestAnimationFrame(gameLoop);
       }
 
       // ==================== INICIALIZACIÓN ====================
-      document.addEventListener('DOMContentLoaded', () => {
-        function resizeCanvas() {
-          const container = isMobile ? 
-            document.getElementById('game-container-mobile') : 
-            document.querySelector('.arcade-screen');
+      window.addEventListener('load', () => {
+        // Mostrar pantalla de carga por 3 segundos
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+          document.getElementById('inicio').style.display = 'flex';
           
-          if (!container) return;
-          
-          if (isMobile) {
-            const containerHeight = container.clientHeight;
-            const containerWidth = container.clientWidth;
-            const targetRatio = CONSTANTS.CANVAS_HEIGHT / CONSTANTS.CANVAS_WIDTH;
-            const currentRatio = containerHeight / containerWidth;
-            
-            if (currentRatio > targetRatio) {
-              gameCanvas.style.width = '100%';
-              gameCanvas.style.height = (containerWidth * targetRatio) + 'px';
-            } else {
-              gameCanvas.style.height = '100%';
-              gameCanvas.style.width = (containerHeight / targetRatio) + 'px';
-            }
-          } else {
-            const containerWidth = container.clientWidth;
-            const containerHeight = container.clientHeight;
-            const ratio = CONSTANTS.CANVAS_HEIGHT / CONSTANTS.CANVAS_WIDTH;
-            let newWidth, newHeight;
-            
-            if (containerHeight / containerWidth > ratio) {
-              newWidth = containerWidth;
-              newHeight = containerWidth * ratio;
-            } else {
-              newHeight = containerHeight;
-              newWidth = containerHeight / ratio;
-            }
-            
-            gameCanvas.style.width = newWidth + 'px';
-            gameCanvas.style.height = newHeight + 'px';
-          }
-          
-          gameCanvas.width = CONSTANTS.CANVAS_WIDTH;
-          gameCanvas.height = CONSTANTS.CANVAS_HEIGHT;
-        }
-
+          // Seleccionar primer vehículo por defecto
+          const firstOption = document.querySelector('.vehicle-option');
+          if (firstOption) firstOption.classList.add('selected');
+        }, 3000);
+        
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        
-        const vehicleOptions = document.querySelectorAll('.vehicle-option');
-        vehicleOptions.forEach(option => {
-          option.addEventListener('click', function() {
-            vehicleOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            document.getElementById('colorPatrulla').value = this.getAttribute('data-value');
-          });
-        });
-        
-        document.getElementById('btnActivarSonido').addEventListener('click', async function() {
-          if (sonidoActivado) {
-            pausarTodosLosSonidos();
-            sonidoActivado = false;
-            this.textContent = '🔇 Sonido Desactivado';
-            this.style.background = '#dc3545';
-          } else {
-            try {
-              sonidoInicio.currentTime = 0;
-              await sonidoInicio.play();
-              sonidoActivado = true;
-              this.textContent = '🔊 Sonido Activado';
-              this.style.background = '#28a745';
-            } catch (e) {
-              console.warn('Error al activar sonido');
-              this.textContent = '❌ Error al activar sonido';
-              this.style.background = '#dc3545';
-            }
-          }
-        });
-        
-        document.getElementById('btnReiniciar').addEventListener('click', async () => {
-          musicaFondo.pause();
-          musicaFondo.currentTime = 0;
-          sonidoViento.pause();
-          sonidoNieve.pause();
-          sonidoNoche.pause();
-          await desactivarNitro();
-          pausarTodosLosSonidos();
-          
-          if (sonidoActivado) {
-            sonidoInicio.currentTime = 0;
-            sonidoInicio.play().catch(() => {});
-          }
-          
-          document.getElementById('inicio').style.display = 'flex';
-          document.getElementById('gameOverScreen').style.display = 'none';
-        });
-        
-        window.iniciarJuego = iniciarJuego;
-        
-        // Simular carga de imágenes
-        const totalImages = 12;
-        let loadedImages = 0;
-        
-        function imageLoaded() {
-          loadedImages++;
-          const percent = Math.round((loadedImages / totalImages) * 100);
-          document.getElementById('loading-progress-bar').style.width = percent + '%';
-          document.getElementById('loading-text').textContent = `Cargando... ${percent}%`;
-          
-          if (loadedImages >= totalImages) {
-            setTimeout(() => {
-              document.getElementById('loading-screen').style.display = 'none';
-              document.getElementById('inicio').style.display = 'flex';
-              
-              if (sonidoActivado) {
-                sonidoInicio.currentTime = 0;
-                sonidoInicio.play().catch(() => {});
-              }
-            }, 1000);
-          }
-        }
-        
-        const imagesToLoad = [
-          'imagenes/cargaInicioPC_1.png',
-          'imagenes/cargaInicioMovil_1.png',
-          'imagenes/patrulla_1.png',
-          'imagenes/patrulla_1b.png',
-          'imagenes/transito_1.png',
-          'imagenes/transito_1b.png',
-          'imagenes/pbi_1.png',
-          'imagenes/pbi_1b.png',
-          'imagenes/auxiliar_1.png',
-          'imagenes/auxiliar_1b.png',
-          'imagenes/fondoComputadora_1.png',
-          'imagenes/fondo_movil_1.png'
-        ];
-        
-        imagesToLoad.forEach(src => {
-          const img = new Image();
-          img.onload = imageLoaded;
-          img.onerror = imageLoaded;
-          img.src = src;
-        });
         
         setupControls();
         gameLoop();
       });
+
     })();
   </script>
 </body>
