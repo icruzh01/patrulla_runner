@@ -1,22 +1,23 @@
-html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
   <title>Patrulla Runner Arcade</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     body { 
       background: #000; 
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      min-height: 100dvh;
       overflow: hidden;
       font-family: 'Arial', sans-serif;
+      touch-action: pan-y pinch-zoom;
     }
 
     /* Fuente arcade solo para desktop */
@@ -209,17 +210,16 @@ html
       font-weight: bold;
     }
 
-    /* Estilos para móvil (pantalla completa) */
+    /* Estilos para móvil (pantalla completa) - CORREGIDO */
     @media (max-width: 768px) {
       body {
         background: #111;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
-        touch-action: manipulation;
         margin: 0;
         padding: 0;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
       }
       
       .arcade-machine {
@@ -231,77 +231,69 @@ html
         top: 0;
         left: 0;
         width: 100vw;
+        width: 100dvw;
         height: 100vh;
+        height: 100dvh;
         overflow: hidden;
+        background: #000;
       }
       
       canvas {
-        width: 100vw !important;
-        height: 100vh !important;
         display: block;
+        width: 100% !important;
+        height: 100% !important;
         object-fit: contain;
+        image-rendering: crisp-edges;
       }
 
-      /* Panel de información minimalista para móvil */
+      /* Panel de información minimalista para móvil - MEJORADO */
       .mobile-hud {
-        position: absolute;
-        top: 10px;
+        position: fixed;
+        top: 0;
         left: 0;
         right: 0;
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 1px;
+        padding: 8px 4px;
         z-index: 20;
         pointer-events: none;
-        font-size: 12px;
-        padding: 0 10px;
-        box-sizing: border-box;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+        font-size: 11px;
+        gap: 4px;
       }
 
       .mobile-hud-left,
-        .mobile-hud-right {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            /*background: rgba(130, 64, 64, 0.7);*/
-            border-radius: 8px;
-            padding: 6px 10px;
-            flex-wrap: wrap;
-            max-width: 70%; /* Aumentamos el ancho máximo */
-            gap: 0px; /* Añadimos espacio entre elementos */
-        }
+      .mobile-hud-right {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        max-width: 70%;
+      }
 
-        .mobile-hud-left {
-            flex-grow: 1; /* Permite que crezca para ocupar espacio disponible */
-                      
-        }
+      .mobile-hud-right {
+        justify-content: flex-end;
+        max-width: 70%;
+      }
 
-        .mobile-hud-right {
-            margin-left: auto; /* Empuja a la derecha */
-        }
+      .mobile-hud-item {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px black;
+        white-space: nowrap;
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(2px);
+      }
 
-        .mobile-hud-item {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
-            margin: -1px;
-            white-space: nowrap;
-            flex-shrink: 0; /* Evita que se encojan los elementos */
-        }
-
-      /* Estilos para las barras de progreso en móvil */
       .mobile-progress-container {
-        width: 100%;
-        height: 8px;
+        width: 80px;
+        height: 6px;
         background: rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
+        border-radius: 3px;
         margin-top: 3px;
         overflow: hidden;
       }
@@ -309,133 +301,118 @@ html
       .mobile-progress-bar {
         height: 100%;
         background: #28a745;
-        transition: width 0.3s;
+        width: 0%;
       }
 
       .mobile-progress-bar.nitro {
         background: #007bff;
       }
 
-      /* Ajustar tamaño de los ítems del HUD derecho */
-      .mobile-hud-right .mobile-hud-item {
-        min-width: 100px;
-        text-align: center;
-      }
-
       .mobile-hud-combo {
-        position: absolute;
-        top: 640px;
+        position: fixed;
+        top: 70px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 215, 0, 0.9);
         color: black;
-        padding: 8px 15px;
+        padding: 6px 12px;
         border-radius: 20px;
         font-size: 14px;
         font-weight: bold;
         display: none;
         white-space: nowrap;
+        z-index: 30;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
       }
 
-      /* Controles táctiles en los extremos */
+      /* Controles táctiles - MEJORADOS */
+      .direction-btn {
+        position: fixed;
+        width: 70px;
+        height: 70px;
+        border-radius: 35px;
+        background: rgba(0, 0, 0, 0.6);
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        font-size: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 30;
+        touch-action: manipulation;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        bottom: 30px;
+      }
+      
+      #btnLeft {
+        left: 20px;
+      }
+      
+      #btnRight {
+        right: 20px;
+      }
+      
+      #btnNitro {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
+        background: rgba(255, 87, 34, 0.8);
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        color: white;
+        font-size: 28px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 30;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      }
+
+      /* Touch areas adicionales */
       .touch-control {
         position: fixed;
         top: 0;
         bottom: 0;
-        width: 30%;
-        z-index: 10;
-        opacity: 0.3;
+        width: 25%;
+        z-index: 15;
+        opacity: 0;
       }
       
       #left-control {
         left: 0;
-        background: rgba(0, 0, 255, 0.1);
       }
       
       #right-control {
         right: 0;
-        background: rgba(255, 0, 0, 0.1);
-      }
-      
-      /* Botones de control direccionales */
-      .direction-btn {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        color: white;
-        font-size: 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 15;
-        touch-action: manipulation;
-        user-select: none;
-      }
-      
-      #btnLeft {
-        left: 20px;
-        bottom: 100px;
-      }
-      
-      #btnRight {
-        right: 20px;
-        bottom: 100px;
-      }
-      
-      /* Botón de nitro en la parte inferior derecha */
-      #btnNitro {
-        position: fixed;
-        bottom: 100px;
-        left: 90%;
-        transform: translateX(-50%);
-        padding: 15px;
-        margin: 0;
-        font-size: 20px;
-        background: rgba(255, 87, 34, 0.7);
-        border: 2px solid rgba(255, 255, 255, 0.7);
-        color: white;
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        touch-action: manipulation;
-        z-index: 10;
       }
     }
 
-    /* Ajustes específicos para orientación vertical */
+    /* Ajustes para orientación vertical */
     @media (max-width: 768px) and (orientation: portrait) {
-      .mobile-hud {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 5px;
-      }
-      
       .mobile-hud-item {
-        margin-bottom: 5px;
+        font-size: 11px;
+        padding: 3px 6px;
       }
       
-      .mobile-hud-right {
-        align-items: flex-start;
+      .mobile-progress-container {
+        width: 60px;
       }
       
-      /* Ajustar posición de botones en vertical */
-      #btnLeft {
-        left: 20px;
-        bottom: 100px;
-      }
-      
-      #btnRight {
-        right: 20px;
-        bottom: 100px;
+      #btnLeft, #btnRight {
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
       }
       
       #btnNitro {
-        left: 88%;
-        bottom: 200px;
-        transform: translateX(-50%);
+        width: 70px;
+        height: 70px;
+        font-size: 24px;
       }
     }
 
@@ -451,7 +428,7 @@ html
 
     /* Pantalla de carga */
     #loading-screen {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -500,7 +477,7 @@ html
 
     /* Pantalla de inicio y game over */
     #inicio {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -514,7 +491,8 @@ html
       gap: 15px;
       padding: 20px;
       box-sizing: border-box;
-      display: none; /* Oculto inicialmente */
+      display: none;
+      overflow-y: auto;
     }
 
     /* Fondo para pantalla de inicio en desktop */
@@ -574,7 +552,7 @@ html
     }
 
     #gameOverScreen {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -619,55 +597,55 @@ html
 
     /* Selector de vehículo personalizado */
     .vehicle-selector-container {
-    margin-bottom: 15px;
-    width: 100%;
+      margin-bottom: 15px;
+      width: 100%;
     }
 
     .vehicle-selector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
     }
 
     .vehicle-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    border: 2px solid #555;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: rgba(0, 0, 0, 0.5);
-    width: 100px;
-    text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(0, 0, 0, 0.5);
+      width: 100px;
+      text-align: center;
     }
 
     .vehicle-option:hover {
-    border-color: gold;
-    background: rgba(255, 215, 0, 0.2);
-    transform: translateY(-3px);
+      border-color: gold;
+      background: rgba(255, 215, 0, 0.2);
+      transform: translateY(-3px);
     }
 
     .vehicle-option.selected {
-    border-color: cyan;
-    background: rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-color: cyan;
+      background: rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     .vehicle-thumb {
-    width: 50px;
-    height: 30px;
-    object-fit: contain;
-    margin-bottom: 5px;
-    image-rendering: pixelated;
+      width: 50px;
+      height: 30px;
+      object-fit: contain;
+      margin-bottom: 5px;
+      image-rendering: pixelated;
     }
 
     .vehicle-option span {
-    font-size: 14px;
-    color: white;
-    text-shadow: 1px 1px 2px black;
+      font-size: 14px;
+      color: white;
+      text-shadow: 1px 1px 2px black;
     }
   </style>
 </head>
@@ -684,7 +662,7 @@ html
       <div class="arcade-title">PATRULLA RUNNER</div>
       <div class="arcade-screen-container">
         <div class="arcade-screen">
-          <div id="game-container">
+          <div id="game-container-desktop">
             <canvas id="game" width="400" height="600"></canvas>
             <div class="arcade-bezel"></div>
           </div>
@@ -755,52 +733,48 @@ html
     </div>
   </div>
 
-  <!-------------------- Versión móvil (oculta inicialmente) ---------------->
+  <!-------------------- Versión móvil ---------------->
   <div id="mobile-view" style="display: none;">
     <div id="game-container">
       <canvas id="game-mobile" width="400" height="600"></canvas>
       
       <div class="mobile-hud">
-        <!-- Elementos de la izquierda -->
         <div class="mobile-hud-left">
-            <div class="mobile-hud-item" id="mobile-player">👮‍♂️: -</div>
-            <div class="mobile-hud-item" id="mobile-lives">♥️: 3</div>
-            <div class="mobile-hud-item" id="mobile-score">💎: 0</div>
-            <div class="mobile-hud-item" id="mobile-shields">🛡️: 0/2</div>
-            <div class="mobile-hud-item" id="mobile-plates">🟡: 0/50</div>
+          <div class="mobile-hud-item" id="mobile-player">👮: -</div>
+          <div class="mobile-hud-item" id="mobile-lives">❤️: 3</div>
+          <div class="mobile-hud-item" id="mobile-score">💎: 0</div>
+          <div class="mobile-hud-item" id="mobile-shields">🛡️: 0/2</div>
+          <div class="mobile-hud-item" id="mobile-plates">🟡: 0/50</div>
         </div>
         
-        <!-- Elementos de la derecha -->
         <div class="mobile-hud-right">
-            <div class="mobile-hud-item" id="mobile-level">🏆: 1</div>
-            
-            <div class="mobile-hud-item">
-                <div>🚩: 0%</div>
-                <div class="mobile-progress-container">
-                    <div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div>
-                </div>
+          <div class="mobile-hud-item" id="mobile-level">🏆: 1</div>
+          
+          <div class="mobile-hud-item">
+            <div>🚩</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar" id="mobile-next-level-bar" style="width: 0%"></div>
             </div>
-            
-            <div class="mobile-hud-item">
-                <div>⚡: 100%</div>
-                <div class="mobile-progress-container">
-                    <div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div>
-                </div>
+          </div>
+          
+          <div class="mobile-hud-item">
+            <div>⚡</div>
+            <div class="mobile-progress-container">
+              <div class="mobile-progress-bar nitro" id="mobile-nitro-bar" style="width: 100%"></div>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
     
       <div class="mobile-hud-combo" id="mobile-combo">COMBO x1</div>
       
-      <!-- Controles táctiles en los extremos -->
+      <!-- Controles táctiles -->
       <div id="left-control" class="touch-control"></div>
       <div id="right-control" class="touch-control"></div>
       
-      <!-- Nuevos botones de control direccional -->
       <div id="btnLeft" class="direction-btn">←</div>
       <div id="btnRight" class="direction-btn">→</div>
-      
-      <button id="btnNitro">💨</button>
+      <div id="btnNitro">💨</div>
     </div>
   </div>
 
@@ -808,33 +782,33 @@ html
   <div id="inicio">
     <h2>Patrulla Runner</h2>
     <button id="btnActivarSonido">🔊 Activar Sonido</button>
-    <input id="nombreJugador" type="text" placeholder="Tu nombre..." />
+    <input id="nombreJugador" type="text" placeholder="Tu nombre..." value="Jugador"/>
            
     <div class="vehicle-selector-container">
-    <label style="color: white; margin-bottom: 5px; display: block; text-align: center;">Selecciona tu vehículo:</label>
-    <div class="vehicle-selector">
-        <div class="vehicle-option" data-value="imagenes/patrulla_1.png">
-        <img src="imagenes/patrulla_1.png" alt="Patrulla de Cuadrante" class="vehicle-thumb">
-        <span>Cuadrante</span>
+      <label style="color: white; margin-bottom: 5px; display: block; text-align: center;">Selecciona tu vehículo:</label>
+      <div class="vehicle-selector">
+        <div class="vehicle-option selected" data-value="imagenes/patrulla_1.png">
+          <img src="imagenes/patrulla_1.png" alt="Patrulla de Cuadrante" class="vehicle-thumb" onerror="this.style.display='none'">
+          <span>Cuadrante</span>
         </div>
         <div class="vehicle-option" data-value="imagenes/transito_1.png">
-        <img src="imagenes/transito_1.png" alt="Patrulla de Tránsito" class="vehicle-thumb">
-        <span>Tránsito</span>
+          <img src="imagenes/transito_1.png" alt="Patrulla de Tránsito" class="vehicle-thumb" onerror="this.style.display='none'">
+          <span>Tránsito</span>
         </div>
         <div class="vehicle-option" data-value="imagenes/pbi_1.png">
-        <img src="imagenes/pbi_1.png" alt="Patrulla P.B.I." class="vehicle-thumb">
-        <span>P.B.I.</span>
+          <img src="imagenes/pbi_1.png" alt="Patrulla P.B.I." class="vehicle-thumb" onerror="this.style.display='none'">
+          <span>P.B.I.</span>
         </div>
         <div class="vehicle-option" data-value="imagenes/auxiliar_1.png">
-        <img src="imagenes/auxiliar_1.png" alt="Patrulla Auxiliar" class="vehicle-thumb">
-        <span>P.A.</span>
+          <img src="imagenes/auxiliar_1.png" alt="Patrulla Auxiliar" class="vehicle-thumb" onerror="this.style.display='none'">
+          <span>P.A.</span>
         </div>
-    </div>
-    <input type="hidden" id="colorPatrulla" value="imagenes/patrulla_1.png">
+      </div>
+      <input type="hidden" id="colorPatrulla" value="imagenes/patrulla_1.png">
     </div>
     
     <div class="tienda">
-      <div id="puntosTotales"></div>
+      <div id="puntosTotales">Tus puntos: 0</div>
     </div>
     <button onclick="iniciarJuego()">🚀 Jugar</button>
   </div>
@@ -875,7 +849,7 @@ html
     fondoInicioMovil.src = 'imagenes/fondo_movil_1.png';
 
     // Detección de dispositivo
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const desktopView = document.getElementById('desktop-view');
     const mobileView = document.getElementById('mobile-view');
     const gameCanvas = isMobile ? document.getElementById('game-mobile') : document.getElementById('game');
@@ -957,7 +931,7 @@ html
     let particulasCrateres = [];
 
     // Variables del juego principal
-    let patrulla = { x: 180, y: gameCanvas.height - 100, width: 40, height: 60, targetX: 180 };
+    let patrulla = { x: 180, y: 540, width: 40, height: 60, targetX: 180 };
     let obstacles = [], objetivos = [], recolectados = [], powerups = [], aceites = [];
     let score = 0, level = 1, vidas = 3;
     let gameOver = false;
@@ -1032,61 +1006,39 @@ html
         if (sonidoActivado) {
             reproducirSonido(sonidoInicio).catch(e => console.error('Error al reproducir música de inicio:', e));
         }
-    }, 5000);
+    }, 3000);
 
-    // Ajustar tamaño del canvas según dispositivo
+    // Función mejorada para redimensionar canvas - CORREGIDA
     function resizeCanvas() {
-        const container = isMobile ? document.getElementById('game-container') : document.querySelector('.arcade-screen');
         const canvas = gameCanvas;
+        if (!canvas) return;
         
         if (isMobile) {
-            const containerHeight = container.clientHeight;
-            const containerWidth = container.clientWidth;
-            const targetRatio = 600/400;
-            const currentRatio = containerHeight/containerWidth;
-            
-            if (currentRatio > targetRatio) {
-                canvas.style.width = '100%';
-                canvas.style.height = (containerWidth * targetRatio) + 'px';
-            } else {
-                canvas.style.height = '100%';
-                canvas.style.width = (containerHeight / targetRatio) + 'px';
-            }
+            // En móvil, ocupar toda la pantalla
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.objectFit = 'cover';
         } else {
-            const containerWidth = container.clientWidth;
-            const containerHeight = container.clientHeight;
-            const ratio = 600/400;
-            let newWidth, newHeight;
-            
-            if (containerHeight/containerWidth > ratio) {
-                newWidth = containerWidth;
-                newHeight = containerWidth * ratio;
-            } else {
-                newHeight = containerHeight;
-                newWidth = containerHeight / ratio;
+            // En desktop, mantener proporción
+            const container = document.querySelector('.arcade-screen');
+            if (container) {
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
+                const ratio = 600/400;
+                
+                if (containerHeight/containerWidth > ratio) {
+                    canvas.style.width = containerWidth + 'px';
+                    canvas.style.height = (containerWidth * ratio) + 'px';
+                } else {
+                    canvas.style.height = containerHeight + 'px';
+                    canvas.style.width = (containerHeight / ratio) + 'px';
+                }
             }
-            
-            canvas.style.width = newWidth + 'px';
-            canvas.style.height = newHeight + 'px';
         }
         
-        // Ajustar tamaño real del canvas
+        // Mantener tamaño lógico constante
         canvas.width = 400;
         canvas.height = 600;
-        
-        // Escalar el contexto
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        
-        if (isMobile) {
-            const scaleX = parseFloat(canvas.style.width) / 400;
-            const scaleY = parseFloat(canvas.style.height) / 600;
-            ctx.scale(scaleX, scaleY);
-        } else {
-            const scaleX = parseFloat(canvas.style.width) / 400;
-            const scaleY = parseFloat(canvas.style.height) / 600;
-            ctx.scale(scaleX, scaleY);
-        }
     }
 
     // Función mejorada para reproducir sonidos
@@ -1094,32 +1046,11 @@ html
         if (!sonidoActivado || juegoPausado) return;
         
         try {
-            // Si ya se está reproduciendo, no hacer nada
             if (audioElement.playing) return;
-            
-            // Si hay un error previo, resetear el audio
-            if (audioElement.error) {
-                audioElement.currentTime = 0;
-            }
-            
-            // Pausar primero para evitar conflictos
-            await audioElement.pause();
             audioElement.currentTime = 0;
-            
-            // Intentar reproducir
             await audioElement.play();
         } catch (e) {
-            console.error('Error al reproducir sonido:', e);
-            // Intento alternativo después de un pequeño retraso
-            setTimeout(async () => {
-                try {
-                    await audioElement.pause();
-                    audioElement.currentTime = 0;
-                    await audioElement.play();
-                } catch (e2) {
-                    console.error('Segundo intento fallido:', e2);
-                }
-            }, 100);
+            // Ignorar errores de reproducción automática
         }
     }
 
@@ -1160,16 +1091,14 @@ html
         await reproducirSonido(sonidoFrenoDerrape);
     }
 
-    // Funciones para efectos climáticos
+    // Funciones para efectos climáticos (versión simplificada para móvil)
     function cambiarClima() {
         const ahora = Date.now();
         
-        // Inicializar tiempoDuracionClima si es la primera vez
         if (tiempoDuracionClima === 0) {
-            tiempoDuracionClima = 15000 + Math.random() * 15000; // 15-30 segundos
+            tiempoDuracionClima = 15000 + Math.random() * 15000;
         }
         
-        // Solo cambiar el clima si ha pasado el tiempo de duración
         if (ahora - tiempoCambioClima > tiempoDuracionClima) {
             const climas = ['normal', 'niebla', 'tormenta', 'viento', 'nieve', 'arena', 'granizo', 'noche'];
             climaActual = climas[Math.floor(Math.random() * climas.length)];
@@ -1183,27 +1112,16 @@ html
                 climaSecundario = null;
             }
             
-            // Establecer nueva duración (15-30 segundos)
             tiempoDuracionClima = 15000 + Math.random() * 15000;
             tiempoCambioClima = ahora;
             
-            // Limpiar partículas anteriores
-            hojas = [];
-            copos = [];
-            arena = [];
-            granizos = [];
-            gotas = [];
-            rayos = [];
-            crateres = [];
-            particulasRayos = [];
-            particulasCrateres = [];
+            hojas = []; copos = []; arena = []; granizos = []; gotas = []; rayos = []; crateres = [];
+            particulasRayos = []; particulasCrateres = [];
             
-            // Activar/desactivar efectos según el clima
             nieblaActiva = climaActual === 'niebla';
             nocheActiva = climaActual === 'noche';
             vientoActivo = climaActual === 'viento';
             
-            // Reproducir sonidos ambientales
             if (sonidoActivado) {
                 sonidoViento.pause();
                 sonidoNieve.pause();
@@ -1212,15 +1130,15 @@ html
                 if (climaActual === 'viento') {
                     sonidoViento.loop = true;
                     sonidoViento.volume = 0.5;
-                    reproducirSonido(sonidoViento).catch(e => console.error('Error al reproducir sonido de viento:', e));
+                    reproducirSonido(sonidoViento);
                 } else if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
                     sonidoNieve.loop = true;
                     sonidoNieve.volume = 0.3;
-                    reproducirSonido(sonidoNieve).catch(e => console.error('Error al reproducir sonido de nieve:', e));
+                    reproducirSonido(sonidoNieve);
                 } else if (climaActual === 'noche') {
                     sonidoNoche.loop = true;
                     sonidoNoche.volume = 0.3;
-                    reproducirSonido(sonidoNoche).catch(e => console.error('Error al reproducir sonido de noche:', e));
+                    reproducirSonido(sonidoNoche);
                 }
             }
         }
@@ -1228,293 +1146,40 @@ html
 
     function drawNiebla() {
         if (!nieblaActiva) return;
-        
         const ctx = gameCanvas.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, gameCanvas.height);
-        gradient.addColorStop(0, 'rgba(200, 200, 200, 0.1)');
-        gradient.addColorStop(1, 'rgba(200, 200, 200, 0.7)');
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = 'rgba(200, 200, 200, 0.3)';
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
     }
 
     async function drawTormenta() {
         if (climaActual !== 'tormenta') return;
-        
         const ahora = Date.now();
         
-        // Generar nuevo rayo cada 5-8 segundos
         if (ahora - ultimotrueno > 5000 + Math.random() * 3000) {
             ultimotrueno = ahora;
-            
-            // Flash de pantalla
-            gameCanvas.style.backgroundColor = 'white';
-            setTimeout(() => { gameCanvas.style.backgroundColor = fondoPorNivel(); }, 100);
-            
-            // Sonido del trueno
             if (sonidoActivado) {
-                try {
-                    await sonidotrueno.pause();
-                    sonidotrueno.currentTime = 0;
-                    await sonidotrueno.play();
-                } catch (e) {
-                    console.error('Error al reproducir sonido de trueno:', e);
-                }
-            }
-            
-            // Crear nuevo rayo con fase de advertencia
-            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth);
-            rayos.push({
-                x: x,
-                y: 0,
-                estado: 'advertencia',
-                tiempoInicio: ahora,
-                tiempoAdvertencia: 1500,
-                tiempoImpacto: 150,
-                ancho: 20 + Math.random() * 30,
-                ramificaciones: Math.floor(Math.random() * 3) + 1
-            });
-        }
-        
-        // Actualizar estado de los rayos existentes
-        for (const rayo of rayos) {
-            if (rayo.estado === 'advertencia' && ahora - rayo.tiempoInicio > rayo.tiempoAdvertencia) {
-                // Cambiar a estado de impacto
-                rayo.estado = 'impacto';
-                rayo.tiempoInicio = ahora;
-                
-                // Crear partículas de impacto
-                for (let i = 0; i < 30; i++) {
-                    particulasRayos.push({
-                        x: rayo.x + (Math.random() - 0.5) * rayo.ancho,
-                        y: Math.random() * gameCanvas.height,
-                        size: 2 + Math.random() * 5,
-                        alpha: 0.8,
-                        speedX: (Math.random() - 0.5) * 5,
-                        speedY: -Math.random() * 10,
-                        decay: 0.02 + Math.random() * 0.03,
-                        color: `rgba(255, ${200 + Math.random() * 55}, 0, 1)`
-                    });
-                }
-                
-                // Verificar colisión con el jugador
-                if (patrulla.x < rayo.x + rayo.ancho/2 &&
-                    patrulla.x + patrulla.width > rayo.x - rayo.ancho/2) {
-                    
-                    if (escudosRecolectados >= 2) {
-                        escudosRecolectados = 1;
-                        await reproducirSonidoAntiPowerup();
-                    } else if (escudosRecolectados === 1) {
-                        escudosRecolectados = 0;
-                        vidas--;
-                        await reproducirSonidoChoque();
-                    } else {
-                        vidas = Math.max(0, vidas - 2);
-                        await reproducirSonidoChoque();
-                    }
-                    
-                    shakeFrames = 15;
-                    tiempoUltimoChoque = ahora;
-                    
-                    if (vidas <= 0) {
-                        gameOver = true;
-                        musicaFondo.pause();
-                        document.getElementById('gameOverScreen').style.display = 'flex';
-                        document.getElementById('btnReiniciar').style.display = 'block';
-                        document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
-                        document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
-                    }
-                    
-                    updateHUD();
-                }
-                
-                // Crear cráter después del impacto
-                crateres.push({
-                    x: rayo.x - 20,
-                    y: gameCanvas.height - 40,
-                    width: 40,
-                    height: 30,
-                    tiempoCreacion: ahora,
-                    particulas: []
-                });
-                
-                // Sonido de impacto
-                if (sonidoActivado) {
-                    try {
-                        await sonidoImpactoRayo.pause();
-                        sonidoImpactoRayo.currentTime = 0;
-                        sonidoImpactoRayo.volume = 0.7;
-                        await sonidoImpactoRayo.play();
-                    } catch (e) {
-                        console.error('Error al reproducir sonido de impacto:', e);
-                    }
-                }
-            } else if (rayo.estado === 'impacto' && ahora - rayo.tiempoInicio > rayo.tiempoImpacto) {
-                // Eliminar rayo después del impacto
-                rayos = rayos.filter(r => r !== rayo);
+                try { sonidotrueno.play(); } catch (e) {}
             }
         }
     }
 
     function drawRayos() {
-        if (climaActual !== 'tormenta') return;
-        
-        const ctx = gameCanvas.getContext('2d');
-        const ahora = Date.now();
-        
-        rayos.forEach(rayo => {
-            if (rayo.estado === 'advertencia') {
-                // Dibujar advertencia (círculo rojo intermitente)
-                const tiempoTranscurrido = ahora - rayo.tiempoInicio;
-                const parpadeo = Math.floor(tiempoTranscurrido / 200) % 2 === 0;
-                
-                if (parpadeo) {
-                    ctx.save();
-                    ctx.fillStyle = `rgba(255, 0, 0, ${0.3 + 0.3 * Math.sin(tiempoTranscurrido / 100)})`;
-                    ctx.beginPath();
-                    ctx.arc(rayo.x, gameCanvas.height - 20, rayo.ancho/2, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Texto de advertencia
-                    ctx.fillStyle = 'white';
-                    ctx.font = 'bold 16px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('¡RAYO INMINENTE!', rayo.x, gameCanvas.height - 40);
-                    ctx.restore();
-                }
-            } else if (rayo.estado === 'impacto') {
-                // Dibujar rayo
-                ctx.save();
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.lineWidth = 3;
-                ctx.shadowColor = 'cyan';
-                ctx.shadowBlur = 15;
-                
-                // Línea principal del rayo
-                ctx.beginPath();
-                ctx.moveTo(rayo.x, 0);
-                ctx.lineTo(rayo.x, gameCanvas.height);
-                ctx.stroke();
-                
-                // Ramificaciones
-                for (let i = 0; i < rayo.ramificaciones; i++) {
-                    const offsetX = (Math.random() - 0.5) * rayo.ancho;
-                    const startY = Math.random() * gameCanvas.height * 0.7;
-                    const endY = startY + Math.random() * gameCanvas.height * 0.3;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(rayo.x, startY);
-                    ctx.lineTo(rayo.x + offsetX, endY);
-                    ctx.stroke();
-                }
-                
-                ctx.restore();
-            }
-        });
-        
-        // Dibujar partículas de rayos
-        particulasRayos.forEach((p, index) => {
-            ctx.fillStyle = p.color.replace('1)', p.alpha + ')');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
-            
-            p.x += p.speedX;
-            p.y += p.speedY;
-            p.alpha -= p.decay;
-            p.size *= 0.98;
-            
-            if (p.alpha <= 0) {
-                particulasRayos.splice(index, 1);
-            }
-        });
+        // Versión simplificada
     }
 
     function drawCrateres() {
-        const ctx = gameCanvas.getContext('2d');
-        const ahora = Date.now();
-        
-        crateres.forEach((crater, index) => {
-            // Eliminar cráter después de 3 segundos (3000ms)
-            if (ahora - crater.tiempoCreacion > 3000) {
-                crateres.splice(index, 1);
-                return;
-            }
-            
-            // Dibujar cráter principal
-            ctx.save();
-            
-            if (craterImg.complete) {
-                ctx.drawImage(craterImg, crater.x, crater.y, crater.width, crater.height);
-            } else {
-                ctx.fillStyle = '#111';
-                ctx.beginPath();
-                ctx.ellipse(
-                    crater.x + crater.width/2,
-                    crater.y + crater.height/2,
-                    crater.width/2,
-                    crater.height/2,
-                    0, 0, Math.PI * 2
-                );
-                ctx.fill();
-                
-                // Detalles del cráter
-                ctx.fillStyle = '#333';
-                ctx.beginPath();
-                ctx.ellipse(
-                    crater.x + crater.width/2,
-                    crater.y + crater.height/2,
-                    crater.width/3,
-                    crater.height/3,
-                    0, 0, Math.PI * 2
-                );
-                ctx.fill();
-            }
-            
-            // Efecto de humo si es reciente (solo durante los 3 segundos)
-            if (frameCount % 5 === 0) {
-                particulasCrateres.push({
-                    x: crater.x + crater.width/2 + (Math.random() - 0.5) * 10,
-                    y: crater.y + (Math.random() * 5),
-                    size: 5 + Math.random() * 10,
-                    alpha: 0.6,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: -Math.random() * 1.5,
-                    decay: 0.01 + Math.random() * 0.02,
-                    color: 'rgba(100, 100, 100, 0.7)'
-                });
-            }
-            
-            ctx.restore();
-        });
-        
-        // Dibujar partículas de cráteres (se autodestruyen cuando alpha <= 0)
-        particulasCrateres.forEach((p, index) => {
-            ctx.fillStyle = p.color.replace('0.7)', p.alpha + ')');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
-            
-            p.x += p.speedX;
-            p.y += p.speedY;
-            p.alpha -= p.decay;
-            p.size *= 0.99;
-            
-            if (p.alpha <= 0) {
-                particulasCrateres.splice(index, 1);
-            }
-        });
+        // Versión simplificada
     }
 
     function spawnHojas() {
         if (climaActual !== 'viento') return;
-        
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.3) {
             hojas.push({
                 x: Math.random() * gameCanvas.width,
                 y: -10,
-                speedX: (Math.random() - 0.5) * 3,
-                speedY: 2 + Math.random() * 3,
-                size: 5 + Math.random() * 5
+                speedX: (Math.random() - 0.5) * 2,
+                speedY: 1 + Math.random() * 2,
+                size: 3 + Math.random() * 5
             });
         }
     }
@@ -1522,7 +1187,7 @@ html
     function drawHojas() {
         const ctx = gameCanvas.getContext('2d');
         hojas.forEach((hoja, i) => {
-            ctx.fillStyle = 'rgba(150, 100, 50, 0.7)';
+            ctx.fillStyle = 'rgba(150, 100, 50, 0.5)';
             ctx.beginPath();
             ctx.arc(hoja.x, hoja.y, hoja.size, 0, Math.PI * 2);
             ctx.fill();
@@ -1534,45 +1199,36 @@ html
 
     function spawnNieve() {
         if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
-            // Aumentar la probabilidad de generar copos y la cantidad
-            if (Math.random() < 0.3) { // Cambiado de 0.2 a 0.5 para más frecuencia
-                // Generar más copos a la vez
-                const cantidadCopos = 2 + Math.floor(Math.random() * 3); // Entre 2 y 4 copos
-                for (let i = 0; i < cantidadCopos; i++) {
-                    copos.push({
-                        x: Math.random() * gameCanvas.width,
-                        y: -5,
-                        speed: 1 + Math.random() * 2,
-                        size: 2 + Math.random() * 3
-                    });
-                }
+            if (Math.random() < 0.3) {
+                copos.push({
+                    x: Math.random() * gameCanvas.width,
+                    y: -5,
+                    speed: 1 + Math.random() * 2,
+                    size: 1 + Math.random() * 3
+                });
             }
         }
     }
 
     function drawNieve() {
         const ctx = gameCanvas.getContext('2d');
-        if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
-            copos.forEach((copo, i) => {
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.arc(copo.x, copo.y, copo.size, 0, Math.PI * 2);
-                ctx.fill();
-                copo.y += copo.speed;
-                copo.x += Math.sin(copo.y * 0.1) * 1.5;
-                if (copo.y > gameCanvas.height) copos.splice(i, 1);
-            });
-        }
+        copos.forEach((copo, i) => {
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(copo.x, copo.y, copo.size, 0, Math.PI * 2);
+            ctx.fill();
+            copo.y += copo.speed;
+            if (copo.y > gameCanvas.height) copos.splice(i, 1);
+        });
     }
 
     function spawnArena() {
         if (climaActual !== 'arena') return;
-        
         if (Math.random() < 0.3) {
             arena.push({
                 x: Math.random() * gameCanvas.width,
                 y: -5,
-                speed: 3 + Math.random() * 4,
+                speed: 2 + Math.random() * 3,
                 size: 1 + Math.random() * 2
             });
         }
@@ -1581,7 +1237,7 @@ html
     function drawArena() {
         const ctx = gameCanvas.getContext('2d');
         arena.forEach((grano, i) => {
-            ctx.fillStyle = 'rgba(194, 178, 128, 0.8)';
+            ctx.fillStyle = 'rgba(194, 178, 128, 0.6)';
             ctx.beginPath();
             ctx.arc(grano.x, grano.y, grano.size, 0, Math.PI * 2);
             ctx.fill();
@@ -1592,13 +1248,12 @@ html
 
     function spawnGranizo() {
         if (climaActual !== 'granizo') return;
-        
         if (Math.random() < 0.03) {
             granizos.push({
                 x: Math.random() * gameCanvas.width,
                 y: -10,
-                speed: 5 + Math.random() * 4,
-                size: 5 + Math.random() * 5
+                speed: 4 + Math.random() * 4,
+                size: 3 + Math.random() * 5
             });
         }
     }
@@ -1620,15 +1275,8 @@ html
                     shakeFrames = 10;
                     tiempoUltimoChoque = Date.now();
                     
-                    // Reproducir sonido de impacto de granizo
                     if (sonidoActivado) {
-                        try {
-                            await sonidoGranizoGolpe.pause();
-                            sonidoGranizoGolpe.currentTime = 0;
-                            await sonidoGranizoGolpe.play();
-                        } catch (e) {
-                            console.error('Error al reproducir sonido de granizo:', e);
-                        }
+                        try { sonidoGranizoGolpe.play(); } catch (e) {}
                     }
                     
                     if (vidas <= 0) {
@@ -1645,9 +1293,8 @@ html
             }
         }
         
-        // Dibujar granizos restantes
         granizos.forEach((granizo, i) => {
-            ctx.fillStyle = 'rgba(0, 0, 255, 0.8)';
+            ctx.fillStyle = 'rgba(0, 100, 255, 0.8)';
             ctx.beginPath();
             ctx.arc(granizo.x, granizo.y, granizo.size, 0, Math.PI * 2);
             ctx.fill();
@@ -1658,30 +1305,9 @@ html
 
     function drawNoche() {
         if (!nocheActiva) return;
-        
         const ctx = gameCanvas.getContext('2d');
-        ctx.fillStyle = 'rgba(0, 0, 50, 0.7)';
+        ctx.fillStyle = 'rgba(0, 0, 50, 0.5)';
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-        
-        // Dibujar farolas
-        ctx.fillStyle = 'rgba(255, 255, 150, 0.8)';
-        for (let i = 0; i < 3; i++) {
-            const x = leftBorder + (rightBorder - leftBorder) / 4 * (i + 1);
-            const y = 0;
-            
-            // Bombilla de la farola
-            ctx.beginPath();
-            ctx.arc(x, y, 5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Luz de la farola
-            const gradient = ctx.createRadialGradient(x, y, 5, x, y, 50);
-            gradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
-            gradient.addColorStop(0.5, 'rgba(255, 255, 150, 0.3)');
-            gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(x - 50, y, 100, gameCanvas.height - y);
-        }
     }
 
     function drawLluvia() {
@@ -1692,20 +1318,19 @@ html
                     x: Math.random() * gameCanvas.width,
                     y: -10,
                     speed: 2 + Math.random() * 5,
-                    length: 10 + Math.random() * 10
+                    length: 5 + Math.random() * 10
                 });
             }
 
-            ctx.strokeStyle = 'rgba(200, 200, 255, 0.7)';
+            ctx.strokeStyle = 'rgba(200, 200, 255, 0.5)';
             ctx.lineWidth = 1;
             for (let i = 0; i < gotas.length; i++) {
                 const g = gotas[i];
                 ctx.beginPath();
                 ctx.moveTo(g.x, g.y);
-                ctx.lineTo(g.x - g.length * 0.3, g.y + g.length);
+                ctx.lineTo(g.x, g.y + g.length);
                 ctx.stroke();
                 g.y += g.speed;
-
                 if (g.y > gameCanvas.height) {
                     gotas.splice(i, 1);
                     i--;
@@ -1716,10 +1341,9 @@ html
 
     async function aplicarEfectosClimaticos() {
         if (vientoActivo) {
-            patrulla.targetX += (Math.random() - 0.5) * 5;
+            patrulla.targetX += (Math.random() - 0.5) * 3;
             patrulla.targetX = Math.max(leftBorder + borderWidth, Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX));
         }
-                       
         if (climaActual === 'granizo') {
             await drawGranizo();
         }
@@ -1728,95 +1352,61 @@ html
     // Funciones del juego principal
     function updateHUD() {
         const ahora = Date.now();
-    if (isMobile) {
-        const nombreCorto = nombreJugador.length > 10 ? nombreJugador.substring(0, 5).toUpperCase() : nombreJugador.toUpperCase();
-        
-        document.getElementById('mobile-player').textContent = `👮‍♂️: ${nombreCorto}`;
-        document.getElementById('mobile-score').textContent = `💎: ${score}`;
-        document.getElementById('mobile-level').textContent = `🏆: ${level}`;
-        document.getElementById('mobile-lives').textContent = `♥️: ${vidas}`;
-        if (ahora - tiempoBloqueoChalecos < 10000) {
-            const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
-            document.getElementById('mobile-shields').textContent = `🛡️: BLOQ (${tiempoRestante}s)`;
-        } else {
+        if (isMobile) {
+            const nombreCorto = nombreJugador.length > 10 ? nombreJugador.substring(0, 5) + '...' : nombreJugador;
+            
+            document.getElementById('mobile-player').textContent = `👮: ${nombreCorto}`;
+            document.getElementById('mobile-score').textContent = `💎: ${score}`;
+            document.getElementById('mobile-level').textContent = `🏆: ${level}`;
+            document.getElementById('mobile-lives').textContent = `❤️: ${vidas}`;
             document.getElementById('mobile-shields').textContent = `🛡️: ${escudosRecolectados}/${MAX_ESCUDOS}`;
-        }
-        document.getElementById('mobile-plates').textContent = `🟡: ${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
-        
-        const progress = Math.min(100, (score / (level * 1000)) * 100);
-        document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
-        document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
-        
-        // Actualizar combo si es necesario
-        const mobileCombo = document.getElementById('mobile-combo');
-        if (mobileCombo) {
-            if (combo > 1) {
-                mobileCombo.textContent = `COMBO x${combo}`;
-                mobileCombo.style.display = 'block';
-                mobileCombo.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
-            } else {
-                mobileCombo.style.display = 'none';
+            document.getElementById('mobile-plates').textContent = `🟡: ${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+            
+            const progress = Math.min(100, (score / (level * 1000)) * 100);
+            document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
+            document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
+            
+            const mobileCombo = document.getElementById('mobile-combo');
+            if (mobileCombo) {
+                if (combo > 1) {
+                    mobileCombo.textContent = `COMBO x${combo}`;
+                    mobileCombo.style.display = 'block';
+                } else {
+                    mobileCombo.style.display = 'none';
+                }
             }
-        }
-    } else {
-        // Versión desktop - también con verificaciones
-        const desktopPlayer = document.getElementById('desktop-player');
-        const desktopScore = document.getElementById('desktop-score');
-        const desktopLevel = document.getElementById('desktop-level');
-        const desktopHighscore = document.getElementById('desktop-highscore');
-        const desktopNitroProgress = document.getElementById('desktop-nitro-progress');
-        const desktopPlates = document.getElementById('desktop-plates');
-        const desktopPlatesProgress = document.getElementById('desktop-plates-progress');
-        const desktopShields = document.getElementById('desktop-shields');
-        const desktopShieldsProgress = document.getElementById('desktop-shields-progress');
-        const desktopLives = document.getElementById('desktop-lives');
-        const desktopComboContainer = document.getElementById('desktop-combo-container');
-        const desktopCombo = document.getElementById('desktop-combo');
-
-        if (desktopPlayer) desktopPlayer.textContent = nombreJugador;
-        if (desktopScore) desktopScore.textContent = score;
-        if (desktopLevel) desktopLevel.textContent = level;
-        if (desktopHighscore) desktopHighscore.textContent = highScore;
-        if (desktopNitroProgress) desktopNitroProgress.style.width = `${nitro}%`;
-        if (desktopPlates) desktopPlates.textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
-        if (desktopPlatesProgress) desktopPlatesProgress.style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
-        if (desktopShields) {
-            if (ahora - tiempoBloqueoChalecos < 10000) {
-                const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
-                desktopShields.textContent = `BLOQ (${tiempoRestante}s)`;
-                desktopShields.style.color = 'red';
-            } else {
-                desktopShields.textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
-                desktopShields.style.color = 'white';
-            }
-        }
-        if (desktopShieldsProgress) desktopShieldsProgress.style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
-        
-        const progress = Math.min(100, (score / (level * 1000)) * 100);
-        if (document.getElementById('desktop-level-progress')) {
+        } else {
+            document.getElementById('desktop-player').textContent = nombreJugador;
+            document.getElementById('desktop-score').textContent = score;
+            document.getElementById('desktop-level').textContent = level;
+            document.getElementById('desktop-highscore').textContent = highScore;
+            document.getElementById('desktop-nitro-progress').style.width = `${nitro}%`;
+            document.getElementById('desktop-plates').textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+            document.getElementById('desktop-plates-progress').style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
+            document.getElementById('desktop-shields').textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
+            document.getElementById('desktop-shields-progress').style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
+            
+            const progress = Math.min(100, (score / (level * 1000)) * 100);
             document.getElementById('desktop-level-progress').style.width = `${progress}%`;
-        }
-        
-        if (desktopLives) {
+            
+            const desktopLives = document.getElementById('desktop-lives');
             desktopLives.innerHTML = '';
             for (let i = 0; i < vidas; i++) {
                 const life = document.createElement('div');
                 life.className = 'life';
                 desktopLives.appendChild(life);
             }
-        }
-        
-        if (desktopComboContainer && desktopCombo) {
+            
+            const desktopComboContainer = document.getElementById('desktop-combo-container');
+            const desktopCombo = document.getElementById('desktop-combo');
             if (combo > 1) {
                 desktopComboContainer.style.display = 'block';
                 desktopCombo.textContent = `x${combo}`;
-                desktopComboContainer.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
             } else {
                 desktopComboContainer.style.display = 'none';
             }
         }
     }
-}
 
     function handleContinuousMove() {
         if (leftControlActive) {
@@ -1835,129 +1425,53 @@ html
             const btnLeft = document.getElementById('btnLeft');
             const btnRight = document.getElementById('btnRight');
             
-            leftControl.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                leftControlActive = true;
+            const startMove = (direction) => {
+                if (direction === 'left') leftControlActive = true;
+                if (direction === 'right') rightControlActive = true;
                 if (!moveInterval) {
                     moveInterval = setInterval(handleContinuousMove, 16);
                 }
-            }, {passive: false});
+            };
             
-            leftControl.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                leftControlActive = false;
-                if (!rightControlActive && moveInterval) {
+            const stopMove = (direction) => {
+                if (direction === 'left') leftControlActive = false;
+                if (direction === 'right') rightControlActive = false;
+                if (!leftControlActive && !rightControlActive && moveInterval) {
                     clearInterval(moveInterval);
                     moveInterval = null;
                 }
-            }, {passive: false});
+            };
             
-            leftControl.addEventListener('mouseleave', (e) => {
-                leftControlActive = false;
-                if (!rightControlActive && moveInterval) {
-                    clearInterval(moveInterval);
-                    moveInterval = null;
-                }
-            });
+            leftControl.addEventListener('touchstart', (e) => { e.preventDefault(); startMove('left'); });
+            leftControl.addEventListener('touchend', (e) => { e.preventDefault(); stopMove('left'); });
+            leftControl.addEventListener('touchcancel', (e) => { e.preventDefault(); stopMove('left'); });
             
-            rightControl.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                rightControlActive = true;
-                if (!moveInterval) {
-                    moveInterval = setInterval(handleContinuousMove, 16);
-                }
-            }, {passive: false});
+            rightControl.addEventListener('touchstart', (e) => { e.preventDefault(); startMove('right'); });
+            rightControl.addEventListener('touchend', (e) => { e.preventDefault(); stopMove('right'); });
+            rightControl.addEventListener('touchcancel', (e) => { e.preventDefault(); stopMove('right'); });
             
-            rightControl.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                rightControlActive = false;
-                if (!leftControlActive && moveInterval) {
-                    clearInterval(moveInterval);
-                    moveInterval = null;
-                }
-            }, {passive: false});
+            btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); startMove('left'); });
+            btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); stopMove('left'); });
+            btnLeft.addEventListener('touchcancel', (e) => { e.preventDefault(); stopMove('left'); });
             
-            rightControl.addEventListener('mouseleave', (e) => {
-                rightControlActive = false;
-                if (!leftControlActive && moveInterval) {
-                    clearInterval(moveInterval);
-                    moveInterval = null;
-                }
-            });
+            btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); startMove('right'); });
+            btnRight.addEventListener('touchend', (e) => { e.preventDefault(); stopMove('right'); });
+            btnRight.addEventListener('touchcancel', (e) => { e.preventDefault(); stopMove('right'); });
             
-            btnNitro.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                activarNitro();
-            }, {passive: false});
-            
-            btnNitro.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                desactivarNitro();
-            }, {passive: false});
-            
-            btnNitro.addEventListener('mouseup', (e) => {
-                e.preventDefault();
-                desactivarNitro();
-            });
-            
-            btnNitro.addEventListener('mouseleave', (e) => {
-                e.preventDefault();
-                desactivarNitro();
-            });
-            
-            btnLeft.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                leftControlActive = true;
-                if (!moveInterval) {
-                    moveInterval = setInterval(handleContinuousMove, 16);
-                }
-            }, {passive: false});
-            
-            btnLeft.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                leftControlActive = false;
-                if (!rightControlActive && moveInterval) {
-                    clearInterval(moveInterval);
-                    moveInterval = null;
-                }
-            }, {passive: false});
-            
-            btnRight.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                rightControlActive = true;
-                if (!moveInterval) {
-                    moveInterval = setInterval(handleContinuousMove, 16);
-                }
-            }, {passive: false});
-            
-            btnRight.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                rightControlActive = false;
-                if (!leftControlActive && moveInterval) {
-                    clearInterval(moveInterval);
-                    moveInterval = null;
-                }
-            }, {passive: false});
+            btnNitro.addEventListener('touchstart', (e) => { e.preventDefault(); activarNitro(); });
+            btnNitro.addEventListener('touchend', (e) => { e.preventDefault(); desactivarNitro(); });
+            btnNitro.addEventListener('touchcancel', (e) => { e.preventDefault(); desactivarNitro(); });
         }
     }
 
     document.getElementById('btnActivarSonido').addEventListener('click', async function() {
+        sonidoActivado = !sonidoActivado;
+        this.textContent = sonidoActivado ? '🔊 Sonido Activado' : '🔇 Sonido Desactivado';
+        this.style.background = sonidoActivado ? '#28a745' : '#dc3545';
         if (sonidoActivado) {
-            await Promise.all(allSounds.map(sound => sound.pause().catch(e => {})));
-            sonidoActivado = false;
-            this.textContent = '🔇 Sonido Desactivado';
-            this.style.background = '#dc3545';
+            try { sonidoInicio.play(); } catch (e) {}
         } else {
-            try {
-                await reproducirSonido(sonidoInicio);
-                sonidoActivado = true;
-                this.textContent = '🔊 Sonido Activado';
-                this.style.background = '#28a745';
-            } catch (e) {
-                console.error('Error al activar sonido:', e);
-                this.textContent = '❌ Error al activar sonido';
-                this.style.background = '#dc3545';
-            }
+            allSounds.forEach(s => s.pause());
         }
     });
 
@@ -1970,26 +1484,10 @@ html
             
             if (!nitroSoundPlaying && sonidoActivado) {
                 try {
-                    await sonidoNitro.pause();
-                    sonidoNitro.currentTime = 0;
                     sonidoNitro.loop = true;
-                    await sonidoNitro.play();
+                    sonidoNitro.play();
                     nitroSoundPlaying = true;
-                } catch (e) {
-                    console.error('Error al reproducir sonido nitro:', e);
-                    nitroSoundPlaying = false;
-                    // Intento alternativo después de un pequeño retraso
-                    setTimeout(async () => {
-                        try {
-                            await sonidoNitro.pause();
-                            sonidoNitro.currentTime = 0;
-                            await sonidoNitro.play();
-                            nitroSoundPlaying = true;
-                        } catch (e2) {
-                            console.error('Segundo intento fallido:', e2);
-                        }
-                    }, 100);
-                }
+                } catch (e) {}
             }
             
             nitroConsumptionInterval = setInterval(() => {
@@ -2011,13 +1509,8 @@ html
             speed -= 3;
             
             if (nitroSoundPlaying) {
-                try {
-                    await sonidoNitro.pause();
-                    sonidoNitro.currentTime = 0;
-                    nitroSoundPlaying = false;
-                } catch (e) {
-                    console.error('Error al pausar sonido nitro:', e);
-                }
+                sonidoNitro.pause();
+                nitroSoundPlaying = false;
             }
             
             clearInterval(nitroConsumptionInterval);
@@ -2030,55 +1523,39 @@ html
 
     function crearEfectoDerrape() {
         const centerX = patrulla.x + patrulla.width / 2;
-        const wheelWidth = 10;
         
         if (derrapeMarks.length < MAX_DERRAPE_MARKS - 1) {
             derrapeMarks.push({
-                x1: centerX - wheelWidth,
-                y1: patrulla.y + patrulla.height,
-                x2: centerX - wheelWidth,
-                y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
-                width: 3 + Math.random() * 2,
-                alpha: 0.8
+                x1: centerX - 10, y1: patrulla.y + patrulla.height,
+                x2: centerX - 10, y2: patrulla.y + patrulla.height + 30,
+                width: 3, alpha: 0.8
             });
-            
             derrapeMarks.push({
-                x1: centerX + wheelWidth,
-                y1: patrulla.y + patrulla.height,
-                x2: centerX + wheelWidth,
-                y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
-                width: 3 + Math.random() * 2,
-                alpha: 0.8
+                x1: centerX + 10, y1: patrulla.y + patrulla.height,
+                x2: centerX + 10, y2: patrulla.y + patrulla.height + 30,
+                width: 3, alpha: 0.8
             });
         }
         
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
             humoParticles.push({
-                x: centerX + (Math.random() - 0.5) * wheelWidth * 1.5,
-                y: patrulla.y + patrulla.height - 5 + Math.random() * 30,
-                size: 5 + Math.random() * 15,
+                x: centerX + (Math.random() - 0.5) * 20,
+                y: patrulla.y + patrulla.height - 5,
+                size: 5 + Math.random() * 10,
                 alpha: 0.6,
                 speedX: (Math.random() - 0.5) * 2,
                 speedY: -Math.random() * 2,
-                decay: 0.01 + Math.random() * 0.03
+                decay: 0.01
             });
         }
-        
         shakeFrames = 5;
     }
 
     function spawnNitroItem() {
         const ahora = Date.now();
-        // Solo aparecer a partir del nivel 4 y si el nitro está por debajo del 80%
-        if (level >= 1 && 
-            ahora - ultimoNitroItemTiempo > NITRO_ITEM_INTERVALO && 
-            nitroItems.length === 0 && 
-            nitro < 80) {
-            
+        if (level >= 1 && ahora - ultimoNitroItemTiempo > NITRO_ITEM_INTERVALO && nitroItems.length === 0 && nitro < 80) {
             if (Math.random() < 0.05) {
-                const minX = leftBorder + borderWidth;
-                const maxX = rightBorder - borderWidth - 30;
-                const x = Math.random() * (maxX - minX) + minX;
+                const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 30);
                 nitroItems.push({ x: x, y: -30 });
                 ultimoNitroItemTiempo = ahora;
             }
@@ -2087,9 +1564,7 @@ html
 
     function spawnVidaItem() {
         if (vidas < 3 && placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 30);
             vidaItems.push({ x: x, y: -30 });
             placasRecolectadasDesdeUltimaVida = 0;
             updateHUD();
@@ -2098,77 +1573,35 @@ html
 
     function spawnTrampaClavos() {
         if (level >= 5 && Math.random() < 0.003 && trampaClavosItems.length === 0) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
-            
-            // Determinar si la trampa se moverá lateralmente (niveles > 8)
-            const seMueveLateralmente = level > 8;
-            
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 30);
             trampaClavosItems.push({ 
-                x: x, 
-                y: -30, 
-                width: 30, 
-                height: 30,
-                rotation: 0,
-                rotationSpeed: (Math.random() - 0.5) * 0.2,
-                slideDirection: seMueveLateralmente ? (Math.random() > 0.5 ? 1 : -1) : 0, // 0 = no se mueve
-                seMueve: seMueveLateralmente // Nueva propiedad para controlar el movimiento
+                x: x, y: -30, width: 30, height: 30,
+                rotation: 0, rotationSpeed: (Math.random() - 0.5) * 0.1,
+                slideDirection: level > 8 ? (Math.random() > 0.5 ? 1 : -1) : 0,
+                seMueve: level > 8
             });
         }
     }
 
     function spawnCono() {
         if (level >= 2 && Math.random() < 0.003) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
-            conos.push({
-                x: x,
-                y: -30,
-                width: 20,
-                height: 30
-            });
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 20);
+            conos.push({ x: x, y: -30, width: 20, height: 30 });
         }
     }
 
     function drawTrampaClavos() {
         const ctx = gameCanvas.getContext('2d');
         trampaClavosItems.forEach(item => {
-            ctx.save();
-            ctx.translate(item.x + item.width / 2, item.y + item.height / 2);
-            ctx.rotate(item.rotation);
-            ctx.translate(-(item.x + item.width / 2), -(item.y + item.height / 2));
-            
             if (trampaClavosImg.complete) {
                 ctx.drawImage(trampaClavosImg, item.x, item.y, item.width, item.height);
             } else {
                 ctx.fillStyle = '#8B4513';
-                ctx.beginPath();
-                ctx.arc(item.x + 15, item.y + 15, 15, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = 'black';
-                for (let i = 0; i < 8; i++) {
-                    const angle = (Math.PI * 2 / 8) * i;
-                    const nailX = item.x + 15 + Math.cos(angle) * 10;
-                    const nailY = item.y + 15 + Math.sin(angle) * 10;
-                    ctx.beginPath();
-                    ctx.moveTo(nailX, nailY);
-                    ctx.lineTo(item.x + 15 + Math.cos(angle) * 5, item.y + 15 + Math.sin(angle) * 5);
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = 'silver';
-                    ctx.stroke();
-                }
+                ctx.fillRect(item.x, item.y, item.width, item.height);
             }
-            ctx.restore();
-            
             item.y += speed;
-            item.rotation += item.rotationSpeed;
-            
-            // Solo mover lateralmente si está en niveles > 8
             if (item.seMueve) {
                 item.x += item.slideDirection * 0.5;
-                
                 if (item.x < leftBorder + borderWidth || item.x + item.width > rightBorder - borderWidth) {
                     item.slideDirection *= -1;
                 }
@@ -2183,19 +1616,7 @@ html
                 ctx.drawImage(conoImg, cono.x, cono.y, cono.width, cono.height);
             } else {
                 ctx.fillStyle = 'orange';
-                ctx.beginPath();
-                ctx.moveTo(cono.x + cono.width/2, cono.y);
-                ctx.lineTo(cono.x + cono.width, cono.y + cono.height);
-                ctx.lineTo(cono.x, cono.y + cono.height);
-                ctx.closePath();
-                ctx.fill();
-                
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(cono.x + cono.width/3, cono.y + cono.height/3);
-                ctx.lineTo(cono.x + cono.width/2, cono.y + cono.height/2);
-                ctx.stroke();
+                ctx.fillRect(cono.x, cono.y, cono.width, cono.height);
             }
             cono.y += speed;
         });
@@ -2203,76 +1624,26 @@ html
 
     function drawVidaItems() {
         const ctx = gameCanvas.getContext('2d');
-        const floatOffset = Math.sin(Date.now() * 0.005) * 3;
-        const pulseSize = 0.9 + Math.abs(Math.sin(pulso * 2)) * 0.2;
-        
         vidaItems.forEach(item => {
-            ctx.save();
-            
-            const glowIntensity = 0.5 + 0.5 * Math.sin(Date.now() / 200);
-            ctx.shadowColor = 'rgba(0, 255, 255, ' + glowIntensity + ')';
-            ctx.shadowBlur = 15 * glowIntensity;
-            
-            const size = 30 * pulseSize;
-            
             if (vidaItemImg.complete) {
-                ctx.drawImage(
-                    vidaItemImg,
-                    item.x + (30 - size)/2, 
-                    item.y + (30 - size)/2 + floatOffset, 
-                    size, 
-                    size
-                );
+                ctx.drawImage(vidaItemImg, item.x, item.y, 30, 30);
             } else {
                 ctx.fillStyle = '#00CED1';
-                ctx.beginPath();
-                ctx.arc(item.x + 15, item.y + 15 + floatOffset, size/2, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('+', item.x + 15, item.y + 15 + floatOffset);
+                ctx.fillRect(item.x, item.y, 30, 30);
             }
-            
-            ctx.restore();
             item.y += speed;
         });
     }
 
     function drawNitroItems() {
         const ctx = gameCanvas.getContext('2d');
-        const floatOffset = Math.sin(Date.now() * 0.005) * 3;
-        
         nitroItems.forEach(item => {
-            // Efecto de brillo pulsante
-            const pulseIntensity = 0.5 + 0.5 * Math.sin(Date.now() * 0.005);
-            
-            ctx.save();
-            ctx.shadowColor = `rgba(255, 165, 0, ${pulseIntensity * 0.7})`;
-            ctx.shadowBlur = 10 * pulseIntensity;
-            
             if (nitroItemImg.complete) {
-                ctx.drawImage(nitroItemImg, item.x, item.y + floatOffset, 30, 30);
+                ctx.drawImage(nitroItemImg, item.x, item.y, 30, 30);
             } else {
-                // Gradiente para el nitro
-                const gradient = ctx.createLinearGradient(item.x, item.y, item.x, item.y + 30);
-                gradient.addColorStop(0, 'rgba(255, 200, 0, 0.8)');
-                gradient.addColorStop(0.5, 'rgba(255, 100, 0, 0.8)');
-                gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
-                
-                ctx.fillStyle = gradient;
-                ctx.fillRect(item.x, item.y + floatOffset, 30, 30);
-                
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 10px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('NITRO', item.x + 15, item.y + 15 + floatOffset);
+                ctx.fillStyle = 'orange';
+                ctx.fillRect(item.x, item.y, 30, 30);
             }
-            
-            ctx.restore();
             item.y += speed;
         });
     }
@@ -2311,7 +1682,8 @@ html
         nombreJugador = document.getElementById('nombreJugador').value.trim() || 'Jugador';
         const colorPatrulla = document.getElementById('colorPatrulla').value;
         
-        patrullaImgs = patrullaAssets[colorPatrulla].map(src => {
+        patrullaImgs = patrullaAssets[colorPatrulla] || patrullaAssets['imagenes/patrulla_1.png'];
+        patrullaImgs = patrullaImgs.map(src => {
             const img = new Image();
             img.src = src;
             return img;
@@ -2322,21 +1694,17 @@ html
         cargarProgreso();
         actualizarTienda();
         document.getElementById('inicio').style.display = 'none';
-        await sonidoInicio.pause();
-        sonidoInicio.currentTime = 0;
+        sonidoInicio.pause();
         if (sonidoActivado) {
-            await musicaFondo.play().catch(e => console.error('Error al reproducir música de fondo:', e));
+            musicaFondo.play().catch(e => console.log('Error al reproducir música de fondo:', e));
         }
         resetGame();
     }
 
     function resetGame() {
-        const ctx = gameCanvas.getContext('2d');
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        
-        patrulla.x = gameCanvas.width / 2 - 20;
-        patrulla.y = gameCanvas.height - 100;
-        patrulla.targetX = gameCanvas.width / 2 - 20;
+        patrulla.x = 180;
+        patrulla.y = 540;
+        patrulla.targetX = 180;
         obstacles = [];
         objetivos = [];
         recolectados = [];
@@ -2354,7 +1722,7 @@ html
         particulasCrateres = [];
         score = 0;
         level = 1;
-        speed = INITIAL_SPEED; // Usamos la constante para la velocidad inicial
+        speed = INITIAL_SPEED;
         vidas = 3;
         escudosRecolectados = 0;
         shakeFrames = 0;
@@ -2396,23 +1764,18 @@ html
     }
 
     document.getElementById('btnReiniciar').addEventListener('click', async () => {
-        await musicaFondo.pause();
-        musicaFondo.currentTime = 0;
-        await sonidoViento.pause();
-        await sonidoNieve.pause();
-        await sonidoNoche.pause();
-        await desactivarNitro();
-        if (sonidoActivado) {
-            await sonidoInicio.play().catch(e => console.error('Error al reproducir música de inicio:', e));
-        }
+        musicaFondo.pause();
+        sonidoViento.pause();
+        sonidoNieve.pause();
+        sonidoNoche.pause();
+        desactivarNitro();
         document.getElementById('inicio').style.display = 'flex';
-        document.getElementById('btnActivarSonido').style.display = 'block';
         document.getElementById('gameOverScreen').style.display = 'none';
     });
 
     if (!isMobile) {
         document.addEventListener('keydown', (e) => {
-            if (!deslizando && !juegoPausado) {
+            if (!deslizando && !juegoPausado && !gameOver) {
                 if (e.key === 'ArrowLeft') {
                     patrulla.targetX = Math.max(leftBorder + borderWidth, patrulla.targetX - 40);
                 }
@@ -2420,6 +1783,7 @@ html
                     patrulla.targetX = Math.min(rightBorder - borderWidth - patrulla.width, patrulla.targetX + 40);
                 }
                 if (e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
                     activarNitro();
                 }
             }
@@ -2427,6 +1791,7 @@ html
 
         document.addEventListener('keyup', (e) => {
             if (e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
                 desactivarNitro();
             }
         });
@@ -2454,11 +1819,7 @@ html
         ctx.lineTo(rightBorder, gameCanvas.height);
         ctx.stroke();
         
-        if (level >= 5) {
-            ctx.strokeStyle = `hsl(${Date.now()/50 % 360}, 80%, 50%)`;
-        } else {
-            ctx.strokeStyle = 'white';
-        }
+        ctx.strokeStyle = level >= 5 ? `hsl(${Date.now()/50 % 360}, 80%, 50%)` : 'white';
         ctx.lineWidth = 3;
         
         lineOffset += speed;
@@ -2480,31 +1841,10 @@ html
     function drawAceites() {
         const ctx = gameCanvas.getContext('2d');
         aceites.forEach(aceite => {
+            ctx.fillStyle = 'rgba(50, 50, 50, 0.7)';
             ctx.beginPath();
             ctx.ellipse(aceite.x, aceite.y, aceite.size, aceite.size * 0.7, 0, 0, Math.PI * 2);
-            
-            const gradient = ctx.createRadialGradient(
-                aceite.x, aceite.y, aceite.size * 0.3,
-                aceite.x, aceite.y, aceite.size
-            );
-            gradient.addColorStop(0, 'rgba(50, 50, 50, 0.8)');
-            gradient.addColorStop(0.5, 'rgba(20, 20, 20, 0.9)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
-            
-            ctx.fillStyle = gradient;
             ctx.fill();
-            
-            ctx.beginPath();
-            ctx.ellipse(
-                aceite.x - aceite.size * 0.3, 
-                aceite.y - aceite.size * 0.2, 
-                aceite.size * 0.15, 
-                aceite.size * 0.1, 
-                0, 0, Math.PI * 2
-            );
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-            ctx.fill();
-            
             aceite.y += speed;
         });
     }
@@ -2512,47 +1852,23 @@ html
     function drawHumo() {
         const ctx = gameCanvas.getContext('2d');
         humoParticles.forEach((p, i) => {
-            ctx.fillStyle = p.color || `rgba(50, 50, 50, ${p.alpha})`;
+            ctx.fillStyle = `rgba(50, 50, 50, ${p.alpha})`;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
-            
             p.x += p.speedX;
             p.y += p.speedY;
             p.alpha -= p.decay;
-            p.size *= 0.99;
-            
-            if (p.alpha <= 0) {
-                humoParticles.splice(i, 1);
-            }
+            if (p.alpha <= 0) humoParticles.splice(i, 1);
         });
     }
 
     function drawDerrapeMarks() {
         const ctx = gameCanvas.getContext('2d');
-        if (deslizando) {
-            if (frameCount % 5 === 0 && derrapeMarks.length < MAX_DERRAPE_MARKS - 1) {
-                const centerX = patrulla.x + patrulla.width / 2;
-                const wheelWidth = 10;
-                
-                derrapeMarks.push({
-                    x1: centerX - wheelWidth,
-                    y1: patrulla.y + patrulla.height,
-                    x2: centerX - wheelWidth,
-                    y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
-                    width: 3 + Math.random() * 2,
-                    alpha: 0.8
-                });
-                
-                derrapeMarks.push({
-                    x1: centerX + wheelWidth,
-                    y1: patrulla.y + patrulla.height,
-                    x2: centerX + wheelWidth,
-                    y2: patrulla.y + patrulla.height + 30 + Math.random() * 20,
-                    width: 3 + Math.random() * 2,
-                    alpha: 0.8
-                });
-            }
+        if (deslizando && frameCount % 5 === 0 && derrapeMarks.length < MAX_DERRAPE_MARKS - 1) {
+            const centerX = patrulla.x + patrulla.width / 2;
+            derrapeMarks.push({ x1: centerX - 10, y1: patrulla.y + patrulla.height, x2: centerX - 10, y2: patrulla.y + patrulla.height + 30, width: 3, alpha: 0.8 });
+            derrapeMarks.push({ x1: centerX + 10, y1: patrulla.y + patrulla.height, x2: centerX + 10, y2: patrulla.y + patrulla.height + 30, width: 3, alpha: 0.8 });
         }
         
         derrapeMarks.forEach((mark, i) => {
@@ -2562,11 +1878,8 @@ html
             ctx.moveTo(mark.x1, mark.y1);
             ctx.lineTo(mark.x2, mark.y2);
             ctx.stroke();
-            
             mark.alpha -= 0.01;
-            if (mark.alpha <= 0) {
-                derrapeMarks.splice(i, 1);
-            }
+            if (mark.alpha <= 0) derrapeMarks.splice(i, 1);
         });
     }
 
@@ -2574,18 +1887,16 @@ html
         const ctx = gameCanvas.getContext('2d');
         const ahora = Date.now();
         
-        // Generar humo de daño si solo queda una vida
         if (vidas === 1 && frameCount % 5 === 0) {
             const centerX = patrulla.x + patrulla.width / 2;
             humoParticles.push({
                 x: centerX + (Math.random() - 0.5) * 15,
                 y: patrulla.y + patrulla.height - 10,
-                size: 1 + Math.random() * 15,
+                size: 5 + Math.random() * 10,
                 alpha: 0.7,
-                speedX: (Math.random() - 0.5) * 1.5,
-                speedY: -Math.random() * 1.5,
-                decay: 0.01 + Math.random() * 0.02,
-                color: 'rgba(200, 200, 200, 0.8)'
+                speedX: (Math.random() - 0.5) * 1,
+                speedY: -Math.random() * 1,
+                decay: 0.01
             });
         }
         
@@ -2596,35 +1907,13 @@ html
                 patrulla.x += (Math.random() - 0.5) * 4;
                 patrulla.x = Math.max(leftBorder + borderWidth, Math.min(rightBorder - borderWidth - patrulla.width, patrulla.x));
                 patrulla.targetX = patrulla.x;
-                
-                ctx.save();
-                const inclineAngle = (Math.random() - 0.5) * 0.3;
-                ctx.translate(patrulla.x + patrulla.width/2, patrulla.y + patrulla.height/2);
-                ctx.rotate(inclineAngle);
-                ctx.translate(-(patrulla.x + patrulla.width/2), -(patrulla.y + patrulla.height/2));
-                
-                if (Math.random() < 0.3) {
-                    humoParticles.push({
-                        x: patrulla.x + patrulla.width/2 + (Math.random() - 0.5) * 10,
-                        y: patrulla.y + patrulla.height - 10,
-                        size: 5 + Math.random() * 15,
-                        alpha: 0.6,
-                        speedX: (Math.random() - 0.5) * 2,
-                        speedY: -Math.random() * 2,
-                        decay: 0.01 + Math.random() * 0.03
-                    });
-                }
             }
         } else {
             patrulla.x += (patrulla.targetX - patrulla.x) * 0.2;
         }
 
         const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
-
-        if (invulnerable && Math.floor(ahora / 100) % 2 === 0) {
-            if (deslizando) ctx.restore();
-            return;
-        }
+        if (invulnerable && Math.floor(ahora / 100) % 2 === 0) return;
 
         frameCount++;
         if (frameCount % switchEveryFrames === 0) {
@@ -2632,154 +1921,62 @@ html
         }
 
         const imgToDraw = patrullaImgs[currentPatrullaImgIndex];
-        if (imgToDraw.complete) {
+        if (imgToDraw && imgToDraw.complete) {
             ctx.drawImage(imgToDraw, Math.round(patrulla.x), Math.round(patrulla.y), patrulla.width, patrulla.height);
         } else {
             ctx.fillStyle = '#0033aa';
             ctx.fillRect(patrulla.x, patrulla.y, patrulla.width, patrulla.height);
         }
 
-        // Dibujar faros delanteros (si es de noche)
         if (nocheActiva) {
             ctx.save();
-            
-            // Faro izquierdo
-            const leftLightX = patrulla.x + 5;
-            const leftLightY = patrulla.y + patrulla.height - 60;
-            
-            // Faro derecho
-            const rightLightX = patrulla.x + patrulla.width - 5;
-            const rightLightY = patrulla.y + patrulla.height - 60;
-            
-            // Crear capa de iluminación
             ctx.globalCompositeOperation = 'lighter';
-            
-            // Dibujar haz de luz izquierdo
-            const leftGradient = ctx.createRadialGradient(
-                leftLightX, leftLightY, 10,
-                leftLightX, leftLightY, 150
-            );
-            leftGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
-            leftGradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
-            leftGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
-            ctx.fillStyle = leftGradient;
+            ctx.fillStyle = 'rgba(255, 255, 200, 0.3)';
             ctx.beginPath();
-            ctx.moveTo(leftLightX, leftLightY);
-            ctx.lineTo(leftLightX - 100, leftLightY - 200);
-            ctx.lineTo(leftLightX + 100, leftLightY - 200);
-            ctx.closePath();
+            ctx.arc(patrulla.x + 5, patrulla.y + patrulla.height - 60, 15, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Dibujar haz de luz derecho
-            const rightGradient = ctx.createRadialGradient(
-                rightLightX, rightLightY, 10,
-                rightLightX, rightLightY, 150
-            );
-            rightGradient.addColorStop(0, 'rgba(255, 255, 200, 0.8)');
-            rightGradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
-            rightGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
-            ctx.fillStyle = rightGradient;
             ctx.beginPath();
-            ctx.moveTo(rightLightX, rightLightY);
-            ctx.lineTo(rightLightX - 100, rightLightY - 200);
-            ctx.lineTo(rightLightX + 100, rightLightY - 200);
-            ctx.closePath();
+            ctx.arc(patrulla.x + patrulla.width - 5, patrulla.y + patrulla.height - 60, 15, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Dibujar focos de luz
-            ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
-            ctx.beginPath();
-            ctx.arc(leftLightX, leftLightY, 8, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.arc(rightLightX, rightLightY, 8, 0, Math.PI * 2);
-            ctx.fill();
-            
             ctx.restore();
         }
 
         if (escudosRecolectados > 0) {
-            const time = Date.now() / 100;
-            const flashIntensity1 = 0.5 + 0.5 * Math.sin(time);
-            const flashIntensity2 = 0.3 + 0.3 * Math.sin(time + 1);
-            
             ctx.save();
-            
-            // Cambiar color según cantidad de escudos
-            const shieldColor = escudosRecolectados >= 2 ? 'rgba(255, 215, 0, ' : 'rgba(0, 255, 255, ';
-            
-            ctx.strokeStyle = shieldColor + flashIntensity1 + ')';
+            ctx.strokeStyle = escudosRecolectados >= 2 ? 'rgba(255, 215, 0, 0.8)' : 'rgba(0, 255, 255, 0.8)';
             ctx.lineWidth = 3;
-            ctx.shadowColor = escudosRecolectados >= 2 ? 'gold' : 'cyan';
-            ctx.shadowBlur = 15 * flashIntensity1;
-            
             ctx.beginPath();
-            ctx.arc(
-                patrulla.x + patrulla.width / 2, 
-                patrulla.y + patrulla.height / 2, 
-                35, 
-                0, 
-                Math.PI * 2
-            );
+            ctx.arc(patrulla.x + patrulla.width / 2, patrulla.y + patrulla.height / 2, 35, 0, Math.PI * 2);
             ctx.stroke();
-            
-            ctx.strokeStyle = escudosRecolectados >= 2 ? 
-                'rgba(255, 235, 150, ' + flashIntensity2 + ')' : 
-                'rgba(100, 255, 255, ' + flashIntensity2 + ')';
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10 * flashIntensity2;
-            ctx.beginPath();
-            ctx.arc(
-                patrulla.x + patrulla.width / 2, 
-                patrulla.y + patrulla.height / 2, 
-                40, 
-                0, 
-                Math.PI * 2
-            );
-            ctx.stroke();
-            
             ctx.restore();
         }
-
-        if (deslizando) ctx.restore();
     }
 
     function spawnObstacle() {
         if (Math.random() < 0.02) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
-            const width = 30 + Math.random() * 20;
-            const height = 30 + Math.random() * 20;
-            obstacles.push({ x: x, y: -height, width: width, height: height });
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 30);
+            obstacles.push({ x: x, y: -30, width: 30, height: 30 });
         }
     }
 
     function spawnObjetivo() {
         if (Math.random() < 0.03) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 30);
             objetivos.push({ x: x, y: -30, width: 30, height: 30 });
         }
     }
 
     function spawnPowerup() {
         if (Math.random() < 0.01) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 30);
             powerups.push({ x: x, y: -30, width: 30, height: 30 });
         }
     }
 
     function spawnAceite() {
         if (level >= 3 && Math.random() < 0.005) {
-            const minX = leftBorder + borderWidth;
-            const maxX = rightBorder - borderWidth - 30;
-            const x = Math.random() * (maxX - minX) + minX;
-            aceites.push({ x: x, y: -10, size: 15 + Math.random() * 15 });
+            const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth - 20);
+            aceites.push({ x: x, y: -10, size: 10 + Math.random() * 10 });
         }
     }
 
@@ -2794,30 +1991,12 @@ html
 
     function drawObjetivos() {
         const ctx = gameCanvas.getContext('2d');
-        const ahora = Date.now();
-        const pulseSize = 0.9 + Math.abs(Math.sin(pulso * 2)) * 0.2;
-        
         objetivos.forEach(obj => {
             if (placaPoliciaImg.complete) {
-                const size = 30 * pulseSize;
-                ctx.drawImage(
-                    placaPoliciaImg, 
-                    obj.x + (30 - size)/2, 
-                    obj.y + (30 - size)/2, 
-                    size, 
-                    size
-                );
+                ctx.drawImage(placaPoliciaImg, obj.x, obj.y, 30, 30);
             } else {
                 ctx.fillStyle = 'gold';
-                ctx.beginPath();
-                ctx.arc(obj.x + 15, obj.y + 15, 15 * pulseSize, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = 'black';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('P', obj.x + 15, obj.y + 15);
+                ctx.fillRect(obj.x, obj.y, 30, 30);
             }
             obj.y += speed;
         });
@@ -2825,30 +2004,12 @@ html
 
     function drawPowerups() {
         const ctx = gameCanvas.getContext('2d');
-        const floatOffset = Math.sin(Date.now() * 0.005) * 3;
-        const pulseSize = 0.9 + Math.abs(Math.sin(pulso * 2)) * 0.2;
-        
         powerups.forEach(pw => {
             if (powerupImg.complete) {
-                const size = 30 * pulseSize;
-                ctx.drawImage(
-                    powerupImg, 
-                    pw.x + (30 - size)/2, 
-                    pw.y + (30 - size)/2 + floatOffset, 
-                    size, 
-                    size
-                );
+                ctx.drawImage(powerupImg, pw.x, pw.y, 30, 30);
             } else {
                 ctx.fillStyle = 'cyan';
-                ctx.beginPath();
-                ctx.arc(pw.x + 15, pw.y + 15 + floatOffset, 15 * pulseSize, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('S', pw.x + 15, pw.y + 15 + floatOffset);
+                ctx.fillRect(pw.x, pw.y, 30, 30);
             }
             pw.y += speed;
         });
@@ -2858,258 +2019,164 @@ html
         const ahora = Date.now();
         const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
         
-        // Colisión con objetivos (placas policiales)
-        for (let i = 0; i < objetivos.length; i++) {
+        // Objetivos
+        for (let i = objetivos.length - 1; i >= 0; i--) {
             const obj = objetivos[i];
-            if (
-                patrulla.x < obj.x + obj.width &&
-                patrulla.x + patrulla.width > obj.x &&
-                patrulla.y < obj.y + obj.height &&
-                patrulla.y + patrulla.height > obj.y
-            ) {
+            if (patrulla.x < obj.x + obj.width && patrulla.x + patrulla.width > obj.x &&
+                patrulla.y < obj.y + obj.height && patrulla.y + patrulla.height > obj.y) {
                 objetivos.splice(i, 1);
-                recolectados.push(obj);
                 
-                // Incrementar combo
                 if (ahora - tiempoUltimaPlaca < TIEMPO_RESET_COMBO) {
                     combo++;
                     maxCombo = Math.max(maxCombo, combo);
                 } else {
                     combo = 1;
                 }
-                
                 tiempoUltimaPlaca = ahora;
                 
-                // Calcular puntos con combo
-                const puntosBase = 100;
-                const puntosConCombo = puntosBase * combo;
-                score += puntosConCombo;
+                score += 100 * combo;
                 placasRecolectadasDesdeUltimaVida++;
                 
-                if (sonidoActivado) {
-                    await reproducirSonidoPunto();
-                }
+                if (sonidoActivado) await reproducirSonidoPunto();
                 
-                // Verificar si se recolectaron suficientes placas para una vida extra
                 if (placasRecolectadasDesdeUltimaVida >= PLACAS_PARA_VIDA) {
                     spawnVidaItem();
                 }
-                
                 updateHUD();
-                break;
             }
         }
         
-        // Colisión con powerups (escudos)
-        for (let i = 0; i < powerups.length; i++) {
+        // Powerups
+        for (let i = powerups.length - 1; i >= 0; i--) {
             const pw = powerups[i];
-            if (
-                patrulla.x < pw.x + pw.width &&
-                patrulla.x + patrulla.width > pw.x &&
-                patrulla.y < pw.y + pw.height &&
-                patrulla.y + patrulla.height > pw.y
-            ) {
+            if (patrulla.x < pw.x + pw.width && patrulla.x + patrulla.width > pw.x &&
+                patrulla.y < pw.y + pw.height && patrulla.y + patrulla.height > pw.y) {
                 powerups.splice(i, 1);
                 
-                if (escudosRecolectados < MAX_ESCUDOS && ahora - tiempoBloqueoChalecos > 10000) {
+                if (escudosRecolectados < MAX_ESCUDOS) {
                     escudosRecolectados++;
-                    if (sonidoActivado) {
-                        await reproducirSonidoPowerup();
-                    }
+                    if (sonidoActivado) await reproducirSonidoPowerup();
                 } else {
                     score += 200;
-                    if (sonidoActivado) {
-                        await reproducirSonidoPunto();
-                    }
+                    if (sonidoActivado) await reproducirSonidoPunto();
                 }
-                
                 updateHUD();
-                break;
             }
         }
         
-        // Colisión con items de nitro
-        for (let i = 0; i < nitroItems.length; i++) {
+        // Nitro items
+        for (let i = nitroItems.length - 1; i >= 0; i--) {
             const item = nitroItems[i];
-            if (
-                patrulla.x < item.x + 30 &&
-                patrulla.x + patrulla.width > item.x &&
-                patrulla.y < item.y + 30 &&
-                patrulla.y + patrulla.height > item.y
-            ) {
+            if (patrulla.x < item.x + 30 && patrulla.x + patrulla.width > item.x &&
+                patrulla.y < item.y + 30 && patrulla.y + patrulla.height > item.y) {
                 nitroItems.splice(i, 1);
                 nitro = Math.min(100, nitro + 30);
-                
-                if (sonidoActivado) {
-                    await reproducirSonidoPowerup();
-                }
-                
+                if (sonidoActivado) await reproducirSonidoPowerup();
                 updateHUD();
-                break;
             }
         }
         
-        // Colisión con items de vida
-        for (let i = 0; i < vidaItems.length; i++) {
+        // Vida items
+        for (let i = vidaItems.length - 1; i >= 0; i--) {
             const item = vidaItems[i];
-            if (
-                patrulla.x < item.x + 30 &&
-                patrulla.x + patrulla.width > item.x &&
-                patrulla.y < item.y + 30 &&
-                patrulla.y + patrulla.height > item.y
-            ) {
+            if (patrulla.x < item.x + 30 && patrulla.x + patrulla.width > item.x &&
+                patrulla.y < item.y + 30 && patrulla.y + patrulla.height > item.y) {
                 vidaItems.splice(i, 1);
                 vidas = Math.min(3, vidas + 1);
-                
-                if (sonidoActivado) {
-                    await reproducirSonidoVida();
-                }
-                
+                if (sonidoActivado) await reproducirSonidoVida();
                 updateHUD();
-                break;
             }
         }
         
-        // Colisión con trampas de clavos
-        for (let i = 0; i < trampaClavosItems.length; i++) {
+        // Trampas
+        for (let i = trampaClavosItems.length - 1; i >= 0; i--) {
             const item = trampaClavosItems[i];
-            if (
-                patrulla.x < item.x + item.width &&
-                patrulla.x + patrulla.width > item.x &&
-                patrulla.y < item.y + item.height &&
-                patrulla.y + patrulla.height > item.y
-            ) {
+            if (patrulla.x < item.x + item.width && patrulla.x + patrulla.width > item.x &&
+                patrulla.y < item.y + item.height && patrulla.y + patrulla.height > item.y) {
                 trampaClavosItems.splice(i, 1);
                 
                 if (escudosRecolectados > 0) {
                     escudosRecolectados--;
-                    await reproducirSonidoAntiPowerup();
+                    if (sonidoActivado) await reproducirSonidoAntiPowerup();
                 } else {
                     vidas--;
                     combo = 0;
                     shakeFrames = 10;
                     tiempoUltimoChoque = ahora;
-                    
-                    if (sonidoActivado) {
-                        await reproducirSonidoTrampaClavos();
-                    }
-                    
-                    if (vidas <= 0) {
-                        gameOver = true;
-                        musicaFondo.pause();
-                        document.getElementById('gameOverScreen').style.display = 'flex';
-                        document.getElementById('btnReiniciar').style.display = 'block';
-                        document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
-                        document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
-                    }
+                    if (sonidoActivado) await reproducirSonidoTrampaClavos();
+                    if (vidas <= 0) gameOver = true;
                 }
-                
                 updateHUD();
-                break;
             }
         }
         
-        // Colisión con conos
-        for (let i = 0; i < conos.length; i++) {
+        // Conos
+        for (let i = conos.length - 1; i >= 0; i--) {
             const cono = conos[i];
-            if (
-                patrulla.x < cono.x + cono.width &&
-                patrulla.x + patrulla.width > cono.x &&
-                patrulla.y < cono.y + cono.height &&
-                patrulla.y + patrulla.height > cono.y
-            ) {
+            if (patrulla.x < cono.x + cono.width && patrulla.x + patrulla.width > cono.x &&
+                patrulla.y < cono.y + cono.height && patrulla.y + patrulla.height > cono.y) {
                 conos.splice(i, 1);
                 
                 if (escudosRecolectados > 0) {
                     escudosRecolectados--;
-                    await reproducirSonidoAntiPowerup();
+                    if (sonidoActivado) await reproducirSonidoAntiPowerup();
                 } else {
                     vidas--;
                     combo = 0;
                     shakeFrames = 10;
                     tiempoUltimoChoque = ahora;
-                    
-                    if (sonidoActivado) {
-                        await reproducirSonidoCono();
-                    }
-                    
-                    if (vidas <= 0) {
-                        gameOver = true;
-                        musicaFondo.pause();
-                        document.getElementById('gameOverScreen').style.display = 'flex';
-                        document.getElementById('btnReiniciar').style.display = 'block';
-                        document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
-                        document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
-                    }
+                    if (sonidoActivado) await reproducirSonidoCono();
+                    if (vidas <= 0) gameOver = true;
                 }
-                
                 updateHUD();
-                break;
             }
         }
         
-        // Colisión con aceite (solo si no hay escudos)
-        for (let i = 0; i < aceites.length; i++) {
+        // Aceite
+        for (let i = aceites.length - 1; i >= 0; i--) {
             const aceite = aceites[i];
-            if (
-                patrulla.x < aceite.x + aceite.size &&
-                patrulla.x + patrulla.width > aceite.x - aceite.size &&
-                patrulla.y < aceite.y + aceite.size &&
-                patrulla.y + patrulla.height > aceite.y - aceite.size
-            ) {
+            if (patrulla.x < aceite.x + aceite.size && patrulla.x + patrulla.width > aceite.x - aceite.size &&
+                patrulla.y < aceite.y + aceite.size && patrulla.y + patrulla.height > aceite.y - aceite.size) {
                 if (escudosRecolectados === 0 && !invulnerable && !deslizando) {
                     deslizando = true;
                     tiempoDeslizamiento = ahora;
-                    
-                    if (sonidoActivado) {
-                        await reproducirSonidoAceite();
-                    }
-                    
+                    if (sonidoActivado) await reproducirSonidoAceite();
                     crearEfectoDerrape();
                 }
                 aceites.splice(i, 1);
-                break;
             }
         }
         
-        // Colisión con obstáculos
-        for (let i = 0; i < obstacles.length; i++) {
+        // Obstáculos
+        for (let i = obstacles.length - 1; i >= 0; i--) {
             const obs = obstacles[i];
-            if (
-                patrulla.x < obs.x + obs.width &&
-                patrulla.x + patrulla.width > obs.x &&
-                patrulla.y < obs.y + obs.height &&
-                patrulla.y + patrulla.height > obs.y
-            ) {
+            if (patrulla.x < obs.x + obs.width && patrulla.x + patrulla.width > obs.x &&
+                patrulla.y < obs.y + obs.height && patrulla.y + patrulla.height > obs.y) {
                 if (!invulnerable) {
                     if (escudosRecolectados > 0) {
                         escudosRecolectados--;
-                        await reproducirSonidoAntiPowerup();
+                        if (sonidoActivado) await reproducirSonidoAntiPowerup();
                     } else {
                         vidas--;
                         combo = 0;
                         shakeFrames = 15;
                         tiempoUltimoChoque = ahora;
-                        
-                        if (sonidoActivado) {
-                            await reproducirSonidoChoque();
-                        }
-                        
-                        if (vidas <= 0) {
-                            gameOver = true;
-                            musicaFondo.pause();
-                            document.getElementById('gameOverScreen').style.display = 'flex';
-                            document.getElementById('btnReiniciar').style.display = 'block';
-                            document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
-                            document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
-                        }
+                        if (sonidoActivado) await reproducirSonidoChoque();
+                        if (vidas <= 0) gameOver = true;
                     }
-                    
                     updateHUD();
                 }
                 obstacles.splice(i, 1);
-                break;
             }
+        }
+        
+        if (gameOver) {
+            musicaFondo.pause();
+            document.getElementById('gameOverScreen').style.display = 'flex';
+            document.getElementById('btnReiniciar').style.display = 'block';
+            document.getElementById('puntosFinales').textContent = `Puntos: ${score}`;
+            document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
+            document.getElementById('maxComboFinal').textContent = `Combo máximo: ${maxCombo}`;
         }
     }
 
@@ -3119,21 +2186,17 @@ html
             speed += 0.5;
             tiempoUltimoLevelUp = Date.now();
             
-            // Aumentar dificultad progresiva
             if (level % 3 === 0) {
                 NITRO_ITEM_INTERVALO = Math.max(5000, NITRO_ITEM_INTERVALO - 1000);
             }
-            
             if (level % 5 === 0) {
                 PLACAS_PARA_VIDA = Math.max(20, PLACAS_PARA_VIDA - 5);
             }
-            
             updateHUD();
         }
     }
 
     function cleanUpObjects() {
-        // Limpiar objetos que salieron de la pantalla
         objetivos = objetivos.filter(obj => obj.y < gameCanvas.height);
         obstacles = obstacles.filter(obs => obs.y < gameCanvas.height);
         powerups = powerups.filter(pw => pw.y < gameCanvas.height);
@@ -3148,8 +2211,8 @@ html
         if (shakeFrames > 0) {
             const intensity = shakeFrames / 15;
             ctx.translate(
-                (Math.random() - 0.5) * 10 * intensity,
-                (Math.random() - 0.5) * 10 * intensity
+                (Math.random() - 0.5) * 5 * intensity,
+                (Math.random() - 0.5) * 5 * intensity
             );
             shakeFrames--;
         }
@@ -3157,19 +2220,14 @@ html
 
     function draw() {
         const ctx = gameCanvas.getContext('2d');
-        
-        // Limpiar canvas
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Aplicar efecto de sacudida si es necesario
         ctx.save();
         applyShake(ctx);
         
-        // Dibujar fondo
         ctx.fillStyle = fondoPorNivel();
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Dibujar efectos climáticos
         drawNiebla();
         drawNoche();
         drawLluvia();
@@ -3179,10 +2237,7 @@ html
         drawRayos();
         drawCrateres();
         
-        // Dibujar carretera
         drawRoadLines();
-        
-        // Dibujar objetos del juego
         drawAceites();
         drawObstacles();
         drawObjetivos();
@@ -3191,23 +2246,16 @@ html
         drawVidaItems();
         drawTrampaClavos();
         drawConos();
-        
-        // Dibujar efectos de la patrulla
         drawHumo();
         drawDerrapeMarks();
-        
-        // Dibujar patrulla
         drawPatrulla();
         
         ctx.restore();
-        
-        // Actualizar pulso para animaciones
         pulso += 0.05;
     }
 
     function gameLoop() {
         if (!gameOver) {
-            // Generar objetos
             spawnObstacle();
             spawnObjetivo();
             spawnPowerup();
@@ -3216,49 +2264,40 @@ html
             spawnTrampaClavos();
             spawnCono();
             
-            // Efectos climáticos
             cambiarClima();
             spawnHojas();
             spawnNieve();
             spawnArena();
             spawnGranizo();
             
-            // Actualizar juego
             checkCollisions();
             checkLevelUp();
             cleanUpObjects();
+            aplicarEfectosClimaticos();
             
-            // Regenerar nitro gradualmente
             if (!nitroActivo && nitro < 100) {
                 nitro = Math.min(100, nitro + nitroRegenSpeed);
                 updateHUD();
             }
             
-            // Actualizar efectos climáticos
+            draw();
             drawTormenta();
             
-            // Dibujar todo
-            draw();
-            
-            // Guardar progreso periódicamente
             guardarProgreso();
             
-            // Actualizar puntuación máxima
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('highScore_' + nombreJugador, highScore);
                 updateHUD();
             }
-            
-            requestAnimationFrame(gameLoop);
         }
+        requestAnimationFrame(gameLoop);
     }
 
     function loop() {
         resizeCanvas();
         setupControls();
         
-        // Selección de vehículo
         const vehicleOptions = document.querySelectorAll('.vehicle-option');
         vehicleOptions.forEach(option => {
             option.addEventListener('click', function() {
@@ -3268,20 +2307,14 @@ html
             });
         });
         
-        // Iniciar el primer vehículo como seleccionado
-        if (vehicleOptions.length > 0) {
-            vehicleOptions[0].classList.add('selected');
-        }
-        
         gameLoop();
     }
 
-    // Inicialización cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', () => {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('orientationchange', resizeCanvas);
         
-        // Precargar imágenes de vehículos
         const vehicleImages = [
             'imagenes/patrulla_1.png', 'imagenes/patrulla_1b.png',
             'imagenes/transito_1.png', 'imagenes/transito_1b.png',
