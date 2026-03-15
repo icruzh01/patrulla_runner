@@ -927,7 +927,7 @@ html
     let sonidoActivado = false;
     let juegoPausado = false;
     let tiempoUltimaPlaca = 0;
-    const TIEMPO_RESET_COMBO = 2000; // 3 segundos para resetear combo
+    const TIEMPO_RESET_COMBO = 2000; // 2 segundos para resetear combo
     let nitroRegenSpeed = 0.2; // Velocidad base de regeneración
     const INITIAL_SPEED = 2; // Velocidad inicial del juego
     let speed = INITIAL_SPEED; // Usamos la constante para la velocidad inicial
@@ -3135,20 +3135,20 @@ html
                         });
                     }
                     objetivos.splice(i, 1); // Solo eliminar si se recolectó
-                } else {
+                //} else {
                     // Mostrar mensaje de que no se pueden recolectar chalecos
-                    const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
-                    recolectados.push({
-                        x: objetivo.x + objetivo.width/2,
-                        y: objetivo.y + objetivo.height/2,
-                        size: 10,
-                        alpha: 1,
-                        speedX: 0,
-                        speedY: -1,
-                        decay: 0.01,
-                        color: 'rgba(255, 0, 0, 1)',
-                        text: `Bloqueado: ${tiempoRestante}s`
-                    });
+                   // const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
+                    //recolectados.push({
+                    //    x: objetivo.x + objetivo.width/2,
+                    //    y: objetivo.y + objetivo.height/2,
+                    //    size: 10,
+                    //    alpha: 1,
+                    //    speedX: 0,
+                    //    speedY: -1,
+                    //    decay: 0.01,
+                    //    color: 'rgba(255, 0, 0, 1)',
+                    //    text: `Bloqueado: ${tiempoRestante}s`
+                    //});
                 }
                 updateHUD();
             }
