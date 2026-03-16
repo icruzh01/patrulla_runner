@@ -260,40 +260,38 @@
       }
 
       .mobile-hud-left,
-        .mobile-hud-right {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            /*background: rgba(130, 64, 64, 0.7);*/
-            border-radius: 8px;
-            padding: 6px 10px;
-            flex-wrap: wrap;
-            max-width: 70%; /* Aumentamos el ancho máximo */
-            gap: 0px; /* Añadimos espacio entre elementos */
-        }
+      .mobile-hud-right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-radius: 8px;
+        padding: 6px 10px;
+        flex-wrap: wrap;
+        max-width: 70%;
+        gap: 0px;
+      }
 
-        .mobile-hud-left {
-            flex-grow: 1; /* Permite que crezca para ocupar espacio disponible */
-                      
-        }
+      .mobile-hud-left {
+        flex-grow: 1;
+      }
 
-        .mobile-hud-right {
-            margin-left: auto; /* Empuja a la derecha */
-        }
+      .mobile-hud-right {
+        margin-left: auto;
+      }
 
-        .mobile-hud-item {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
-            margin: -1px;
-            white-space: nowrap;
-            flex-shrink: 0; /* Evita que se encojan los elementos */
-        }
+      .mobile-hud-item {
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 1px 1px 2px black;
+        margin: -1px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
 
       /* Estilos para las barras de progreso en móvil */
       .mobile-progress-container {
@@ -321,20 +319,46 @@
         text-align: center;
       }
 
+      /* ELEMENTO FLOTANTE COMBO - ESTILOS PRINCIPALES */
       .mobile-hud-combo {
         position: absolute;
-        top: 640px;
+        top: 120px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 215, 0, 0.9);
-        color: black;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: 14px;
+        color: #000;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 28px;
         font-weight: bold;
         display: none;
         white-space: nowrap;
+        z-index: 30;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        letter-spacing: 2px;
+        transition: all 0.2s ease;
+        pointer-events: none;
+        animation: comboPulse 0.5s ease-in-out;
       }
+
+      @keyframes comboPulse {
+        0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
+        50% { transform: translateX(-50%) scale(1.2); }
+        100% { transform: translateX(-50%) scale(1); opacity: 1; }
+      }
+
+      /* Estilos específicos para cada nivel de combo (cambia el color a más dorado) */
+      .mobile-hud-combo[data-combo="2"] { background: rgba(255, 215, 0, 0.7); }
+      .mobile-hud-combo[data-combo="3"] { background: rgba(255, 200, 0, 0.8); }
+      .mobile-hud-combo[data-combo="4"] { background: rgba(255, 185, 0, 0.85); }
+      .mobile-hud-combo[data-combo="5"] { background: rgba(255, 170, 0, 0.9); }
+      .mobile-hud-combo[data-combo="6"] { background: rgba(255, 155, 0, 0.95); }
+      .mobile-hud-combo[data-combo="7"] { background: rgba(255, 140, 0, 1); }
+      .mobile-hud-combo[data-combo="8"] { background: rgba(255, 125, 0, 1); }
+      .mobile-hud-combo[data-combo="9"] { background: rgba(255, 110, 0, 1); }
+      .mobile-hud-combo[data-combo="10"] { background: rgba(255, 95, 0, 1); }
 
       /* Controles táctiles en los extremos */
       .touch-control {
@@ -513,7 +537,7 @@
       gap: 15px;
       padding: 20px;
       box-sizing: border-box;
-      display: none; /* Oculto inicialmente */
+      display: none;
     }
 
     /* Fondo para pantalla de inicio en desktop */
@@ -618,55 +642,55 @@
 
     /* Selector de vehículo personalizado */
     .vehicle-selector-container {
-    margin-bottom: 15px;
-    width: 100%;
+      margin-bottom: 15px;
+      width: 100%;
     }
 
     .vehicle-selector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
     }
 
     .vehicle-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    border: 2px solid #555;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: rgba(0, 0, 0, 0.5);
-    width: 100px;
-    text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(0, 0, 0, 0.5);
+      width: 100px;
+      text-align: center;
     }
 
     .vehicle-option:hover {
-    border-color: gold;
-    background: rgba(255, 215, 0, 0.2);
-    transform: translateY(-3px);
+      border-color: gold;
+      background: rgba(255, 215, 0, 0.2);
+      transform: translateY(-3px);
     }
 
     .vehicle-option.selected {
-    border-color: cyan;
-    background: rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-color: cyan;
+      background: rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     .vehicle-thumb {
-    width: 50px;
-    height: 30px;
-    object-fit: contain;
-    margin-bottom: 5px;
-    image-rendering: pixelated;
+      width: 50px;
+      height: 30px;
+      object-fit: contain;
+      margin-bottom: 5px;
+      image-rendering: pixelated;
     }
 
     .vehicle-option span {
-    font-size: 14px;
-    color: white;
-    text-shadow: 1px 1px 2px black;
+      font-size: 14px;
+      color: white;
+      text-shadow: 1px 1px 2px black;
     }
   </style>
 </head>
@@ -787,9 +811,10 @@
                 </div>
             </div>
         </div>
-    </div>
-    
-      <div class="mobile-hud-combo" id="mobile-combo">COMBO x1</div>
+      </div>
+      
+      <!-- Elemento flotante COMBO para móvil -->
+      <div class="mobile-hud-combo" id="mobile-combo" data-combo="1">COMBO x1</div>
       
       <!-- Controles táctiles en los extremos -->
       <div id="left-control" class="touch-control"></div>
@@ -810,26 +835,26 @@
     <input id="nombreJugador" type="text" placeholder="Tu nombre..." />
            
     <div class="vehicle-selector-container">
-    <label style="color: white; margin-bottom: 5px; display: block; text-align: center;">Selecciona tu vehículo:</label>
-    <div class="vehicle-selector">
+      <label style="color: white; margin-bottom: 5px; display: block; text-align: center;">Selecciona tu vehículo:</label>
+      <div class="vehicle-selector">
         <div class="vehicle-option" data-value="imagenes/patrulla_1.png">
-        <img src="imagenes/patrulla_1.png" alt="Patrulla de Cuadrante" class="vehicle-thumb">
-        <span>Cuadrante</span>
+          <img src="imagenes/patrulla_1.png" alt="Patrulla de Cuadrante" class="vehicle-thumb">
+          <span>Cuadrante</span>
         </div>
         <div class="vehicle-option" data-value="imagenes/transito_1.png">
-        <img src="imagenes/transito_1.png" alt="Patrulla de Tránsito" class="vehicle-thumb">
-        <span>Tránsito</span>
+          <img src="imagenes/transito_1.png" alt="Patrulla de Tránsito" class="vehicle-thumb">
+          <span>Tránsito</span>
         </div>
         <div class="vehicle-option" data-value="imagenes/pbi_1.png">
-        <img src="imagenes/pbi_1.png" alt="Patrulla P.B.I." class="vehicle-thumb">
-        <span>P.B.I.</span>
+          <img src="imagenes/pbi_1.png" alt="Patrulla P.B.I." class="vehicle-thumb">
+          <span>P.B.I.</span>
         </div>
         <div class="vehicle-option" data-value="imagenes/auxiliar_1.png">
-        <img src="imagenes/auxiliar_1.png" alt="Patrulla Auxiliar" class="vehicle-thumb">
-        <span>P.A.</span>
+          <img src="imagenes/auxiliar_1.png" alt="Patrulla Auxiliar" class="vehicle-thumb">
+          <span>P.A.</span>
         </div>
-    </div>
-    <input type="hidden" id="colorPatrulla" value="imagenes/patrulla_1.png">
+      </div>
+      <input type="hidden" id="colorPatrulla" value="imagenes/patrulla_1.png">
     </div>
     
     <div class="tienda">
@@ -926,10 +951,10 @@
     let sonidoActivado = false;
     let juegoPausado = false;
     let tiempoUltimaPlaca = 0;
-    const TIEMPO_RESET_COMBO = 1000; // 1 segundo1 para resetear combo
-    let nitroRegenSpeed = 0.2; // Velocidad base de regeneración
-    const INITIAL_SPEED = 2; // Velocidad inicial del juego
-    let speed = INITIAL_SPEED; // Usamos la constante para la velocidad inicial
+    const TIEMPO_RESET_COMBO = 1000; // 1 segundo para resetear combo
+    let nitroRegenSpeed = 0.2;
+    const INITIAL_SPEED = 2;
+    let speed = INITIAL_SPEED;
 
     // Variables para controles táctiles (móvil)
     let moveInterval = null;
@@ -967,7 +992,7 @@
     let tiempoDeslizamiento = 0;
     const tiempoInvulnerable = 1000;
     const tiempoDeslizamientoMax = 1000;
-    let tiempoBloqueoChalecos = 0; // Variable mantenida pero sin usar
+    let tiempoBloqueoChalecos = 0;
     
     // Variables para las líneas de carril
     let lineOffset = 0;
@@ -1050,11 +1075,9 @@
             canvas.style.height = newHeight + 'px';
         }
         
-        // Ajustar tamaño real del canvas
         canvas.width = 400;
         canvas.height = 600;
         
-        // Escalar el contexto
         const ctx = canvas.getContext('2d');
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         
@@ -1073,12 +1096,10 @@
     function cambiarClima() {
         const ahora = Date.now();
         
-        // Inicializar tiempoDuracionClima si es la primera vez
         if (tiempoDuracionClima === 0) {
-            tiempoDuracionClima = 15000 + Math.random() * 15000; // 15-30 segundos
+            tiempoDuracionClima = 15000 + Math.random() * 15000;
         }
         
-        // Solo cambiar el clima si ha pasado el tiempo de duración
         if (ahora - tiempoCambioClima > tiempoDuracionClima) {
             const climas = ['normal', 'niebla', 'tormenta', 'viento', 'nieve', 'arena', 'granizo', 'noche'];
             climaActual = climas[Math.floor(Math.random() * climas.length)];
@@ -1092,11 +1113,9 @@
                 climaSecundario = null;
             }
             
-            // Establecer nueva duración (15-30 segundos)
             tiempoDuracionClima = 15000 + Math.random() * 15000;
             tiempoCambioClima = ahora;
             
-            // Limpiar partículas anteriores
             hojas = [];
             copos = [];
             arena = [];
@@ -1107,12 +1126,10 @@
             particulasRayos = [];
             particulasCrateres = [];
             
-            // Activar/desactivar efectos según el clima
             nieblaActiva = climaActual === 'niebla';
             nocheActiva = climaActual === 'noche';
             vientoActivo = climaActual === 'viento';
             
-            // Reproducir sonidos ambientales
             if (sonidoActivado) {
                 sonidoViento.pause();
                 sonidoNieve.pause();
@@ -1151,21 +1168,17 @@
         
         const ahora = Date.now();
         
-        // Generar nuevo rayo cada 5-8 segundos
         if (ahora - ultimotrueno > 5000 + Math.random() * 3000) {
             ultimotrueno = ahora;
             
-            // Flash de pantalla
             gameCanvas.style.backgroundColor = 'white';
             setTimeout(() => { gameCanvas.style.backgroundColor = fondoPorNivel(); }, 100);
             
-            // Sonido del trueno
             if (sonidoActivado) {
                 sonidotrueno.currentTime = 0;
                 sonidotrueno.play().catch(e => console.error('Error al reproducir sonido de trueno:', e));
             }
             
-            // Crear nuevo rayo con fase de advertencia
             const x = leftBorder + borderWidth + Math.random() * (rightBorder - leftBorder - 2 * borderWidth);
             rayos.push({
                 x: x,
@@ -1179,14 +1192,11 @@
             });
         }
         
-        // Actualizar estado de los rayos existentes
         rayos.forEach((rayo, index) => {
             if (rayo.estado === 'advertencia' && ahora - rayo.tiempoInicio > rayo.tiempoAdvertencia) {
-                // Cambiar a estado de impacto
                 rayo.estado = 'impacto';
                 rayo.tiempoInicio = ahora;
                 
-                // Crear partículas de impacto
                 for (let i = 0; i < 30; i++) {
                     particulasRayos.push({
                         x: rayo.x + (Math.random() - 0.5) * rayo.ancho,
@@ -1200,7 +1210,6 @@
                     });
                 }
                 
-                // Verificar colisión con el jugador
                 if (patrulla.x < rayo.x + rayo.ancho/2 &&
                     patrulla.x + patrulla.width > rayo.x - rayo.ancho/2) {
                     
@@ -1231,7 +1240,6 @@
                     updateHUD();
                 }
                 
-                // Crear cráter después del impacto
                 crateres.push({
                     x: rayo.x - 20,
                     y: gameCanvas.height - 40,
@@ -1241,14 +1249,12 @@
                     particulas: []
                 });
                 
-                // Sonido de impacto
                 if (sonidoActivado) {
                     sonidoImpactoRayo.currentTime = 0;
                     sonidoImpactoRayo.volume = 0.7;
                     sonidoImpactoRayo.play().catch(e => console.error('Error al reproducir sonido de impacto:', e));
                 }
             } else if (rayo.estado === 'impacto' && ahora - rayo.tiempoInicio > rayo.tiempoImpacto) {
-                // Eliminar rayo después del impacto
                 rayos.splice(index, 1);
             }
         });
@@ -1262,7 +1268,6 @@
         
         rayos.forEach(rayo => {
             if (rayo.estado === 'advertencia') {
-                // Dibujar advertencia (círculo rojo intermitente)
                 const tiempoTranscurrido = ahora - rayo.tiempoInicio;
                 const parpadeo = Math.floor(tiempoTranscurrido / 200) % 2 === 0;
                 
@@ -1273,7 +1278,6 @@
                     ctx.arc(rayo.x, gameCanvas.height - 20, rayo.ancho/2, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Texto de advertencia
                     ctx.fillStyle = 'white';
                     ctx.font = 'bold 16px Arial';
                     ctx.textAlign = 'center';
@@ -1281,20 +1285,17 @@
                     ctx.restore();
                 }
             } else if (rayo.estado === 'impacto') {
-                // Dibujar rayo
                 ctx.save();
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
                 ctx.lineWidth = 3;
                 ctx.shadowColor = 'cyan';
                 ctx.shadowBlur = 15;
                 
-                // Línea principal del rayo
                 ctx.beginPath();
                 ctx.moveTo(rayo.x, 0);
                 ctx.lineTo(rayo.x, gameCanvas.height);
                 ctx.stroke();
                 
-                // Ramificaciones
                 for (let i = 0; i < rayo.ramificaciones; i++) {
                     const offsetX = (Math.random() - 0.5) * rayo.ancho;
                     const startY = Math.random() * gameCanvas.height * 0.7;
@@ -1310,7 +1311,6 @@
             }
         });
         
-        // Dibujar partículas de rayos
         particulasRayos.forEach((p, index) => {
             ctx.fillStyle = p.color.replace('1)', p.alpha + ')');
             ctx.beginPath();
@@ -1333,13 +1333,11 @@
         const ahora = Date.now();
         
         crateres.forEach((crater, index) => {
-            // Eliminar cráter después de 3 segundos (3000ms)
             if (ahora - crater.tiempoCreacion > 3000) {
                 crateres.splice(index, 1);
                 return;
             }
             
-            // Dibujar cráter principal
             ctx.save();
             
             if (craterImg.complete) {
@@ -1356,7 +1354,6 @@
                 );
                 ctx.fill();
                 
-                // Detalles del cráter
                 ctx.fillStyle = '#333';
                 ctx.beginPath();
                 ctx.ellipse(
@@ -1369,7 +1366,6 @@
                 ctx.fill();
             }
             
-            // Efecto de humo si es reciente (solo durante los 3 segundos)
             if (frameCount % 5 === 0) {
                 particulasCrateres.push({
                     x: crater.x + crater.width/2 + (Math.random() - 0.5) * 10,
@@ -1386,7 +1382,6 @@
             ctx.restore();
         });
         
-        // Dibujar partículas de cráteres (se autodestruyen cuando alpha <= 0)
         particulasCrateres.forEach((p, index) => {
             ctx.fillStyle = p.color.replace('0.7)', p.alpha + ')');
             ctx.beginPath();
@@ -1433,10 +1428,8 @@
 
     function spawnNieve() {
         if (climaActual === 'nieve' || (climaActual === 'granizo' && climaSecundario === 'nieve')) {
-            // Aumentar la probabilidad de generar copos y la cantidad
-            if (Math.random() < 0.3) { // Cambiado de 0.2 a 0.5 para más frecuencia
-                // Generar más copos a la vez
-                const cantidadCopos = 2 + Math.floor(Math.random() * 3); // Entre 2 y 4 copos
+            if (Math.random() < 0.3) {
+                const cantidadCopos = 2 + Math.floor(Math.random() * 3);
                 for (let i = 0; i < cantidadCopos; i++) {
                     copos.push({
                         x: Math.random() * gameCanvas.width,
@@ -1521,18 +1514,15 @@
         ctx.fillStyle = 'rgba(0, 0, 50, 0.7)';
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Dibujar farolas
         ctx.fillStyle = 'rgba(255, 255, 150, 0.8)';
         for (let i = 0; i < 3; i++) {
             const x = leftBorder + (rightBorder - leftBorder) / 4 * (i + 1);
             const y = 0;
             
-            // Bombilla de la farola
             ctx.beginPath();
             ctx.arc(x, y, 5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Luz de la farola
             const gradient = ctx.createRadialGradient(x, y, 5, x, y, 50);
             gradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
             gradient.addColorStop(0.5, 'rgba(255, 255, 150, 0.3)');
@@ -1594,7 +1584,6 @@
                         shakeFrames = 10;
                         tiempoUltimoChoque = Date.now();
                         
-                        // Reproducir sonido de impacto de granizo
                         if (sonidoActivado) {
                             sonidoGranizoGolpe.currentTime = 0;
                             sonidoGranizoGolpe.play().catch(e => console.error('Error al reproducir sonido de granizo:', e));
@@ -1619,81 +1608,85 @@
     // Funciones del juego principal
     function updateHUD() {
         const ahora = Date.now();
-    if (isMobile) {
-        const nombreCorto = nombreJugador.length > 10 ? nombreJugador.substring(0, 5).toUpperCase() : nombreJugador.toUpperCase();
-        
-        document.getElementById('mobile-player').textContent = `👮‍♂️: ${nombreCorto}`;
-        document.getElementById('mobile-score').textContent = `💎: ${score}`;
-        document.getElementById('mobile-level').textContent = `🏆: ${level}`;
-        document.getElementById('mobile-lives').textContent = `♥️: ${vidas}`;
-        document.getElementById('mobile-shields').textContent = `🛡️: ${escudosRecolectados}/${MAX_ESCUDOS}`;
-        document.getElementById('mobile-plates').textContent = `🟡: ${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
-        
-        const progress = Math.min(100, (score / (level * 1000)) * 100);
-        document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
-        document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
-        
-        // Actualizar combo si es necesario
-        const mobileCombo = document.getElementById('mobile-combo');
-        if (mobileCombo) {
-            if (combo > 1) {
-                mobileCombo.textContent = `COMBO x${combo}`;
-                mobileCombo.style.display = 'block';
-                mobileCombo.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 255, 255, 0.7)';
-            } else {
-                mobileCombo.style.display = 'none';
+        if (isMobile) {
+            const nombreCorto = nombreJugador.length > 10 ? nombreJugador.substring(0, 5).toUpperCase() : nombreJugador.toUpperCase();
+            
+            document.getElementById('mobile-player').textContent = `👮‍♂️: ${nombreCorto}`;
+            document.getElementById('mobile-score').textContent = `💎: ${score}`;
+            document.getElementById('mobile-level').textContent = `🏆: ${level}`;
+            document.getElementById('mobile-lives').textContent = `♥️: ${vidas}`;
+            document.getElementById('mobile-shields').textContent = `🛡️: ${escudosRecolectados}/${MAX_ESCUDOS}`;
+            document.getElementById('mobile-plates').textContent = `🟡: ${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+            
+            const progress = Math.min(100, (score / (level * 1000)) * 100);
+            document.getElementById('mobile-next-level-bar').style.width = `${progress}%`;
+            document.getElementById('mobile-nitro-bar').style.width = `${nitro}%`;
+            
+            // Actualizar elemento flotante COMBO
+            const mobileCombo = document.getElementById('mobile-combo');
+            if (mobileCombo) {
+                if (combo > 1) {
+                    mobileCombo.textContent = `COMBO x${combo}`;
+                    mobileCombo.style.display = 'block';
+                    mobileCombo.setAttribute('data-combo', combo);
+                    
+                    // Aplicar animación cada vez que se actualiza el combo
+                    mobileCombo.style.animation = 'none';
+                    mobileCombo.offsetHeight;
+                    mobileCombo.style.animation = 'comboPulse 0.5s ease-in-out';
+                } else {
+                    mobileCombo.style.display = 'none';
+                }
             }
-        }
-    } else {
-        // Versión desktop - también con verificaciones
-        const desktopPlayer = document.getElementById('desktop-player');
-        const desktopScore = document.getElementById('desktop-score');
-        const desktopLevel = document.getElementById('desktop-level');
-        const desktopHighscore = document.getElementById('desktop-highscore');
-        const desktopNitroProgress = document.getElementById('desktop-nitro-progress');
-        const desktopPlates = document.getElementById('desktop-plates');
-        const desktopPlatesProgress = document.getElementById('desktop-plates-progress');
-        const desktopShields = document.getElementById('desktop-shields');
-        const desktopShieldsProgress = document.getElementById('desktop-shields-progress');
-        const desktopLives = document.getElementById('desktop-lives');
-        const desktopComboContainer = document.getElementById('desktop-combo-container');
-        const desktopCombo = document.getElementById('desktop-combo');
+        } else {
+            const desktopPlayer = document.getElementById('desktop-player');
+            const desktopScore = document.getElementById('desktop-score');
+            const desktopLevel = document.getElementById('desktop-level');
+            const desktopHighscore = document.getElementById('desktop-highscore');
+            const desktopNitroProgress = document.getElementById('desktop-nitro-progress');
+            const desktopPlates = document.getElementById('desktop-plates');
+            const desktopPlatesProgress = document.getElementById('desktop-plates-progress');
+            const desktopShields = document.getElementById('desktop-shields');
+            const desktopShieldsProgress = document.getElementById('desktop-shields-progress');
+            const desktopLives = document.getElementById('desktop-lives');
+            const desktopComboContainer = document.getElementById('desktop-combo-container');
+            const desktopCombo = document.getElementById('desktop-combo');
 
-        if (desktopPlayer) desktopPlayer.textContent = nombreJugador;
-        if (desktopScore) desktopScore.textContent = score;
-        if (desktopLevel) desktopLevel.textContent = level;
-        if (desktopHighscore) desktopHighscore.textContent = highScore;
-        if (desktopNitroProgress) desktopNitroProgress.style.width = `${nitro}%`;
-        if (desktopPlates) desktopPlates.textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
-        if (desktopPlatesProgress) desktopPlatesProgress.style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
-        if (desktopShields) desktopShields.textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
-        if (desktopShieldsProgress) desktopShieldsProgress.style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
-        
-        const progress = Math.min(100, (score / (level * 1000)) * 100);
-        if (document.getElementById('desktop-level-progress')) {
-            document.getElementById('desktop-level-progress').style.width = `${progress}%`;
-        }
-        
-        if (desktopLives) {
-            desktopLives.innerHTML = '';
-            for (let i = 0; i < vidas; i++) {
-                const life = document.createElement('div');
-                life.className = 'life';
-                desktopLives.appendChild(life);
+            if (desktopPlayer) desktopPlayer.textContent = nombreJugador;
+            if (desktopScore) desktopScore.textContent = score;
+            if (desktopLevel) desktopLevel.textContent = level;
+            if (desktopHighscore) desktopHighscore.textContent = highScore;
+            if (desktopNitroProgress) desktopNitroProgress.style.width = `${nitro}%`;
+            if (desktopPlates) desktopPlates.textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
+            if (desktopPlatesProgress) desktopPlatesProgress.style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
+            if (desktopShields) desktopShields.textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
+            if (desktopShieldsProgress) desktopShieldsProgress.style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
+            
+            const progress = Math.min(100, (score / (level * 1000)) * 100);
+            if (document.getElementById('desktop-level-progress')) {
+                document.getElementById('desktop-level-progress').style.width = `${progress}%`;
             }
-        }
-        
-        if (desktopComboContainer && desktopCombo) {
-            if (combo > 1) {
-                desktopComboContainer.style.display = 'block';
-                desktopCombo.textContent = `x${combo}`;
-                desktopComboContainer.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
-            } else {
-                desktopComboContainer.style.display = 'none';
+            
+            if (desktopLives) {
+                desktopLives.innerHTML = '';
+                for (let i = 0; i < vidas; i++) {
+                    const life = document.createElement('div');
+                    life.className = 'life';
+                    desktopLives.appendChild(life);
+                }
+            }
+            
+            if (desktopComboContainer && desktopCombo) {
+                if (combo > 1) {
+                    desktopComboContainer.style.display = 'block';
+                    desktopCombo.textContent = `x${combo}`;
+                    desktopComboContainer.style.backgroundColor = combo > 3 ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+                } else {
+                    desktopComboContainer.style.display = 'none';
+                }
             }
         }
     }
-}
 
     function handleContinuousMove() {
         if (leftControlActive) {
@@ -1854,7 +1847,6 @@
                 try {
                     sonidoNitro.play().catch(e => {
                         console.error('Error al reproducir sonido nitro:', e);
-                        // Si falla, intentar de nuevo después de un pequeño retraso
                         setTimeout(() => {
                             sonidoNitro.play().catch(e => console.error('Segundo intento fallido:', e));
                         }, 100);
@@ -1947,7 +1939,6 @@
 
     function spawnNitroItem() {
         const ahora = Date.now();
-        // Solo aparecer a partir del nivel 4 y si el nitro está por debajo del 80%
         if (level >= 1 && 
             ahora - ultimoNitroItemTiempo > NITRO_ITEM_INTERVALO && 
             nitroItems.length === 0 && 
@@ -1980,7 +1971,6 @@
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
             
-            // Determinar si la trampa se moverá lateralmente (niveles > 8)
             const seMueveLateralmente = level > 8;
             
             trampaClavosItems.push({ 
@@ -1990,8 +1980,8 @@
                 height: 30,
                 rotation: 0,
                 rotationSpeed: (Math.random() - 0.5) * 0.2,
-                slideDirection: seMueveLateralmente ? (Math.random() > 0.5 ? 1 : -1) : 0, // 0 = no se mueve
-                seMueve: seMueveLateralmente // Nueva propiedad para controlar el movimiento
+                slideDirection: seMueveLateralmente ? (Math.random() > 0.5 ? 1 : -1) : 0,
+                seMueve: seMueveLateralmente
             });
         }
     }
@@ -2043,7 +2033,6 @@
             item.y += speed;
             item.rotation += item.rotationSpeed;
             
-            // Solo mover lateralmente si está en niveles > 8
             if (item.seMueve) {
                 item.x += item.slideDirection * 0.5;
                 
@@ -2124,7 +2113,6 @@
         const floatOffset = Math.sin(Date.now() * 0.005) * 3;
         
         nitroItems.forEach(item => {
-            // Efecto de brillo pulsante
             const pulseIntensity = 0.5 + 0.5 * Math.sin(Date.now() * 0.005);
             
             ctx.save();
@@ -2134,7 +2122,6 @@
             if (nitroItemImg.complete) {
                 ctx.drawImage(nitroItemImg, item.x, item.y + floatOffset, 30, 30);
             } else {
-                // Gradiente para el nitro
                 const gradient = ctx.createLinearGradient(item.x, item.y, item.x, item.y + 30);
                 gradient.addColorStop(0, 'rgba(255, 200, 0, 0.8)');
                 gradient.addColorStop(1, 'rgba(255, 100, 0, 0.8)');
@@ -2303,7 +2290,7 @@
         particulasCrateres = [];
         score = 0;
         level = 1;
-        speed = INITIAL_SPEED; // Usamos la constante para la velocidad inicial
+        speed = INITIAL_SPEED;
         vidas = 3;
         escudosRecolectados = 0;
         shakeFrames = 0;
@@ -2334,7 +2321,7 @@
         nocheActiva = false;
         vientoActivo = false;
         tiempoUltimaPlaca = 0;
-        tiempoBloqueoChalecos = 0; // Reiniciar variable
+        tiempoBloqueoChalecos = 0;
         
         sonidoViento.pause();
         sonidoNieve.pause();
@@ -2524,7 +2511,6 @@
         const ctx = gameCanvas.getContext('2d');
         const ahora = Date.now();
         
-        // Generar humo de daño si solo queda una vida
         if (vidas === 1 && frameCount % 5 === 0) {
             const centerX = patrulla.x + patrulla.width / 2;
             humoParticles.push({
@@ -2589,22 +2575,17 @@
             ctx.fillRect(patrulla.x, patrulla.y, patrulla.width, patrulla.height);
         }
 
-        // Dibujar faros delanteros (si es de noche)
         if (nocheActiva) {
             ctx.save();
             
-            // Faro izquierdo
             const leftLightX = patrulla.x + 5;
             const leftLightY = patrulla.y + patrulla.height - 60;
             
-            // Faro derecho
             const rightLightX = patrulla.x + patrulla.width - 5;
             const rightLightY = patrulla.y + patrulla.height - 60;
             
-            // Crear capa de iluminación
             ctx.globalCompositeOperation = 'lighter';
             
-            // Dibujar haz de luz izquierdo
             const leftGradient = ctx.createRadialGradient(
                 leftLightX, leftLightY, 10,
                 leftLightX, leftLightY, 150
@@ -2620,7 +2601,6 @@
             ctx.closePath();
             ctx.fill();
             
-            // Dibujar haz de luz derecho
             const rightGradient = ctx.createRadialGradient(
                 rightLightX, rightLightY, 10,
                 rightLightX, rightLightY, 150
@@ -2636,7 +2616,6 @@
             ctx.closePath();
             ctx.fill();
             
-            // Dibujar focos de luz
             ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
             ctx.beginPath();
             ctx.arc(leftLightX, leftLightY, 8, 0, Math.PI * 2);
@@ -2656,7 +2635,6 @@
             
             ctx.save();
             
-            // Cambiar color según cantidad de escudos
             const shieldColor = escudosRecolectados >= 2 ? 'rgba(255, 215, 0, ' : 'rgba(0, 255, 255, ';
             
             ctx.strokeStyle = shieldColor + flashIntensity1 + ')';
@@ -2708,29 +2686,24 @@
         const ctx = gameCanvas.getContext('2d');
         ctx.save();
         
-        // Posiciones de los faros delanteros (solo frontales)
         const leftLightX = patrulla.x + 5;
         const leftLightY = patrulla.y + patrulla.height - 60;
         const rightLightX = patrulla.x + patrulla.width - 5;
         const rightLightY = patrulla.y + patrulla.height - 60;
         
-        // Configurar modo de mezcla para efectos de luz
         ctx.globalCompositeOperation = 'lighter';
         
-        // Dibujar reflejos en la carretera SOLO PARA LUCES DELANTERAS
         const roadGradient = ctx.createLinearGradient(0, gameCanvas.height - 50, 0, gameCanvas.height);
         roadGradient.addColorStop(0, 'rgba(255, 255, 200, 0.3)');
         roadGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
         ctx.fillStyle = roadGradient;
         
-        // Reflejo izquierdo (frente)
         ctx.beginPath();
         ctx.lineTo(leftLightX + 50, gameCanvas.height - 50);
         ctx.lineTo(leftLightX, gameCanvas.height);
         ctx.closePath();
         ctx.fill();
         
-        // Reflejo derecho (frente)
         ctx.beginPath();
         ctx.lineTo(rightLightX + 50, gameCanvas.height - 50);
         ctx.lineTo(rightLightX, gameCanvas.height);
@@ -2790,16 +2763,13 @@
         
         objetivos.forEach(objetivo => {
             if (objetivo.type === 'placa') {
-                // Animación de flotación para placas
                 const floatOffset = Math.sin(now * 0.005) * 3;
                 
-                // Efecto de brillo pulsante dorado
                 const pulseIntensity = 0.5 + 0.5 * Math.sin(now * 0.005);
                 const glowIntensity = 0.3 + 0.3 * Math.sin(now * 0.003);
                 
                 ctx.save();
                 
-                // Sombra y brillo dorado
                 ctx.shadowColor = `rgba(255, 215, 0, ${glowIntensity})`;
                 ctx.shadowBlur = 10 * glowIntensity;
                 ctx.shadowOffsetY = 2;
@@ -2813,7 +2783,6 @@
                         objetivo.height
                     );
                 } else {
-                    // Gradiente dorado para la placa
                     const gradient = ctx.createRadialGradient(
                         objetivo.x + objetivo.width/2,
                         objetivo.y + objetivo.height/2 + floatOffset,
@@ -2836,7 +2805,6 @@
                     );
                     ctx.fill();
                     
-                    // Texto "P" con efecto de relieve
                     ctx.fillStyle = `rgba(0, 0, 0, ${0.7 + pulseIntensity * 0.3})`;
                     ctx.font = 'bold 14px Arial';
                     ctx.textAlign = 'center';
@@ -2850,7 +2818,6 @@
                 
                 ctx.restore();
                 
-                // Partículas doradas alrededor
                 if (frameCount % 15 === 0) {
                     recolectados.push({
                         x: objetivo.x + objetivo.width/2 + (Math.random() - 0.5) * 20,
@@ -2864,16 +2831,13 @@
                     });
                 }
             } else if (objetivo.type === 'powerup') {
-                // Animación de flotación
                 const floatOffset = Math.sin(now * 0.005) * 5;
                 
-                // Efecto de brillo pulsante
                 const pulseIntensity = 0.5 + 0.5 * Math.sin(now * 0.005);
                 const glowIntensity = 0.3 + 0.3 * Math.sin(now * 0.003);
                 
                 ctx.save();
                 
-                // Sombra para efecto de profundidad
                 ctx.shadowColor = `rgba(0, 255, 255, ${glowIntensity})`;
                 ctx.shadowBlur = 15 * glowIntensity;
                 ctx.shadowOffsetY = 2;
@@ -2887,7 +2851,6 @@
                         objetivo.height
                     );
                 } else {
-                    // Gradiente para el círculo
                     const gradient = ctx.createRadialGradient(
                         objetivo.x + objetivo.width/2,
                         objetivo.y + objetivo.height/2 + floatOffset,
@@ -2923,7 +2886,6 @@
                 
                 ctx.restore();
                 
-                // Añadir efecto de partículas brillantes alrededor
                 if (frameCount % 10 === 0) {
                     recolectados.push({
                         x: objetivo.x + objetivo.width/2 + (Math.random() - 0.5) * 25,
@@ -2947,13 +2909,12 @@
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
             
-            // Solo generar barreras (eliminar cráteres aleatorios)
             obstacles.push({
                 x: x,
                 y: -30,
                 width: 30,
                 height: 30,
-                type: 'barrera' // Único tipo permitido
+                type: 'barrera'
             });
         }
     }
@@ -2975,7 +2936,6 @@
                 type: type
             };
             
-            // Propiedades de animación específicas para cada tipo
             if (type === 'placa') {
                 nuevoObjetivo.floatSpeed = 0.04 + Math.random() * 0.02;
                 nuevoObjetivo.floatAmplitude = 1.5 + Math.random() * 2;
@@ -3006,7 +2966,6 @@
         const ahora = Date.now();
         const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
         
-        // Verificar colisión con obstáculos
         obstacles.forEach((obstacle, i) => {
             if (patrulla.x < obstacle.x + obstacle.width &&
                 patrulla.x + patrulla.width > obstacle.x &&
@@ -3033,7 +2992,6 @@
                             document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
                             document.getElementById('maxComboFinal').textContent = `Máximo Combo: x${maxCombo}`;
                             
-                            // Guardar puntos totales
                             totalPuntos += score;
                             localStorage.setItem('puntos_' + nombreJugador, totalPuntos);
                             localStorage.setItem('highScore_' + nombreJugador, Math.max(highScore, score));
@@ -3045,7 +3003,6 @@
             }
         });
         
-        // Verificar colisión con aceite
         aceites.forEach((aceite, i) => {
             if (patrulla.x < aceite.x + aceite.size &&
                 patrulla.x + patrulla.width > aceite.x - aceite.size &&
@@ -3058,14 +3015,12 @@
                     reproducirSonidoAceite();
                     shakeFrames = 10;
                     
-                    // Crear efecto de derrape
                     crearEfectoDerrape();
                 }
                 aceites.splice(i, 1);
             }
         });
         
-        // Verificar colisión con objetivos
         objetivos.forEach((objetivo, i) => {
             if (patrulla.x < objetivo.x + objetivo.width &&
                 patrulla.x + patrulla.width > objetivo.x &&
@@ -3084,7 +3039,6 @@
                     
                     reproducirSonidoPunto();
                     
-                    // Generar efecto de recolección
                     for (let j = 0; j < 10; j++) {
                         recolectados.push({
                             x: objetivo.x + objetivo.width/2,
@@ -3100,12 +3054,10 @@
                     
                     spawnVidaItem();
                 } else if (objetivo.type === 'powerup') {
-                    // Recolectar power-up siempre, sin bloqueo
                     escudosRecolectados = Math.min(MAX_ESCUDOS, escudosRecolectados + 1);
                     score += 5;
                     reproducirSonidoPowerup();
                     
-                    // Efecto visual para powerup
                     for (let j = 0; j < 15; j++) {
                         recolectados.push({
                             x: objetivo.x + objetivo.width/2,
@@ -3118,13 +3070,12 @@
                             color: 'rgba(0, 255, 255, 1)'
                         });
                     }
-                    objetivos.splice(i, 1); // Eliminar después de recolectar
+                    objetivos.splice(i, 1);
                 }
                 updateHUD();
             }
         });
         
-        // Verificar colisión con ítem nitro
         nitroItems.forEach((item, i) => {
             if (patrulla.x < item.x + 30 &&
                 patrulla.x + patrulla.width > item.x &&
@@ -3132,10 +3083,9 @@
                 patrulla.y + patrulla.height > item.y) {
                 
                 nitro = Math.min(100, nitro + 30);
-                score += 10; // Añadir 10 puntos por nitro
+                score += 10;
                 reproducirSonidoPowerup();
                 
-                // Efecto visual
                 for (let j = 0; j < 15; j++) {
                     recolectados.push({
                         x: item.x + 15,
@@ -3154,7 +3104,6 @@
             }
         });
         
-        // Verificar colisión con ítem vida
         vidaItems.forEach((item, i) => {
             if (patrulla.x < item.x + 30 &&
                 patrulla.x + patrulla.width > item.x &&
@@ -3164,7 +3113,6 @@
                 vidas = Math.min(3, vidas + 1);
                 reproducirSonidoVida();
                 
-                // Efecto visual
                 for (let j = 0; j < 20; j++) {
                     recolectados.push({
                         x: item.x + 15,
@@ -3183,7 +3131,6 @@
             }
         });
         
-        // Verificar colisión con trampa de clavos
         trampaClavosItems.forEach((item, i) => {
             if (patrulla.x < item.x + item.width &&
                 patrulla.x + patrulla.width > item.x &&
@@ -3209,7 +3156,6 @@
                         document.getElementById('highScoreFinal').textContent = `Récord: ${highScore}`;
                         document.getElementById('maxComboFinal').textContent = `Máximo Combo: x${maxCombo}`;
                         
-                        // Guardar puntos totales
                         totalPuntos += score;
                         localStorage.setItem('puntos_' + nombreJugador, totalPuntos);
                         localStorage.setItem('highScore_' + nombreJugador, Math.max(highScore, score));
@@ -3221,7 +3167,6 @@
             }
         });
         
-        // Verificar colisión con conos
         conos.forEach((cono, i) => {
             if (patrulla.x < cono.x + cono.width &&
                 patrulla.x + patrulla.width > cono.x &&
@@ -3229,14 +3174,12 @@
                 patrulla.y + patrulla.height > cono.y) {
                 
                 if (!invulnerable) {
-                    // Los conos ahora solo activan el bloqueo por 10 segundos
                     tiempoBloqueoChalecos = ahora;
                     combo = 0;
                     shakeFrames = 10;
                     tiempoUltimoChoque = ahora;
                     reproducirSonidoCono();
                     
-                    // Efecto visual para indicar el bloqueo
                     for (let j = 0; j < 15; j++) {
                         recolectados.push({
                             x: cono.x + cono.width/2,
@@ -3255,7 +3198,6 @@
             }
         });
         
-        // Verificar si el combo debe resetearse (si no se recolecta una placa en 3 segundos)
         if (combo > 1 && ahora - tiempoUltimaPlaca > TIEMPO_RESET_COMBO) {
             combo = 0;
             updateHUD();
@@ -3266,7 +3208,6 @@
         const ctx = gameCanvas.getContext('2d');
         recolectados.forEach((p, i) => {
             if (p.text) {
-                // Dibujar texto de bloqueo (ya no se usa, pero se mantiene la funcionalidad por si acaso)
                 ctx.fillStyle = p.color;
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
@@ -3274,7 +3215,6 @@
                 p.y += p.speedY;
                 p.alpha -= p.decay;
             } else {
-                // Dibujar partícula normal
                 ctx.fillStyle = p.color.replace('1)', p.alpha + ')');
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -3298,16 +3238,13 @@
             level++;
             tiempoUltimoLevelUp = ahora;
             
-            // Aumentar dificultad
             speed += 0.5;
             PLACAS_PARA_VIDA = Math.min(100, PLACAS_PARA_VIDA + 10);
             
-            // Efecto visual de nivel completado
             shakeFrames = 20;
             
-            // Cambiar clima cada 3 niveles
             if (level % 3 === 0) {
-                tiempoCambioClima = 0; // Forzar cambio de clima
+                tiempoCambioClima = 0;
             }
             
             updateHUD();
@@ -3315,7 +3252,6 @@
     }
 
     function cleanUpObjects() {
-        // Limpiar objetos que salieron de la pantalla
         obstacles = obstacles.filter(obstacle => obstacle.y < gameCanvas.height + 50);
         objetivos = objetivos.filter(objetivo => objetivo.y < gameCanvas.height + 50);
         aceites = aceites.filter(aceite => aceite.y < gameCanvas.height + 50);
@@ -3344,18 +3280,14 @@
     function draw() {
         const ctx = gameCanvas.getContext('2d');
         
-        // Limpiar canvas
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Aplicar efecto de sacudida si es necesario
         ctx.save();
         drawShakeEffect();
         
-        // Dibujar fondo según nivel
         ctx.fillStyle = fondoPorNivel();
         ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
         
-        // Dibujar efectos climáticos
         drawLluvia();
         drawNieve();
         drawArena();
@@ -3367,10 +3299,8 @@
         drawNoche();
         drawNiebla();
         
-        // Dibujar carretera
         drawRoadLines();
         
-        // Dibujar objetos del juego
         drawAceites();
         drawObstacles();
         drawObjetivos();
@@ -3379,22 +3309,17 @@
         drawTrampaClavos();
         drawConos();
         
-        // Dibujar efectos de recolección
         drawRecolectados();
         
-        // Dibujar patrulla
         drawPatrulla();
         
-        // Dibujar efectos de luz (faros)
         drawLightEffects();
         
-        // Dibujar efectos de humo y derrape
         drawHumo();
         drawDerrapeMarks();
         
         ctx.restore();
         
-        // Dibujar HUD
         if (gameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
             ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
@@ -3415,17 +3340,14 @@
     function update() {
         if (gameOver || juegoPausado) return;
         
-        // Regenerar nitro gradualmente
         if (!nitroActivo && nitro < 100) {
             nitro += nitroRegenSpeed;
             if (nitro > 100) nitro = 100;
             updateHUD();
         }
         
-        // Mover patrulla suavemente hacia la posición objetivo
         patrulla.x += (patrulla.targetX - patrulla.x) * 0.1;
         
-        // Generar nuevos objetos
         spawnObstacle();
         spawnObjetivo();
         spawnAceite();
@@ -3437,25 +3359,18 @@
         spawnArena();
         spawnGranizo();
         
-        // Verificar colisiones
         checkCollisions();
         
-        // Verificar si subió de nivel
         checkLevelUp();
         
-        // Limpiar objetos que salieron de la pantalla
         cleanUpObjects();
         
-        // Actualizar efectos
         drawPulseEffect();
         
-        // Cambiar clima si es necesario
         cambiarClima();
         
-        // Aplicar efectos climáticos
         aplicarEfectosClimaticos();
         
-        // Guardar progreso periódicamente
         guardarProgreso();
     }
 
@@ -3470,29 +3385,23 @@
     // Configurar selectores de vehículo
     document.querySelectorAll('.vehicle-option').forEach(option => {
         option.addEventListener('click', function() {
-            // Quitar selección anterior
             document.querySelectorAll('.vehicle-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
             
-            // Marcar como seleccionado
             this.classList.add('selected');
             
-            // Actualizar valor oculto
             document.getElementById('colorPatrulla').value = this.getAttribute('data-value');
         });
     });
 
-    // Seleccionar primer vehículo por defecto
     document.querySelector('.vehicle-option').classList.add('selected');
 
-    // Configurar controles táctiles
     setupControls();
 
-    // Ajustar tamaño del canvas al cargar y al cambiar tamaño de ventana
     window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);
-</script>
+  </script>
 </body>
 </html>
