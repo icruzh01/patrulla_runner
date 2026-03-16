@@ -3087,7 +3087,7 @@ html
                 patrulla.y + patrulla.height > objetivo.y) {
                 
                 if (objetivo.type === 'placa') {
-                    score += 10 * combo;
+                    score += 1 * combo;
                     placasRecolectadasDesdeUltimaVida++;
                     tiempoUltimaPlaca = ahora;
                     
@@ -3324,7 +3324,7 @@ html
 
     function checkLevelUp() {
         const ahora = Date.now();
-        if (score >= level * 1000 && ahora - tiempoUltimoLevelUp > 3000) {
+        if (score >= level * 10000 && ahora - tiempoUltimoLevelUp > 3000) {
             level++;
             tiempoUltimoLevelUp = ahora;
             
