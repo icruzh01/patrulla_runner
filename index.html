@@ -3113,45 +3113,45 @@
                     
                     spawnVidaItem();
                 } else if (objetivo.type === 'powerup') {
-                    // Verificar si el jugador puede recolectar chalecos
-                    if (ahora - tiempoBloqueoChalecos > 10000) { // 10 segundos
-                        escudosRecolectados = Math.min(MAX_ESCUDOS, escudosRecolectados + 1);
-                        score += 5;
-                        reproducirSonidoPowerup();
-                        
-                        // Efecto visual para powerup
-                        for (let j = 0; j < 15; j++) {
-                            recolectados.push({
-                                x: objetivo.x + objetivo.width/2,
-                                y: objetivo.y + objetivo.height/2,
-                                size: 2 + Math.random() * 4,
-                                alpha: 1,
-                                speedX: (Math.random() - 0.5) * 4,
-                                speedY: -Math.random() * 4,
-                                decay: 0.02 + Math.random() * 0.03,
-                                color: 'rgba(0, 255, 255, 1)'
-                            });
-                        }
-                        objetivos.splice(i, 1); // Solo eliminar si se recolectó
-                    } else {
-                        //Mostrar mensaje de que no se pueden recolectar chalecos (en el array recolectados, estilo combo)
-                        const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
+                // Verificar si el jugador puede recolectar chalecos
+                const ahora = Date.now();
+                if (ahora - tiempoBloqueoChalecos > 10000) { // 10 segundos
+                    escudosRecolectados = Math.min(MAX_ESCUDOS, escudosRecolectados + 1);
+                    score += 5;
+                    reproducirSonidoPowerup();
+                    
+                    // Efecto visual para powerup
+                    for (let j = 0; j < 15; j++) {
                         recolectados.push({
                             x: objetivo.x + objetivo.width/2,
                             y: objetivo.y + objetivo.height/2,
-                            size: 10,
+                            size: 2 + Math.random() * 4,
                             alpha: 1,
-                            speedX: 0,
-                            speedY: -1,
-                            decay: 0.01,
-                            color: 'rgba(255, 0, 0, 1)',
-                            text: `Bloqueado: ${tiempoRestante}s`
+                            speedX: (Math.random() - 0.5) * 4,
+                            speedY: -Math.random() * 4,
+                            decay: 0.02 + Math.random() * 0.03,
+                            color: 'rgba(0, 255, 255, 1)'
                         });
                     }
+                    objetivos.splice(i, 1); // Solo eliminar si se recolectó
+                } else {
+                    //Mostrar mensaje de que no se pueden recolectar chalecos
+                    const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
+                    recolectados.push({
+                        x: objetivo.x + objetivo.width/2,
+                        y: objetivo.y + objetivo.height/2,
+                        size: 10,
+                        alpha: 1,
+                        speedX: 0,
+                        speedY: -1,
+                        decay: 0.01,
+                        color: 'rgba(255, 0, 0, 1)',
+                        text: `Bloqueado: ${tiempoRestante}s`
+                    });
                 }
                 updateHUD();
             }
-        });
+        }});
         
         // Verificar colisión con ítem nitro
         nitroItems.forEach((item, i) => {
@@ -3295,20 +3295,13 @@
         const ctx = gameCanvas.getContext('2d');
         recolectados.forEach((p, i) => {
             if (p.text) {
-                // Dibujar texto de bloqueo (estilo similar a mensajes de combo)
-                ctx.save();
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.shadowColor = 'rgba(255,0,0,0.7)';
-                ctx.shadowBlur = 6;
+                // Dibujar texto de bloqueo
                 ctx.fillStyle = p.color;
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
                 ctx.fillText(p.text, p.x, p.y);
-                ctx.restore();
-                
-                // Movimiento ascendente y desvanecimiento
                 p.y += p.speedY;
                 p.alpha -= p.decay;
-                p.color = p.color.replace(/\d+(?=\))/, p.alpha); // actualizar transparencia
             } else {
                 // Dibujar partícula normal
                 ctx.fillStyle = p.color.replace('1)', p.alpha + ')');
@@ -3415,7 +3408,7 @@
         drawTrampaClavos();
         drawConos();
         
-        // Dibujar efectos de recolección (incluye mensajes bloqueados)
+        // Dibujar efectos de recolección
         drawRecolectados();
         
         // Dibujar patrulla
@@ -3529,6 +3522,6 @@
     window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);
-  </script>
+</script>
 </body>
 </html>
