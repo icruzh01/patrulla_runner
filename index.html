@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -3136,7 +3135,7 @@ html
                     }
                     objetivos.splice(i, 1); // Solo eliminar si se recolectó
                 } else {
-                    //Mostrar mensaje de que no se pueden recolectar chalecos
+                    //Mostrar mensaje de que no se pueden recolectar chalecos (como texto flotante, junto a otros efectos de combo/recolectados)
                     const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
                     recolectados.push({
                         x: objetivo.x + objetivo.width/2,
@@ -3296,7 +3295,7 @@ html
         const ctx = gameCanvas.getContext('2d');
         recolectados.forEach((p, i) => {
             if (p.text) {
-                // Dibujar texto de bloqueo
+                // Dibujar texto de bloqueo como parte de los efectos visuales (junto a los mensajes de combo)
                 ctx.fillStyle = p.color;
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
