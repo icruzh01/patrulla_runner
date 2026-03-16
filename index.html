@@ -967,7 +967,7 @@
     let tiempoDeslizamiento = 0;
     const tiempoInvulnerable = 1000;
     const tiempoDeslizamientoMax = 1000;
-    let tiempoBloqueoChalecos = 0; // Tiempo cuando se activó el bloqueo de chalecos
+    let tiempoBloqueoChalecos = 0; // Variable mantenida pero sin usar
     
     // Variables para las líneas de carril
     let lineOffset = 0;
@@ -1626,12 +1626,7 @@
         document.getElementById('mobile-score').textContent = `💎: ${score}`;
         document.getElementById('mobile-level').textContent = `🏆: ${level}`;
         document.getElementById('mobile-lives').textContent = `♥️: ${vidas}`;
-        if (ahora - tiempoBloqueoChalecos < 10000) {
-            const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
-            document.getElementById('mobile-shields').textContent = `🛡️: BLOQ (${tiempoRestante}s)`;
-        } else {
-            document.getElementById('mobile-shields').textContent = `🛡️: ${escudosRecolectados}/${MAX_ESCUDOS}`;
-        }
+        document.getElementById('mobile-shields').textContent = `🛡️: ${escudosRecolectados}/${MAX_ESCUDOS}`;
         document.getElementById('mobile-plates').textContent = `🟡: ${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
         
         const progress = Math.min(100, (score / (level * 1000)) * 100);
@@ -1671,16 +1666,7 @@
         if (desktopNitroProgress) desktopNitroProgress.style.width = `${nitro}%`;
         if (desktopPlates) desktopPlates.textContent = `${placasRecolectadasDesdeUltimaVida}/${PLACAS_PARA_VIDA}`;
         if (desktopPlatesProgress) desktopPlatesProgress.style.width = `${(placasRecolectadasDesdeUltimaVida / PLACAS_PARA_VIDA) * 100}%`;
-        if (desktopShields) {
-            if (ahora - tiempoBloqueoChalecos < 10000) {
-                const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
-                desktopShields.textContent = `BLOQ (${tiempoRestante}s)`;
-                desktopShields.style.color = 'red';
-            } else {
-                desktopShields.textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
-                desktopShields.style.color = 'white';
-            }
-        }
+        if (desktopShields) desktopShields.textContent = `${escudosRecolectados}/${MAX_ESCUDOS}`;
         if (desktopShieldsProgress) desktopShieldsProgress.style.width = `${(escudosRecolectados / MAX_ESCUDOS) * 100}%`;
         
         const progress = Math.min(100, (score / (level * 1000)) * 100);
@@ -2348,6 +2334,7 @@
         nocheActiva = false;
         vientoActivo = false;
         tiempoUltimaPlaca = 0;
+        tiempoBloqueoChalecos = 0; // Reiniciar variable
         
         sonidoViento.pause();
         sonidoNieve.pause();
@@ -3113,9 +3100,7 @@
                     
                     spawnVidaItem();
                 } else if (objetivo.type === 'powerup') {
-                // Verificar si el jugador puede recolectar chalecos
-                const ahora = Date.now();
-                if (ahora - tiempoBloqueoChalecos > 10000) { // 10 segundos
+                    // Recolectar power-up siempre, sin bloqueo
                     escudosRecolectados = Math.min(MAX_ESCUDOS, escudosRecolectados + 1);
                     score += 5;
                     reproducirSonidoPowerup();
@@ -3133,25 +3118,11 @@
                             color: 'rgba(0, 255, 255, 1)'
                         });
                     }
-                    objetivos.splice(i, 1); // Solo eliminar si se recolectó
-                } else {
-                    //Mostrar mensaje de que no se pueden recolectar chalecos
-                    const tiempoRestante = Math.ceil((10000 - (ahora - tiempoBloqueoChalecos)) / 1000);
-                    recolectados.push({
-                        x: objetivo.x + objetivo.width/2,
-                        y: objetivo.y + objetivo.height/2,
-                        size: 10,
-                        alpha: 1,
-                        speedX: 0,
-                        speedY: -1,
-                        decay: 0.01,
-                        color: 'rgba(255, 0, 0, 1)',
-                        text: `Bloqueado: ${tiempoRestante}s`
-                    });
+                    objetivos.splice(i, 1); // Eliminar después de recolectar
                 }
                 updateHUD();
             }
-        }});
+        });
         
         // Verificar colisión con ítem nitro
         nitroItems.forEach((item, i) => {
@@ -3258,8 +3229,8 @@
                 patrulla.y + patrulla.height > cono.y) {
                 
                 if (!invulnerable) {
-                    // Solo activar el bloqueo de chalecos, no quitar vida
-                    tiempoBloqueoChalecos = Date.now();
+                    // Los conos ahora solo activan el bloqueo por 10 segundos
+                    tiempoBloqueoChalecos = ahora;
                     combo = 0;
                     shakeFrames = 10;
                     tiempoUltimoChoque = ahora;
@@ -3295,7 +3266,7 @@
         const ctx = gameCanvas.getContext('2d');
         recolectados.forEach((p, i) => {
             if (p.text) {
-                // Dibujar texto de bloqueo
+                // Dibujar texto de bloqueo (ya no se usa, pero se mantiene la funcionalidad por si acaso)
                 ctx.fillStyle = p.color;
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
