@@ -990,7 +990,7 @@
     let sonidoActivado = false;
     let juegoPausado = false;
     let tiempoUltimaPlaca = 0;
-    const TIEMPO_RESET_COMBO = 3000; // 1 segundo para resetear combo
+    const TIEMPO_RESET_COMBO = 3000; // 3 segundos para resetear combo
     let nitroRegenSpeed = 0.2; // Velocidad base de regeneración
     const INITIAL_SPEED = 2; // Velocidad inicial del juego
     let speed = INITIAL_SPEED;
@@ -1042,6 +1042,25 @@
     const leftBorder = 40;
     const rightBorder = 360;
 
+    // Probabilidades base de spawn para cada nivel (ajustadas para que sean menores en nivel 1)
+    const BASE_SPAWN_RATES = {
+        obstaculo: 0.005,      // 0.5% en nivel 1
+        objetivo: 0.02,        // 2% en nivel 1
+        aceite: 0.002,         // 0.2% en nivel 1
+        nitroItem: 0.03,       // 3% cuando aparecen (solo si condiciones se cumplen)
+        trampaClavos: 0.001,    // 0.1% en nivel 1
+        cono: 0.001            // 0.1% en nivel 1
+    };
+
+    // Factores de incremento por nivel (multiplicador)
+    const LEVEL_MULTIPLIERS = {
+        obstaculo: 0.3,    // +30% por nivel
+        objetivo: 0.25,     // +25% por nivel
+        aceite: 0.4,        // +40% por nivel
+        trampaClavos: 0.5,  // +50% por nivel
+        cono: 0.5           // +50% por nivel
+    };
+
     // Sonidos del juego
     const sonidoPunto = new Audio('sonidos/estrella_1.mp3');
     const sonidoChoque = new Audio('sonidos/choque_1.mp3');
@@ -1067,6 +1086,14 @@
     const sonidoInicio = new Audio('sonidos/musicaInicio_1.mp3');
     sonidoInicio.loop = true;
     sonidoInicio.volume = 0.3;
+
+    // Función para obtener la probabilidad de spawn según el nivel
+    function getSpawnRate(baseRate, multiplier) {
+        // En nivel 1, usamos la base sin multiplicar
+        // A partir de nivel 2, incrementamos progresivamente
+        const levelMultiplier = Math.max(1, 1 + (level - 1) * multiplier);
+        return baseRate * levelMultiplier;
+    }
 
     // Función para actualizar el display del combo en móvil
     function updateComboDisplay() {
@@ -2032,12 +2059,13 @@
     function spawnNitroItem() {
         const ahora = Date.now();
         // Solo aparecer a partir del nivel 4 y si el nitro está por debajo del 80%
-        if (level >= 1 && 
+        if (level >= 4 && 
             ahora - ultimoNitroItemTiempo > NITRO_ITEM_INTERVALO && 
             nitroItems.length === 0 && 
             nitro < 80) {
             
-            if (Math.random() < 0.05) {
+            // Usar probabilidad base para nitro item (es un poco diferente porque depende de otras condiciones)
+            if (Math.random() < getSpawnRate(BASE_SPAWN_RATES.nitroItem, 0.1)) {
                 const minX = leftBorder + borderWidth;
                 const maxX = rightBorder - borderWidth - 30;
                 const x = Math.random() * (maxX - minX) + minX;
@@ -2059,7 +2087,7 @@
     }
 
     function spawnTrampaClavos() {
-        if (level >= 5 && Math.random() < 0.003 && trampaClavosItems.length === 0) {
+        if (level >= 5 && Math.random() < getSpawnRate(BASE_SPAWN_RATES.trampaClavos, LEVEL_MULTIPLIERS.trampaClavos) && trampaClavosItems.length === 0) {
             const minX = leftBorder + borderWidth;
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
@@ -2081,7 +2109,7 @@
     }
 
     function spawnCono() {
-        if (level >= 2 && Math.random() < 0.003) {
+        if (level >= 2 && Math.random() < getSpawnRate(BASE_SPAWN_RATES.cono, LEVEL_MULTIPLIERS.cono)) {
             const minX = leftBorder + borderWidth;
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
@@ -3026,7 +3054,7 @@
     }
 
     function spawnObstacle() {
-        if (Math.random() < 0.01) {
+        if (Math.random() < getSpawnRate(BASE_SPAWN_RATES.obstaculo, LEVEL_MULTIPLIERS.obstaculo)) {
             const minX = leftBorder + borderWidth;
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
@@ -3043,7 +3071,7 @@
     }
 
     function spawnObjetivo() {
-        if (Math.random() < 0.04) {
+        if (Math.random() < getSpawnRate(BASE_SPAWN_RATES.objetivo, LEVEL_MULTIPLIERS.objetivo)) {
             const minX = leftBorder + borderWidth;
             const maxX = rightBorder - borderWidth - 20;
             const x = Math.random() * (maxX - minX) + minX;
@@ -3073,7 +3101,7 @@
     }
 
     function spawnAceite() {
-        if (level >= 1 && Math.random() < 0.005) {
+        if (level >= 1 && Math.random() < getSpawnRate(BASE_SPAWN_RATES.aceite, LEVEL_MULTIPLIERS.aceite)) {
             const minX = leftBorder + borderWidth;
             const maxX = rightBorder - borderWidth - 30;
             const x = Math.random() * (maxX - minX) + minX;
@@ -3383,7 +3411,7 @@
 
     function checkLevelUp() {
         const ahora = Date.now();
-        if (score >= level * 1000 && ahora - tiempoUltimoLevelUp > 3000) {
+        if (score >= level * 10000 && ahora - tiempoUltimoLevelUp > 3000) {
             level++;
             tiempoUltimoLevelUp = ahora;
             
