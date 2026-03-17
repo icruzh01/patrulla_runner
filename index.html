@@ -2008,6 +2008,54 @@
         }
     }
 
+    // Nueva función para activar nitro por tiempo al recolectar un ítem
+    let nitroPorTiempoActivo = false;
+    let nitroTimeout = null;
+    let nitroOriginalSpeed = INITIAL_SPEED;
+
+    function activarNitroPorTiempo(duracion) {
+        // Si ya hay un nitro por tiempo activo, lo cancelamos para reiniciar
+        if (nitroPorTiempoActivo) {
+            clearTimeout(nitroTimeout);
+            // Restauramos velocidad original antes de aplicar nuevo boost
+            speed = nitroOriginalSpeed;
+        } else {
+            // Guardamos la velocidad original solo la primera vez
+            nitroOriginalSpeed = speed;
+        }
+
+        // Activar el boost
+        nitroPorTiempoActivo = true;
+        speed = nitroOriginalSpeed + 3; // Mismo boost que el nitro normal
+
+        // Efecto visual y sonoro (opcional, similar al nitro normal)
+        if (!nitroSoundPlaying && sonidoActivado) {
+            sonidoNitro.currentTime = 0;
+            sonidoNitro.loop = true;
+            sonidoNitro.play().catch(e => console.error('Error al reproducir sonido nitro por ítem:', e));
+            nitroSoundPlaying = true;
+        }
+
+        // Programar la desactivación después de la duración
+        nitroTimeout = setTimeout(() => {
+            if (nitroPorTiempoActivo) {
+                nitroPorTiempoActivo = false;
+                speed = nitroOriginalSpeed;
+
+                if (nitroSoundPlaying) {
+                    sonidoNitro.pause();
+                    sonidoNitro.currentTime = 0;
+                    nitroSoundPlaying = false;
+                }
+
+                if (sonidoActivado) {
+                    reproducirSonidoFrenoDerrape();
+                }
+                crearEfectoDerrape();
+            }
+        }, duracion);
+    }
+
     function reproducirSonidoFrenoDerrape() {
         try {
             sonidoFrenoDerrape.currentTime = 0;
@@ -2448,6 +2496,18 @@
         tiempoUltimaPlaca = 0;
         tiempoBloqueoChalecos = 0;
         
+        // Limpiar cualquier nitro por tiempo activo al reiniciar
+        if (nitroPorTiempoActivo) {
+            clearTimeout(nitroTimeout);
+            nitroPorTiempoActivo = false;
+            speed = INITIAL_SPEED;
+            if (nitroSoundPlaying) {
+                sonidoNitro.pause();
+                sonidoNitro.currentTime = 0;
+                nitroSoundPlaying = false;
+            }
+        }
+        
         sonidoViento.pause();
         sonidoNieve.pause();
         sonidoNoche.pause();
@@ -2808,7 +2868,7 @@
             ctx.restore();
         }
 
-        if (nitroActivo) {
+        if (nitroActivo || nitroPorTiempoActivo) {
             ctx.fillStyle = 'rgba(255, 200, 0, 0.5)';
             ctx.fillRect(patrulla.x - 10, patrulla.y + patrulla.height - 5, patrulla.width + 20, 10);
         }
@@ -3252,9 +3312,6 @@
                 score += 10; // Añadir 10 puntos por nitro
                 reproducirSonidoPowerup();
                 
-                // EFECTO NITRO: Activar nitro por 5 segundos
-                activarNitroPorItem();
-                
                 // Efecto visual
                 for (let j = 0; j < 15; j++) {
                     recolectados.push({
@@ -3380,44 +3437,6 @@
             combo = 1; // Reiniciar a 1 en lugar de 0
             updateHUD();
         }
-    }
-
-    // Nueva función para activar nitro por 5 segundos al recolectar ítem
-    function activarNitroPorItem() {
-        if (nitroActivo) {
-            // Si ya hay nitro activo, simplemente añadir tiempo extra
-            clearTimeout(nitroPorItemTimeout);
-        } else {
-            // Activar nitro sin consumir la barra
-            nitroActivo = true;
-            speed += 3;
-            
-            if (!nitroSoundPlaying && sonidoActivado) {
-                sonidoNitro.currentTime = 0;
-                sonidoNitro.loop = true;
-                sonidoNitro.play().catch(e => console.error('Error al reproducir sonido nitro por item:', e));
-                nitroSoundPlaying = true;
-            }
-        }
-        
-        // Reiniciar o establecer el timeout para 5 segundos
-        nitroPorItemTimeout = setTimeout(() => {
-            if (nitroActivo) {
-                nitroActivo = false;
-                speed -= 3;
-                
-                if (nitroSoundPlaying) {
-                    sonidoNitro.pause();
-                    sonidoNitro.currentTime = 0;
-                    nitroSoundPlaying = false;
-                }
-                
-                if (sonidoActivado) {
-                    reproducirSonidoFrenoDerrape();
-                }
-                crearEfectoDerrape();
-            }
-        }, 5000); // 5 segundos
     }
 
     function drawRecolectados() {
@@ -3573,8 +3592,8 @@
     function update() {
         if (gameOver || juegoPausado) return;
         
-        // Regenerar nitro gradualmente
-        if (!nitroActivo && nitro < 100) {
+        // Regenerar nitro gradualmente (solo si no está activo el nitro por tiempo o manual)
+        if (!nitroActivo && !nitroPorTiempoActivo && nitro < 100) {
             nitro += nitroRegenSpeed;
             if (nitro > 100) nitro = 100;
             updateHUD();
@@ -3652,8 +3671,47 @@
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);
 
-    // Variable para el timeout del nitro por ítem
-    let nitroPorItemTimeout = null;
+    // Modificación final: al recolectar un ítem nitro, activar nitro por 5 segundos
+    const originalCheckCollisions = checkCollisions;
+    checkCollisions = function() {
+        const ahora = Date.now();
+        const invulnerable = ahora - tiempoUltimoChoque < tiempoInvulnerable;
+        
+        // Verificar colisión con ítem nitro
+        nitroItems.forEach((item, i) => {
+            if (patrulla.x < item.x + 30 &&
+                patrulla.x + patrulla.width > item.x &&
+                patrulla.y < item.y + 30 &&
+                patrulla.y + patrulla.height > item.y) {
+                
+                // En lugar de aumentar nitro, activamos el nitro por 5 segundos
+                activarNitroPorTiempo(5000); // 5000ms = 5 segundos
+                
+                score += 10; // Añadir 10 puntos por nitro
+                reproducirSonidoPowerup();
+                
+                // Efecto visual
+                for (let j = 0; j < 15; j++) {
+                    recolectados.push({
+                        x: item.x + 15,
+                        y: item.y + 15,
+                        size: 2 + Math.random() * 4,
+                        alpha: 1,
+                        speedX: (Math.random() - 0.5) * 4,
+                        speedY: -Math.random() * 4,
+                        decay: 0.02 + Math.random() * 0.03,
+                        color: 'rgba(255, 165, 0, 1)'
+                    });
+                }
+                
+                nitroItems.splice(i, 1);
+                updateHUD();
+            }
+        });
+        
+        // Llamar al resto de colisiones (obstáculos, objetivos, etc.)
+        originalCheckCollisions.call(this);
+    };
 </script>
 </body>
 </html>
