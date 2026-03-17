@@ -3471,7 +3471,7 @@
 
     function checkLevelUp() {
         const ahora = Date.now();
-        if (score >= level * 10000 && ahora - tiempoUltimoLevelUp > 3000) {
+        if (score >= level * 1000 && ahora - tiempoUltimoLevelUp > 3000) {
             level++;
             tiempoUltimoLevelUp = ahora;
             
