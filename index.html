@@ -3252,6 +3252,9 @@
                 score += 10; // Añadir 10 puntos por nitro
                 reproducirSonidoPowerup();
                 
+                // EFECTO NITRO: Activar nitro por 5 segundos
+                activarNitroPorItem();
+                
                 // Efecto visual
                 for (let j = 0; j < 15; j++) {
                     recolectados.push({
@@ -3377,6 +3380,44 @@
             combo = 1; // Reiniciar a 1 en lugar de 0
             updateHUD();
         }
+    }
+
+    // Nueva función para activar nitro por 5 segundos al recolectar ítem
+    function activarNitroPorItem() {
+        if (nitroActivo) {
+            // Si ya hay nitro activo, simplemente añadir tiempo extra
+            clearTimeout(nitroPorItemTimeout);
+        } else {
+            // Activar nitro sin consumir la barra
+            nitroActivo = true;
+            speed += 3;
+            
+            if (!nitroSoundPlaying && sonidoActivado) {
+                sonidoNitro.currentTime = 0;
+                sonidoNitro.loop = true;
+                sonidoNitro.play().catch(e => console.error('Error al reproducir sonido nitro por item:', e));
+                nitroSoundPlaying = true;
+            }
+        }
+        
+        // Reiniciar o establecer el timeout para 5 segundos
+        nitroPorItemTimeout = setTimeout(() => {
+            if (nitroActivo) {
+                nitroActivo = false;
+                speed -= 3;
+                
+                if (nitroSoundPlaying) {
+                    sonidoNitro.pause();
+                    sonidoNitro.currentTime = 0;
+                    nitroSoundPlaying = false;
+                }
+                
+                if (sonidoActivado) {
+                    reproducirSonidoFrenoDerrape();
+                }
+                crearEfectoDerrape();
+            }
+        }, 5000); // 5 segundos
     }
 
     function drawRecolectados() {
@@ -3610,6 +3651,9 @@
     window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);
+
+    // Variable para el timeout del nitro por ítem
+    let nitroPorItemTimeout = null;
 </script>
 </body>
 </html>
